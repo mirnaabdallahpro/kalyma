@@ -22,7 +22,7 @@ function ComingSoon({ title }) {
               className="panel"
               style={{ textAlign: "center", padding: "60px 24px" }}
             >
-              <h3 style={{ marginTop: 0 }}>🚧 {title} — bientôt disponible</h3>
+              <h3 style={{ marginTop: 0 }}>🚧 {title} — bientôt <span style={{ color: "var(--accent)" }}>disponible</span></h3>
               <p
                 style={{
                   color: "var(--muted)",
