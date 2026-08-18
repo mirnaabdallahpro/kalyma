@@ -1,0 +1,878 @@
+/* =========================================================
+   KALYMA OS — GLOBAL STYLES
+   ========================================================= */
+
+#root {
+    width: 100%;
+    min-height: 100svh;
+}
+
+:root {
+    --primary: #041b53;
+    --secondary: #ffdc5a;
+    --accent: #8dafff;
+
+    --bg: #f6f8fc;
+    --white: #ffffff;
+
+    --text: #041b53;
+    --muted: #64708a;
+
+    --line: #e8ecf3;
+    --soft: #f5f7fb;
+
+    --dark: #0b1020;
+
+    --success: #1e9b6a;
+
+    --radius: 18px;
+
+    --shadow: 0 16px 45px rgba(4, 27, 83, 0.10);
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    color: var(--text);
+    background: var(--bg);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button {
+    font: inherit;
+    border: 0;
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   COMMON
+   ========================================================= */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 13px 20px;
+
+    border-radius: 12px;
+
+    font-weight: 800;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #fff;
+}
+
+.btn-yellow {
+    background: var(--secondary);
+    color: var(--primary);
+}
+
+
+/* =========================================================
+   DASHBOARD LAYOUT
+   ========================================================= */
+
+.dashboard-body {
+    min-height: 100vh;
+    background: var(--bg);
+}
+
+.app {
+    min-height: 100vh;
+
+    display: grid;
+
+    grid-template-columns: 245px 1fr;
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.sidebar {
+    position: sticky;
+    top: 0;
+
+    height: 100vh;
+
+    padding: 25px 17px;
+
+    background: var(--primary);
+    color: #fff;
+}
+
+
+/* Logo */
+
+.sidebar .logo {
+    display: block;
+
+    padding: 0 12px 35px;
+
+    font-size: 25px;
+    font-weight: 900;
+
+    letter-spacing: -1px;
+}
+
+.sidebar .logo span {
+    color: var(--secondary);
+}
+
+
+/* Menu labels */
+
+.menu-label {
+    padding: 0 12px;
+    margin: 18px 0 8px;
+
+    color: #8fa2cf;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+
+/* Menu */
+
+.menu a {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 12px;
+
+    margin: 3px 0;
+
+    border-radius: 11px;
+
+    color: #cbd5ee;
+
+    font-size: 14px;
+    font-weight: 650;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.menu a:hover,
+.menu a.active {
+    background: rgba(255, 255, 255, 0.11);
+    color: #fff;
+}
+
+
+/* Sidebar bottom */
+
+.side-bottom {
+    position: absolute;
+
+    left: 17px;
+    right: 17px;
+    bottom: 20px;
+
+    padding: 14px;
+
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.side-bottom strong {
+    display: block;
+
+    margin-top: 4px;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+.main {
+    min-width: 0;
+    width: 100%;
+}
+
+
+/* =========================================================
+   TOPBAR
+   ========================================================= */
+
+.topbar {
+    height: 76px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 32px;
+
+    background: #fff;
+
+    border-bottom: 1px solid var(--line);
+}
+
+
+/* Search */
+
+.search {
+    width: 270px;
+
+    padding: 10px 14px;
+
+    background: var(--soft);
+
+    border: 1px solid #edf0f6;
+
+    border-radius: 11px;
+
+    color: #7a8498;
+
+    font-size: 13px;
+}
+
+
+/* User */
+
+.user {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: var(--accent);
+
+    color: var(--primary);
+
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.content {
+    width: 100%;
+    /* max-width: 1450px; */
+
+    /* margin: auto; */
+
+    padding: 32px;
+}
+
+
+/* =========================================================
+   WELCOME
+   ========================================================= */
+
+.welcome {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: flex-end;
+
+    margin-bottom: 26px;
+}
+
+.welcome h1 {
+    margin: 0 0 7px;
+
+    font-size: 34px;
+    line-height: 1.1;
+
+    letter-spacing: -1.5px;
+}
+
+.welcome p {
+    margin: 0;
+
+    color: #718099;
+
+    font-size: 14px;
+}
+
+.date {
+    color: #77839a;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   KPI CARDS
+   ========================================================= */
+
+.cards {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 16px;
+}
+
+.d-card {
+    padding: 19px;
+
+    background: #fff;
+
+    border: 1px solid var(--line);
+
+    border-radius: 17px;
+
+    box-shadow:
+        0 4px 16px rgba(4, 27, 83, 0.03);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.d-card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 24px rgba(4, 27, 83, 0.07);
+}
+
+.d-card .label {
+    color: #78849a;
+
+    font-size: 12px;
+}
+
+.d-card .value {
+    margin: 8px 0;
+
+    font-size: 28px;
+    font-weight: 900;
+}
+
+.trend {
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.trend.up {
+    color: var(--success);
+}
+
+
+/* =========================================================
+   MAIN GRID
+   ========================================================= */
+
+.grid-main {
+    display: grid;
+
+    grid-template-columns: 1.45fr 0.75fr;
+
+    gap: 18px;
+
+    margin-top: 18px;
+}
+
+
+/* =========================================================
+   PANELS
+   ========================================================= */
+
+.panel {
+    padding: 22px;
+
+    background: #fff;
+
+    border: 1px solid var(--line);
+
+    border-radius: 18px;
+}
+
+.panel-head {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.panel-head h3 {
+    margin: 0;
+
+    font-size: 16px;
+}
+
+.muted {
+    color: #78849a;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   SALES CHART
+   ========================================================= */
+
+.chart {
+    height: 210px;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    gap: 8px;
+
+    padding: 20px 4px 0;
+
+    border-bottom: 1px solid #edf0f5;
+}
+
+.bar {
+    flex: 1;
+
+    min-height: 20px;
+
+    border-radius: 7px 7px 0 0;
+
+    background: #dce7ff;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+.bar:hover {
+    opacity: 0.8;
+    transform: translateY(-2px);
+}
+
+.bar:nth-child(3n) {
+    background: var(--accent);
+}
+
+.bar:last-child {
+    background: var(--primary);
+}
+
+
+/* =========================================================
+   PIPELINE
+   ========================================================= */
+
+.pipeline {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 12px;
+}
+
+.stage {
+    padding: 12px;
+
+    background: #f7f9fc;
+
+    border-radius: 13px;
+
+    min-width: 0;
+}
+
+.stage h4 {
+    margin: 0 0 10px;
+
+    color: #748099;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+}
+
+.deal {
+    margin-bottom: 8px;
+
+    padding: 11px;
+
+    background: #fff;
+
+    border: 1px solid #e8ecf3;
+
+    border-radius: 10px;
+
+    font-size: 12px;
+}
+
+.deal:last-child {
+    margin-bottom: 0;
+}
+
+.deal strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 12px;
+}
+
+.deal span {
+    color: #78849a;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   PRIORITIES
+   ========================================================= */
+
+.priority {
+    display: flex;
+
+    gap: 12px;
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid #eef1f5;
+}
+
+.priority:last-child {
+    border-bottom: 0;
+}
+
+.dot {
+    width: 9px;
+    height: 9px;
+
+    flex: 0 0 auto;
+
+    margin-top: 5px;
+
+    border-radius: 50%;
+
+    background: var(--secondary);
+}
+
+.priority strong {
+    display: block;
+
+    font-size: 13px;
+}
+
+.priority small {
+    display: block;
+
+    margin-top: 4px;
+
+    color: #7a8498;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   KALYMA AI
+   ========================================================= */
+
+.ai {
+    margin-top: 18px;
+
+    padding: 22px;
+
+    background: var(--primary);
+
+    color: #fff;
+
+    border-radius: 18px;
+}
+
+.ai .tag {
+    display: inline-block;
+
+    padding: 5px 8px;
+
+    background: var(--secondary);
+
+    color: var(--primary);
+
+    border-radius: 999px;
+
+    font-size: 10px;
+    font-weight: 900;
+}
+
+.ai h3 {
+    margin: 15px 0 10px;
+
+    font-size: 18px;
+}
+
+.ai p {
+    margin: 0 0 18px;
+
+    color: #c9d4ed;
+
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.ai button {
+    padding: 10px 13px;
+
+    background: #fff;
+
+    color: var(--primary);
+
+    border-radius: 9px;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.ai button:hover {
+    transform: translateY(-1px);
+    opacity: 0.9;
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .content {
+        padding: 26px;
+    }
+
+    .grid-main {
+        grid-template-columns: 1fr;
+    }
+
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — SMALL TABLET
+   ========================================================= */
+
+@media (max-width: 950px) {
+
+    .app {
+        grid-template-columns: 78px 1fr;
+    }
+
+    .sidebar {
+        padding: 20px 10px;
+    }
+
+    .sidebar .logo {
+        padding-left: 8px;
+
+        font-size: 18px;
+    }
+
+    .menu a {
+        justify-content: center;
+
+        font-size: 0;
+    }
+
+    .menu a:first-letter {
+        font-size: 16px;
+    }
+
+    .menu-label {
+        display: none;
+    }
+
+    .side-bottom {
+        display: none;
+    }
+
+    .pipeline {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+    .app {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        position: relative;
+
+        width: 100%;
+        height: auto;
+
+        padding: 12px 16px;
+    }
+
+    .sidebar .logo {
+        padding: 0;
+
+        font-size: 22px;
+    }
+
+    .sidebar .menu-label,
+    .side-bottom {
+        display: none;
+    }
+
+    .sidebar .menu {
+        display: none;
+    }
+
+    .topbar {
+        height: 64px;
+
+        padding: 0 20px;
+    }
+
+    .search {
+        display: none;
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    .welcome {
+        display: block;
+    }
+
+    .welcome h1 {
+        font-size: 28px;
+    }
+
+    .date {
+        margin-top: 10px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr 1fr;
+
+        gap: 12px;
+    }
+
+    .d-card {
+        padding: 15px;
+    }
+
+    .d-card .value {
+        font-size: 23px;
+    }
+
+    .pipeline {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .panel {
+        padding: 17px;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 420px) {
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .pipeline {
+        grid-template-columns: 1fr;
+    }
+
+    .welcome h1 {
+        font-size: 25px;
+    }
+
+    .topbar {
+        padding: 0 16px;
+    }
+
+    .content {
+        padding: 16px;
+    }
+
+}
