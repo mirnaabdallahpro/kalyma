@@ -43,7 +43,7 @@
    ========================================================= */
 
 .lp-section-inner {
-    opacity: 0;
+
     transform: translateY(22px);
 
     transition: opacity 0.7s ease, transform 0.7s ease;
@@ -849,13 +849,11 @@
 .lp-proof-slot {
     height: 130px;
 
-    background: repeating-linear-gradient(
-        135deg,
-        var(--soft),
-        var(--soft) 10px,
-        #fff 10px,
-        #fff 20px
-    );
+    background: repeating-linear-gradient(135deg,
+            var(--soft),
+            var(--soft) 10px,
+            #fff 10px,
+            #fff 20px);
 
     border: 1px dashed var(--line);
     border-radius: var(--radius);
