@@ -1,26 +1,102 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+} from "react-router-dom";
+
 import Business from "./pages/Business";
+import BusinessOffers from "./pages/business/BusinessOffers";
+import BusinessOverview from "./pages/business/BusinessOverview";
+import BusinessProfile from "./pages/business/BusinessProfile";
+import BusinessStrategy from "./pages/business/BusinessStrategy";
+
 import ComingSoon from "./pages/ComingSoon";
 import Dashboard from "./pages/Dashboard";
+
+import BusinessDiagnostics from "./pages/business/BusinessDiagnostics";
+import Home from "./pages/Home";
 import "./styles.css";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/business" element={<Business />} />
 
-        {/* Modules pas encore développés — placeholder en attendant */}
-        <Route path="/crm" element={<ComingSoon title="CRM" />} />
-        <Route path="/tasks" element={<ComingSoon title="Tâches" />} />
-        <Route path="/meetings" element={<ComingSoon title="Rendez-vous" />} />
-        <Route path="/messages" element={<ComingSoon title="Messages" />} />
-        <Route path="/documents" element={<ComingSoon title="Documents" />} />
-        <Route path="/settings" element={<ComingSoon title="Paramètres" />} />
+        {/* =========================
+            ROOT
+        ========================= */}
+        <Route path="/" element={<Home />} />
 
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+
+        {/* =========================
+            DASHBOARD
+        ========================= */}
+
+        <Route
+          path="/dashboard"
+          element={<Dashboard />}
+        />
+
+        {/* =========================
+            BUSINESS
+        ========================= */}
+
+        <Route
+          path="/business"
+          element={<Business />}
+        >
+          {/* /business */}
+          <Route
+            index
+            element={<BusinessOverview />}
+          />
+
+          {/* /business/profile */}
+          <Route
+            path="profile"
+            element={<BusinessProfile />}
+          />
+
+          {/* /business/offers */}
+          <Route
+            path="offers"
+            element={<BusinessOffers />}
+          />
+          <Route
+  path="strategy"
+  element={<BusinessStrategy />}
+/>
+
+    <Route
+  path="diagnostics"
+  element={<BusinessDiagnostics />}
+/>
+        </Route>
+
+        {/* =========================
+            COMING SOON
+        ========================= */}
+
+        <Route
+          path="/coming-soon"
+          element={<ComingSoon />}
+        />
+
+        {/* =========================
+            404
+        ========================= */}
+
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to="/dashboard"
+              replace
+            />
+          }
+        />
+
       </Routes>
     </BrowserRouter>
   );
