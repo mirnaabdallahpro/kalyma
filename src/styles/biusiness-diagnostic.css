@@ -1,0 +1,2388 @@
+/* =========================================================
+   BUSINESS DIAGNOSTIC
+   Admin — Diagnostic stratégique
+   ========================================================= */
+
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.admin-business-page {
+    width: 100%;
+    min-width: 0;
+    padding-bottom: 30px;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.admin-page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.admin-page-header>div:first-child {
+    min-width: 0;
+}
+
+.admin-business-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 0;
+    margin: 0 0 12px;
+
+    border: 0;
+    background: transparent;
+
+    color: #7b8498;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        color 0.15s ease,
+        transform 0.15s ease;
+}
+
+.admin-business-back:hover {
+    color: var(--primary);
+    transform: translateX(-2px);
+}
+
+.admin-page-eyebrow {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #8b94a7;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.admin-page-header h1 {
+    margin: 0;
+
+    color: var(--primary);
+
+    font-size: 28px;
+    font-weight: 700;
+
+    line-height: 1.2;
+}
+
+.admin-page-header p {
+    margin: 7px 0 0;
+
+    color: #6c778c;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   HEADER ACTIONS
+   ========================================================= */
+
+.admin-diagnostic-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    flex-shrink: 0;
+}
+
+.admin-diagnostic-current {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 7px 10px;
+
+    border-radius: 7px;
+
+    background: #edf8f2;
+    color: #258554;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+.admin-diagnostic-current::before {
+    content: "";
+
+    width: 6px;
+    height: 6px;
+
+    margin-right: 6px;
+
+    border-radius: 50%;
+
+    background: #2da56a;
+}
+
+
+/* =========================================================
+   SCORE
+   ========================================================= */
+
+.admin-diagnostic-result-score {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 30px;
+
+    padding: 22px;
+
+    margin-bottom: 18px;
+
+    background: #fff;
+
+    border: 1px solid #e9edf3;
+    border-radius: 12px;
+}
+
+.admin-section-label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #8992a5;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.admin-diagnostic-result-number {
+    display: flex;
+    align-items: baseline;
+
+    gap: 5px;
+
+    color: var(--primary);
+
+    font-size: 42px;
+    font-weight: 700;
+
+    line-height: 1;
+}
+
+.admin-diagnostic-result-number small {
+    color: #8a93a5;
+
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.admin-diagnostic-result-progress {
+    width: 260px;
+    height: 7px;
+
+    margin-top: 14px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background: #edf0f4;
+}
+
+.admin-diagnostic-result-progress>div {
+    height: 100%;
+
+    border-radius: inherit;
+
+    background: var(--secondary);
+
+    transition: width 0.3s ease;
+}
+
+.admin-diagnostic-result-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    gap: 7px;
+
+    color: #8992a5;
+
+    font-size: 11px;
+    line-height: 1.4;
+
+    text-align: right;
+}
+
+
+/* =========================================================
+   RESULT SECTION
+   ========================================================= */
+
+.admin-diagnostic-result-section {
+    width: 100%;
+
+    margin-bottom: 18px;
+
+    background: #fff;
+
+    border: 1px solid #e9edf3;
+    border-radius: 12px;
+
+    overflow: hidden;
+}
+
+.admin-diagnostic-result-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 20px 22px;
+
+    border-bottom: 1px solid #edf0f4;
+}
+
+.admin-diagnostic-result-section-header>div {
+    min-width: 0;
+}
+
+.admin-diagnostic-result-section-header h2 {
+    margin: 0;
+
+    color: var(--primary);
+
+    font-size: 17px;
+    font-weight: 700;
+
+    line-height: 1.3;
+}
+
+.admin-diagnostic-result-section-header p {
+    margin: 5px 0 0;
+
+    color: #8992a5;
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.admin-diagnostic-result-section-body {
+    padding: 22px;
+}
+
+
+/* =========================================================
+   SYNTHÈSE
+   ========================================================= */
+
+.admin-diagnostic-synthesis {
+    max-width: 900px;
+}
+
+.admin-diagnostic-synthesis h2 {
+    margin: 0 0 10px;
+
+    color: var(--primary);
+
+    font-size: 20px;
+    font-weight: 700;
+
+    line-height: 1.3;
+}
+
+.admin-diagnostic-synthesis p {
+    margin: 0;
+
+    color: #4e5a71;
+
+    font-size: 13px;
+    line-height: 1.75;
+}
+
+
+/* =========================================================
+   HIGHLIGHTS
+   ========================================================= */
+
+.admin-diagnostic-highlights {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+}
+
+.admin-diagnostic-highlight {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+
+    padding: 18px;
+
+    background: #f8faff;
+
+    border-radius: 12px;
+}
+
+.admin-diagnostic-highlight>span {
+    display: block;
+
+    color: #8992a5;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.admin-diagnostic-highlight>strong {
+    display: block;
+
+    color: var(--primary);
+
+    font-size: 15px;
+    font-weight: 700;
+
+    line-height: 1.4;
+}
+
+.admin-diagnostic-highlight>small {
+    display: block;
+
+    color: #7d879b;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   DIMENSIONS
+   ========================================================= */
+
+.admin-diagnostic-result-dimensions {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+}
+
+.admin-diagnostic-result-dimension {
+    padding: 18px 0;
+
+    border-bottom: 1px solid #edf0f4;
+}
+
+.admin-diagnostic-result-dimension:first-child {
+    padding-top: 0;
+}
+
+.admin-diagnostic-result-dimension:last-child {
+    padding-bottom: 0;
+
+    border-bottom: 0;
+}
+
+.admin-diagnostic-result-dimension-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 10px;
+}
+
+.admin-diagnostic-result-dimension-header>div {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    min-width: 0;
+}
+
+.admin-diagnostic-result-dimension-header>div>strong {
+    color: var(--primary);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    line-height: 1.4;
+}
+
+
+
+.admin-diagnostic-result-dimension-header>strong {
+    flex-shrink: 0;
+
+    color: var(--primary);
+
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.admin-diagnostic-result-dimension-header>strong small {
+    margin-left: 3px;
+
+    color: #8992a5;
+
+    font-size: 10px;
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   DIMENSION STATUS
+   ========================================================= */
+
+.diagnostic-dimension-status {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 4px 7px;
+
+    border-radius: 6px;
+
+    font-size: 9px;
+    font-weight: 600;
+
+    line-height: 1;
+
+    white-space: nowrap;
+}
+
+.diagnostic-dimension-status.strong {
+    background: #edf8f2;
+    color: #258554;
+}
+
+.diagnostic-dimension-status.medium {
+    background: #fff8df;
+    color: #806b00;
+}
+
+.diagnostic-dimension-status.weak {
+    background: #fff0ef;
+    color: #b54b45;
+}
+
+
+/* =========================================================
+   DIMENSION PROGRESS
+   ========================================================= */
+
+.admin-diagnostic-result-dimension-progress {
+    width: 100%;
+    height: 6px;
+
+    margin-bottom: 10px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background: #edf0f4;
+}
+
+.admin-diagnostic-result-dimension-progress>div {
+    height: 100%;
+
+    border-radius: inherit;
+
+    background: var(--secondary);
+
+    transition: width 0.3s ease;
+}
+
+.admin-diagnostic-result-dimension p {
+    margin: 0;
+
+    color: #68748a;
+
+    font-size: 12px;
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   RECOMMENDATIONS
+   ========================================================= */
+
+.admin-diagnostic-result-recommendations {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+}
+
+.admin-diagnostic-result-recommendation {
+    display: grid;
+
+    grid-template-columns: 36px minmax(0, 1fr);
+
+    gap: 14px;
+
+    padding: 18px 0;
+
+    border-bottom: 1px solid #edf0f4;
+}
+
+.admin-diagnostic-result-recommendation:first-child {
+    padding-top: 0;
+}
+
+.admin-diagnostic-result-recommendation:last-child {
+    padding-bottom: 0;
+
+    border-bottom: 0;
+}
+
+.admin-diagnostic-recommendation-number {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #eef3ff;
+    color: var(--primary);
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.admin-diagnostic-recommendation-content {
+    min-width: 0;
+}
+
+.admin-diagnostic-recommendation-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 14px;
+}
+
+.admin-diagnostic-recommendation-header h3 {
+    margin: 0;
+
+    color: var(--primary);
+
+    font-size: 14px;
+    font-weight: 700;
+
+    line-height: 1.4;
+}
+
+.admin-diagnostic-recommendation-content p {
+    margin: 7px 0 0;
+
+    color: #68748a;
+
+    font-size: 12px;
+    line-height: 1.65;
+}
+
+.admin-diagnostic-recommendation-content>small {
+    display: block;
+
+    margin-top: 8px;
+
+    color: #8992a5;
+
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.admin-diagnostic-recommendation-content>small strong {
+    color: #526078;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   RECOMMENDATION PRIORITY
+   ========================================================= */
+
+.recommendation-priority {
+    display: inline-flex;
+    align-items: center;
+
+    flex-shrink: 0;
+
+    padding: 4px 8px;
+
+    border-radius: 6px;
+
+    font-size: 9px;
+    font-weight: 600;
+
+    line-height: 1;
+
+    white-space: nowrap;
+}
+
+.recommendation-priority.high {
+    background: #fff0ef;
+    color: #b54b45;
+}
+
+.recommendation-priority.medium {
+    background: #fff8df;
+    color: #806b00;
+}
+
+.recommendation-priority.low {
+    background: #f1f4f8;
+    color: #7b8498;
+}
+
+
+/* =========================================================
+   NEXT ACTION
+   ========================================================= */
+
+.admin-diagnostic-next-action {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 16px;
+
+    padding: 20px;
+
+    background: #f8faff;
+
+    border-radius: 12px;
+}
+
+.admin-diagnostic-next-icon {
+    width: 40px;
+    height: 40px;
+
+    flex: 0 0 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: var(--primary);
+    color: var(--secondary);
+
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.admin-diagnostic-next-action>div:last-child {
+    min-width: 0;
+}
+
+.admin-diagnostic-next-action span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #8992a5;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.admin-diagnostic-next-action h3 {
+    margin: 0;
+
+    color: var(--primary);
+
+    font-size: 16px;
+    font-weight: 700;
+
+    line-height: 1.4;
+}
+
+.admin-diagnostic-next-action p {
+    margin: 7px 0 0;
+
+    color: #68748a;
+
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   EMPTY RESULT
+   ========================================================= */
+
+.admin-diagnostic-empty-result {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 90px;
+
+    padding: 25px 20px;
+
+    background: #f8faff;
+
+    border-radius: 10px;
+
+    color: #8992a5;
+
+    font-size: 12px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.admin-diagnostic-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding: 6px 0 30px;
+}
+
+
+/* =========================================================
+   LOADING / ERROR / EMPTY PAGE
+   ========================================================= */
+
+/*
+   Ces règles s'appliquent aux retours précoces du composant :
+
+   - Chargement du diagnostic...
+   - erreur
+   - Diagnostic introuvable.
+*/
+
+.admin-business-page>p {
+    margin: 0 0 16px;
+
+    color: #68748a;
+
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLETTE
+   ========================================================= */
+
+@media (max-width: 1024px) {
+
+    .admin-page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .admin-diagnostic-header-actions {
+        width: 100%;
+
+        justify-content: flex-start;
+    }
+
+    .admin-diagnostic-result-score {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .admin-diagnostic-result-meta {
+        align-items: flex-start;
+
+        text-align: left;
+    }
+
+    .admin-diagnostic-result-progress {
+        width: 100%;
+        max-width: 420px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .admin-business-page {
+        width: 100%;
+    }
+
+    .admin-page-header {
+        gap: 16px;
+
+        margin-bottom: 18px;
+    }
+
+    .admin-page-header h1 {
+        font-size: 24px;
+    }
+
+    .admin-diagnostic-header-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .admin-diagnostic-header-actions .btn {
+        width: 100%;
+    }
+
+    .admin-diagnostic-result-score {
+        padding: 18px;
+    }
+
+    .admin-diagnostic-result-section-header {
+        padding: 18px;
+    }
+
+    .admin-diagnostic-result-section-body {
+        padding: 18px;
+    }
+
+    .admin-diagnostic-highlights {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-diagnostic-recommendation-header {
+        align-items: flex-start;
+        flex-direction: column;
+
+        gap: 8px;
+    }
+
+    .admin-diagnostic-footer {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .admin-diagnostic-footer .btn {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — PETITS MOBILES
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .admin-page-eyebrow {
+        font-size: 9px;
+    }
+
+    .admin-page-header h1 {
+        font-size: 21px;
+    }
+
+    .admin-page-header p {
+        font-size: 12px;
+    }
+
+    .admin-diagnostic-result-score {
+        padding: 16px;
+    }
+
+    .admin-diagnostic-result-number {
+        font-size: 36px;
+    }
+
+    .admin-diagnostic-result-progress {
+        height: 6px;
+    }
+
+    .admin-diagnostic-result-section-header {
+        padding: 16px;
+    }
+
+    .admin-diagnostic-result-section-body {
+        padding: 16px;
+    }
+
+    .admin-diagnostic-result-section-header h2 {
+        font-size: 16px;
+    }
+
+    .admin-diagnostic-result-dimension-header {
+        align-items: flex-start;
+    }
+
+    .admin-diagnostic-result-dimension-header>div {
+        align-items: flex-start;
+        flex-direction: column;
+
+        gap: 5px;
+    }
+
+    .admin-diagnostic-result-recommendation {
+        grid-template-columns: 30px minmax(0, 1fr);
+
+        gap: 10px;
+    }
+
+    .admin-diagnostic-recommendation-number {
+        width: 30px;
+        height: 30px;
+    }
+
+    .admin-diagnostic-next-action {
+        gap: 12px;
+
+        padding: 15px;
+    }
+
+    .admin-diagnostic-next-icon {
+        width: 36px;
+        height: 36px;
+
+        flex-basis: 36px;
+    }
+}
+
+/* =========================================================
+   ADMIN DIAGNOSTIC — COMPLÉMENTS UI
+   Ergonomie / états / boutons / responsive
+   ========================================================= */
+
+
+/* =========================================================
+   BOUTONS
+   ========================================================= */
+
+.admin-business-page .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    min-height: 38px;
+    padding: 9px 15px;
+
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+
+/* Bouton principal */
+
+.admin-business-page .btn-primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #ffffff;
+}
+
+.admin-business-page .btn-primary:hover {
+    background: #123756;
+    border-color: #123756;
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 14px rgba(14, 42, 71, 0.14);
+}
+
+.admin-business-page .btn-primary:active {
+    transform: translateY(0);
+}
+
+
+/* Bouton secondaire */
+
+.admin-business-page .btn-secondary {
+    background: #ffffff;
+    border-color: #dfe4eb;
+    color: #526078;
+}
+
+.admin-business-page .btn-secondary:hover {
+    background: #f8faff;
+    border-color: #cfd6e1;
+    color: var(--primary);
+}
+
+
+/* Focus accessible */
+
+.admin-business-page .btn:focus-visible,
+.admin-business-back:focus-visible {
+    outline: 3px solid rgba(228, 160, 43, 0.25);
+    outline-offset: 2px;
+}
+
+
+/* Bouton désactivé */
+
+.admin-business-page .btn:disabled {
+    opacity: 1;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   HEADER — AMÉLIORATION VISUELLE
+   ========================================================= */
+
+.admin-page-header {
+    position: relative;
+}
+
+.admin-page-header::after {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    bottom: -12px;
+
+    width: 42px;
+    height: 3px;
+
+    border-radius: 999px;
+
+    background: var(--secondary);
+}
+
+
+/* =========================================================
+   BADGE DIAGNOSTIC ACTUEL
+   ========================================================= */
+
+.admin-diagnostic-current {
+    box-shadow:
+        inset 0 0 0 1px rgba(45, 165, 106, 0.08);
+}
+
+
+/* =========================================================
+   SCORE — ENCADREMENT
+   ========================================================= */
+
+.admin-diagnostic-result-score {
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-diagnostic-result-score::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 4px;
+    height: 100%;
+
+    background: var(--secondary);
+}
+
+
+/* Score légèrement plus premium */
+
+.admin-diagnostic-result-number {
+    letter-spacing: -0.04em;
+}
+
+
+/* =========================================================
+   MÉTADONNÉES DU DIAGNOSTIC
+   ========================================================= */
+
+.admin-diagnostic-result-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.admin-diagnostic-result-meta span:not(:last-child)::after {
+    content: "";
+}
+
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+
+.admin-diagnostic-result-section {
+    box-shadow:
+        0 1px 2px rgba(14, 42, 71, 0.02);
+
+    transition:
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.admin-diagnostic-result-section:hover {
+    border-color: #e1e6ee;
+
+    box-shadow:
+        0 5px 18px rgba(14, 42, 71, 0.035);
+}
+
+.admin-diagnostic-result-section-header {
+    background: #ffffff;
+}
+
+.admin-diagnostic-result-section-header h2 {
+    position: relative;
+}
+
+
+/* =========================================================
+   SYNTHÈSE
+   ========================================================= */
+
+.admin-diagnostic-synthesis {
+    position: relative;
+
+    padding: 20px 22px;
+
+    background: #f8faff;
+    border-left: 3px solid var(--secondary);
+    border-radius: 10px;
+}
+
+.admin-diagnostic-synthesis h2 {
+    font-size: 18px;
+}
+
+.admin-diagnostic-synthesis p {
+    color: #56647a;
+}
+
+
+/* =========================================================
+   HIGHLIGHTS
+   ========================================================= */
+
+.admin-diagnostic-highlight {
+    position: relative;
+
+    min-height: 110px;
+
+    border: 1px solid #edf0f5;
+
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.admin-diagnostic-highlight:hover {
+    transform: translateY(-2px);
+
+    border-color: #e1e6ee;
+
+    box-shadow:
+        0 7px 18px rgba(14, 42, 71, 0.05);
+}
+
+
+/* Point fort */
+
+.admin-diagnostic-highlight:first-child {
+    border-left: 3px solid #2da56a;
+}
+
+
+/* Priorité */
+
+.admin-diagnostic-highlight:last-child {
+    border-left: 3px solid var(--secondary);
+}
+
+
+/* =========================================================
+   DIMENSIONS
+   ========================================================= */
+
+.admin-diagnostic-result-dimension {
+    transition:
+        background-color 0.18s ease,
+        padding-left 0.18s ease,
+        padding-right 0.18s ease;
+}
+
+.admin-diagnostic-result-dimension:hover {
+    background: #fbfcfe;
+}
+
+
+/* Progression dimension */
+
+.admin-diagnostic-result-dimension-progress {
+    position: relative;
+}
+
+.admin-diagnostic-result-dimension-progress>div {
+    background:
+        linear-gradient(90deg,
+            var(--secondary),
+            #efb94e);
+}
+
+
+/* Score élevé */
+
+.diagnostic-dimension-status.strong {
+    box-shadow:
+        inset 0 0 0 1px rgba(37, 133, 84, 0.08);
+}
+
+
+/* =========================================================
+   RECOMMANDATIONS
+   ========================================================= */
+
+.admin-diagnostic-result-recommendation {
+    transition:
+        background-color 0.18s ease;
+}
+
+.admin-diagnostic-result-recommendation:hover {
+    background: #fcfdff;
+}
+
+
+/* Numéro */
+
+.admin-diagnostic-recommendation-number {
+    border: 1px solid #e0e7f4;
+
+    box-shadow:
+        0 2px 5px rgba(14, 42, 71, 0.04);
+}
+
+
+/* =========================================================
+   PRIORITÉS
+   ========================================================= */
+
+.recommendation-priority.high {
+    border: 1px solid #f4d5d2;
+}
+
+.recommendation-priority.medium {
+    border: 1px solid #eee2a8;
+}
+
+.recommendation-priority.low {
+    border: 1px solid #e0e5eb;
+}
+
+
+/* =========================================================
+   NEXT ACTION
+   ========================================================= */
+
+.admin-diagnostic-next-action {
+    position: relative;
+
+    overflow: hidden;
+
+    border: 1px solid #e7ecf3;
+}
+
+.admin-diagnostic-next-action::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 3px;
+    height: 100%;
+
+    background: var(--secondary);
+}
+
+.admin-diagnostic-next-icon {
+    box-shadow:
+        0 5px 12px rgba(14, 42, 71, 0.12);
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.admin-diagnostic-empty-result {
+    border: 1px dashed #dfe5ed;
+}
+
+.admin-diagnostic-empty-result::before {
+    content: "—";
+
+    display: block;
+
+    margin-right: 8px;
+
+    color: var(--secondary);
+    font-size: 16px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   LOADING STATE
+   ========================================================= */
+
+.admin-diagnostic-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 240px;
+    padding: 30px;
+
+    color: #68748a;
+    font-size: 13px;
+}
+
+.admin-diagnostic-loading::before {
+    content: "";
+
+    width: 18px;
+    height: 18px;
+
+    margin-right: 10px;
+
+    border: 2px solid #e4e9f0;
+    border-top-color: var(--secondary);
+    border-radius: 50%;
+
+    animation: adminDiagnosticSpin 0.7s linear infinite;
+}
+
+@keyframes adminDiagnosticSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   ERROR STATE
+   ========================================================= */
+
+.admin-diagnostic-error {
+    padding: 22px;
+
+    background: #fff8f7;
+
+    border: 1px solid #f0d8d5;
+    border-left: 3px solid #b54b45;
+    border-radius: 10px;
+
+    color: #8e4742;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.admin-diagnostic-error p {
+    margin: 0 0 15px;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.admin-diagnostic-footer {
+    margin-top: 6px;
+}
+
+.admin-diagnostic-footer .btn {
+    min-width: 150px;
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLETTE
+   ========================================================= */
+
+@media (max-width: 1024px) {
+
+    .admin-page-header::after {
+        bottom: -9px;
+    }
+
+    .admin-diagnostic-result-score {
+        padding-left: 20px;
+    }
+
+    .admin-diagnostic-highlight {
+        min-height: 100px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .admin-page-header::after {
+        bottom: -8px;
+        width: 34px;
+        height: 2px;
+    }
+
+    .admin-diagnostic-result-score {
+        gap: 20px;
+    }
+
+    .admin-diagnostic-result-meta {
+        width: 100%;
+        padding-top: 3px;
+
+        border-top: 1px solid #edf0f4;
+    }
+
+    .admin-diagnostic-result-dimension:hover {
+        background: transparent;
+    }
+
+    .admin-diagnostic-highlight:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .admin-diagnostic-synthesis {
+        padding: 17px;
+    }
+
+    .admin-diagnostic-next-action {
+        align-items: flex-start;
+    }
+
+    .admin-diagnostic-footer {
+        margin-top: 4px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — PETITS MOBILES
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .admin-business-page .btn {
+        min-height: 40px;
+    }
+
+    .admin-diagnostic-result-score {
+        padding-left: 17px;
+    }
+
+    .admin-diagnostic-result-meta {
+        gap: 8px;
+        font-size: 10px;
+    }
+
+    .admin-diagnostic-synthesis {
+        padding: 15px;
+    }
+
+    .admin-diagnostic-synthesis h2 {
+        font-size: 17px;
+    }
+
+    .admin-diagnostic-synthesis p {
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    .admin-diagnostic-next-action {
+        padding: 14px;
+    }
+
+    .admin-diagnostic-next-action h3 {
+        font-size: 14px;
+    }
+
+    .admin-diagnostic-next-action p {
+        font-size: 11px;
+    }
+
+    .admin-diagnostic-footer {
+        gap: 9px;
+    }
+}
+
+
+/* =========================================================
+   ACCESSIBILITÉ — RÉDUCTION DES ANIMATIONS
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .admin-business-page *,
+    .admin-business-page *::before,
+    .admin-business-page *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* =========================================================
+   ADMIN BUSINESS DIAGNOSTIC
+   FORMULAIRE — COMPLÉMENTS CSS
+   ========================================================= */
+
+
+/* =========================================================
+   ERREUR
+   ========================================================= */
+
+.admin-business-error {
+    display: flex;
+    align-items: center;
+
+    min-height: 44px;
+    margin-bottom: 18px;
+    padding: 12px 15px;
+
+    background: #fff7f6;
+    border: 1px solid #f0d8d5;
+    border-left: 3px solid #b54b45;
+    border-radius: 9px;
+
+    color: #934b46;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   CONTEXTE CLIENT
+   ========================================================= */
+
+.admin-business-diagnostic-context {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+
+    margin-bottom: 18px;
+
+    background: #ffffff;
+    border: 1px solid #e9edf3;
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 1px 2px rgba(14, 42, 71, 0.02);
+}
+
+.admin-business-diagnostic-context>div {
+    min-width: 0;
+    padding: 16px 17px;
+
+    border-right: 1px solid #edf0f4;
+}
+
+.admin-business-diagnostic-context>div:last-child {
+    border-right: 0;
+}
+
+.admin-business-diagnostic-context span {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #8992a5;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+.admin-business-diagnostic-context strong {
+    display: block;
+
+    overflow: hidden;
+
+    color: var(--primary);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    line-height: 1.4;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* Compteurs */
+
+.admin-business-diagnostic-context>div:nth-child(4) strong,
+.admin-business-diagnostic-context>div:nth-child(5) strong,
+.admin-business-diagnostic-context>div:nth-child(6) strong {
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   SECTIONS DU FORMULAIRE
+   ========================================================= */
+
+.admin-diagnostic-section {
+    width: 100%;
+    margin-bottom: 18px;
+
+    background: #ffffff;
+
+    border: 1px solid #e9edf3;
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 1px 2px rgba(14, 42, 71, 0.02);
+
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.admin-diagnostic-section:hover {
+    border-color: #e1e6ee;
+
+    box-shadow:
+        0 5px 18px rgba(14, 42, 71, 0.035);
+}
+
+
+/* Header */
+
+.admin-diagnostic-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 20px 22px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #edf0f4;
+}
+
+.admin-diagnostic-section-header>div {
+    min-width: 0;
+}
+
+.admin-diagnostic-section-header h2 {
+    margin: 0;
+
+    color: var(--primary);
+
+    font-size: 17px;
+    font-weight: 700;
+
+    line-height: 1.3;
+}
+
+.admin-diagnostic-section-header p {
+    margin: 5px 0 0;
+
+    color: #8992a5;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+}
+
+
+/* Petit accent sous le titre */
+
+.admin-diagnostic-section-header h2::after {
+    content: "";
+
+    display: block;
+
+    width: 25px;
+    height: 2px;
+
+    margin-top: 8px;
+
+    background: var(--secondary);
+
+    border-radius: 999px;
+}
+
+
+/* Body */
+
+.admin-diagnostic-section-body {
+    padding: 22px;
+}
+
+
+/* =========================================================
+   SCORE EDITOR
+   ========================================================= */
+
+.admin-diagnostic-score-editor {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 110px;
+    padding: 22px;
+
+    background: #f8faff;
+
+    border: 1px solid #edf0f5;
+    border-radius: 10px;
+}
+
+.admin-diagnostic-score-editor>div {
+    display: flex;
+    align-items: baseline;
+
+    gap: 7px;
+}
+
+.admin-diagnostic-score-editor span {
+    align-self: flex-start;
+
+    margin-right: 12px;
+
+    color: #8992a5;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 0.07em;
+}
+
+.admin-diagnostic-score-editor input {
+    width: 105px;
+
+    padding: 5px 0;
+
+    background: transparent;
+
+    border: 0;
+    border-bottom: 2px solid var(--secondary);
+    border-radius: 0;
+
+    color: var(--primary);
+
+    font-size: 42px;
+    font-weight: 700;
+
+    line-height: 1;
+
+    outline: none;
+
+    transition:
+        border-color 0.18s ease;
+}
+
+.admin-diagnostic-score-editor input:focus {
+    border-bottom-color: var(--primary);
+}
+
+.admin-diagnostic-score-editor small {
+    color: #8992a5;
+
+    font-size: 13px;
+    font-weight: 500;
+}
+
+
+/* Retirer les flèches natives */
+
+.admin-diagnostic-score-editor input::-webkit-inner-spin-button,
+.admin-diagnostic-score-editor input::-webkit-outer-spin-button {
+    margin: 0;
+
+    -webkit-appearance: none;
+}
+
+.admin-diagnostic-score-editor input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+
+/* =========================================================
+   FORM GRID
+   ========================================================= */
+
+.admin-diagnostic-form-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 18px 20px;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   FORM FIELDS
+   ========================================================= */
+
+.admin-diagnostic-field {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+
+    gap: 7px;
+}
+
+.admin-diagnostic-field>span {
+    display: block;
+
+    color: #526078;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    line-height: 1.4;
+}
+
+.admin-diagnostic-field input,
+.admin-diagnostic-field textarea,
+.admin-diagnostic-field select {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 10px 12px;
+
+    background: #ffffff;
+
+    border: 1px solid #dfe5ed;
+    border-radius: 8px;
+
+    color: #344258;
+
+    font-family: inherit;
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    outline: none;
+
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        background-color 0.18s ease;
+}
+
+
+/* Input */
+
+.admin-diagnostic-field input {
+    min-height: 40px;
+}
+
+
+/* Textarea */
+
+.admin-diagnostic-field textarea {
+    min-height: 100px;
+
+    resize: vertical;
+}
+
+
+/* Select */
+
+.admin-diagnostic-field select {
+    min-height: 40px;
+
+    cursor: pointer;
+}
+
+
+/* Placeholder */
+
+.admin-diagnostic-field input::placeholder,
+.admin-diagnostic-field textarea::placeholder {
+    color: #a7afbd;
+}
+
+
+/* Focus */
+
+.admin-diagnostic-field input:focus,
+.admin-diagnostic-field textarea:focus,
+.admin-diagnostic-field select:focus {
+    background: #ffffff;
+
+    border-color: var(--secondary);
+
+    box-shadow:
+        0 0 0 3px rgba(228, 160, 43, 0.10);
+}
+
+
+/* Hover */
+
+.admin-diagnostic-field input:hover,
+.admin-diagnostic-field textarea:hover,
+.admin-diagnostic-field select:hover {
+    border-color: #cbd3df;
+}
+
+
+/* Champ pleine largeur */
+
+.admin-diagnostic-field-full {
+    grid-column: 1 / -1;
+}
+
+
+/* =========================================================
+   DIMENSIONS
+   ========================================================= */
+
+.admin-diagnostic-dimensions {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+
+    margin-bottom: 18px;
+}
+
+.admin-diagnostic-dimension-editor {
+    position: relative;
+
+    margin-bottom: 14px;
+    padding: 18px;
+
+    background: #fbfcfe;
+
+    border: 1px solid #e5eaf1;
+    border-radius: 10px;
+
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.admin-diagnostic-dimension-editor:last-child {
+    margin-bottom: 0;
+}
+
+.admin-diagnostic-dimension-editor:hover {
+    border-color: #d9e0ea;
+
+    box-shadow:
+        0 4px 12px rgba(14, 42, 71, 0.035);
+}
+
+
+/* =========================================================
+   RECOMMANDATIONS
+   ========================================================= */
+
+.admin-diagnostic-recommendations {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+
+    margin-bottom: 18px;
+}
+
+.admin-diagnostic-recommendation-editor {
+    position: relative;
+
+    margin-bottom: 14px;
+    padding: 18px;
+
+    background: #fbfcfe;
+
+    border: 1px solid #e5eaf1;
+    border-radius: 10px;
+
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.admin-diagnostic-recommendation-editor:last-child {
+    margin-bottom: 0;
+}
+
+.admin-diagnostic-recommendation-editor:hover {
+    border-color: #d9e0ea;
+
+    box-shadow:
+        0 4px 12px rgba(14, 42, 71, 0.035);
+}
+
+
+/* =========================================================
+   EDITOR HEADER
+   ========================================================= */
+
+.admin-diagnostic-editor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+
+    border-bottom: 1px solid #e9edf3;
+}
+
+.admin-diagnostic-editor-header strong {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    color: var(--primary);
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.admin-diagnostic-editor-header strong::before {
+    content: "";
+
+    display: inline-block;
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: var(--secondary);
+}
+
+
+/* =========================================================
+   BOUTON DANGER
+   ========================================================= */
+
+.admin-business-page .btn-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 32px;
+    padding: 7px 10px;
+
+    background: #fff7f6;
+
+    border: 1px solid #f0d8d5;
+    border-radius: 7px;
+
+    color: #b54b45;
+
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease;
+}
+
+.admin-business-page .btn-danger:hover {
+    background: #fff0ef;
+
+    border-color: #e8c2be;
+
+    color: #963f39;
+}
+
+
+/* =========================================================
+   ACTIONS FINALES
+   ========================================================= */
+
+.admin-diagnostic-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding: 8px 0 30px;
+}
+
+.admin-diagnostic-actions .btn {
+    min-width: 145px;
+}
+
+
+/* Bouton de génération */
+
+.admin-diagnostic-actions .btn-primary {
+    min-width: 190px;
+}
+
+
+/* =========================================================
+   ÉTAT GÉNÉRATION
+   ========================================================= */
+
+.admin-diagnostic-actions .btn-primary:disabled {
+    position: relative;
+
+    padding-left: 34px;
+}
+
+.admin-diagnostic-actions .btn-primary:disabled::before {
+    content: "";
+
+    position: absolute;
+    left: 13px;
+
+    width: 13px;
+    height: 13px;
+
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #ffffff;
+
+    border-radius: 50%;
+
+    animation: adminDiagnosticGenerateSpin 0.7s linear infinite;
+}
+
+@keyframes adminDiagnosticGenerateSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLETTE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .admin-business-diagnostic-context {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+    .admin-business-diagnostic-context>div:nth-child(3) {
+        border-right: 0;
+    }
+
+    .admin-business-diagnostic-context>div:nth-child(-n + 3) {
+        border-bottom: 1px solid #edf0f4;
+    }
+}
+
+
+@media (max-width: 900px) {
+
+    .admin-diagnostic-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-diagnostic-field-full {
+        grid-column: auto;
+    }
+
+    .admin-diagnostic-score-editor {
+        min-height: 95px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .admin-business-diagnostic-context {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-business-diagnostic-context>div {
+        border-right: 0;
+        border-bottom: 1px solid #edf0f4;
+    }
+
+    .admin-business-diagnostic-context>div:nth-child(odd) {
+        border-right: 1px solid #edf0f4;
+    }
+
+    .admin-business-diagnostic-context>div:nth-last-child(-n + 2) {
+        border-bottom: 0;
+    }
+
+    .admin-diagnostic-section-header {
+        padding: 18px;
+    }
+
+    .admin-diagnostic-section-body {
+        padding: 18px;
+    }
+
+    .admin-diagnostic-score-editor {
+        padding: 18px;
+    }
+
+    .admin-diagnostic-dimension-editor,
+    .admin-diagnostic-recommendation-editor {
+        padding: 15px;
+    }
+
+    .admin-diagnostic-editor-header {
+        align-items: flex-start;
+    }
+
+    .admin-diagnostic-actions {
+        align-items: stretch;
+        flex-direction: column-reverse;
+
+        padding-bottom: 24px;
+    }
+
+    .admin-diagnostic-actions .btn,
+    .admin-diagnostic-actions .btn-primary {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — PETITS MOBILES
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .admin-business-diagnostic-context {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .admin-business-diagnostic-context>div {
+        padding: 13px;
+    }
+
+    .admin-business-diagnostic-context strong {
+        font-size: 11px;
+    }
+
+    .admin-business-diagnostic-context>div:nth-child(4) strong,
+    .admin-business-diagnostic-context>div:nth-child(5) strong,
+    .admin-business-diagnostic-context>div:nth-child(6) strong {
+        font-size: 15px;
+    }
+
+    .admin-diagnostic-section-header {
+        padding: 16px;
+    }
+
+    .admin-diagnostic-section-body {
+        padding: 16px;
+    }
+
+    .admin-diagnostic-score-editor {
+        min-height: 85px;
+        padding: 15px;
+    }
+
+    .admin-diagnostic-score-editor input {
+        width: 80px;
+
+        font-size: 34px;
+    }
+
+    .admin-diagnostic-score-editor span {
+        margin-right: 5px;
+
+        font-size: 9px;
+    }
+
+    .admin-diagnostic-score-editor small {
+        font-size: 11px;
+    }
+
+    .admin-diagnostic-form-grid {
+        gap: 14px;
+    }
+
+    .admin-diagnostic-editor-header {
+        gap: 10px;
+    }
+
+    .admin-diagnostic-editor-header strong {
+        font-size: 12px;
+    }
+
+    .admin-business-page .btn-danger {
+        min-height: 30px;
+        padding: 6px 8px;
+
+        font-size: 9px;
+    }
+}

@@ -34,7 +34,7 @@ function ProfileOverviewPanel({ profile, onEdit }) {
         {metrics.map((m) => (
           <div className="d-card" key={m.label}>
             <div className="label">{m.label}</div>
-            <div className="value" style={{ fontSize: 18 }}>
+            <div className="value" style={{ fontSize: 12 }}>
               {m.value}
             </div>
             <div className={`trend ${m.up ? "up" : ""}`}>{m.trend}</div>

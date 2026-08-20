@@ -54,6 +54,364 @@
     transform: translateY(0);
 }
 
+
+/* =========================================================
+   KALYMA — AUTHENTICATION
+   Login / Register
+   ========================================================= */
+
+.auth-page {
+    min-height: 100svh;
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 40px 24px;
+
+    background:
+        radial-gradient(circle at 50% 0%,
+            rgba(255, 220, 90, 0.10),
+            transparent 34%),
+        var(--lp-paper);
+
+    color: var(--primary);
+
+    font-family: var(--lp-body);
+
+    box-sizing: border-box;
+}
+
+.auth-page * {
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.auth-card {
+    width: 100%;
+    max-width: 440px;
+
+    padding: 42px 40px;
+
+    background: #fff;
+
+    border: 1px solid var(--line);
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 18px 50px rgba(4, 27, 83, 0.08),
+        0 4px 12px rgba(4, 27, 83, 0.04);
+
+    text-align: left;
+}
+
+
+/* =========================================================
+   LOGO
+   ========================================================= */
+
+.auth-logo {
+    margin-bottom: 28px;
+
+    font-family: var(--lp-display);
+    font-size: 25px;
+    font-weight: 700;
+
+    letter-spacing: -0.8px;
+
+    color: var(--primary);
+
+    text-align: center;
+}
+
+.auth-logo span {
+    color: var(--secondary);
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.auth-card h1 {
+    margin: 0;
+
+    font-family: var(--lp-display);
+    font-size: 28px;
+    line-height: 1.2;
+
+    letter-spacing: -0.8px;
+
+    color: var(--primary);
+
+    text-align: center;
+}
+
+.auth-card>p {
+    max-width: 320px;
+
+    margin: 10px auto 30px;
+
+    color: var(--lp-muted-navy);
+
+    font-size: 14px;
+    line-height: 1.6;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.auth-card form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.form-group label {
+    color: var(--primary);
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.form-group input {
+    width: 100%;
+
+    height: 48px;
+
+    padding: 0 14px;
+
+    background: #fff;
+
+    border: 1px solid var(--line);
+
+    border-radius: 10px;
+
+    color: var(--primary);
+
+    font-family: var(--lp-body);
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.form-group input::placeholder {
+    color: #9aa4b8;
+}
+
+.form-group input:hover {
+    border-color: rgba(4, 27, 83, 0.25);
+}
+
+.form-group input:focus {
+    border-color: var(--primary);
+
+    box-shadow:
+        0 0 0 3px rgba(4, 27, 83, 0.08);
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.auth-error {
+    margin-top: -4px;
+
+    padding: 11px 13px;
+
+    background: rgba(190, 45, 45, 0.06);
+
+    border: 1px solid rgba(190, 45, 45, 0.15);
+
+    border-radius: 9px;
+
+    color: #a52b2b;
+
+    font-size: 12.5px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   PRIMARY BUTTON
+   ========================================================= */
+
+.auth-card .btn-primary {
+    width: 100%;
+
+    min-height: 48px;
+
+    margin-top: 4px;
+
+    border: 0;
+
+    border-radius: 10px;
+
+    background: var(--secondary);
+    color: var(--primary);
+
+    font-family: var(--lp-body);
+    font-size: 13.5px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.auth-card .btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+
+    opacity: 0.94;
+
+    box-shadow:
+        0 8px 20px rgba(255, 220, 90, 0.25);
+}
+
+.auth-card .btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.auth-card .btn-primary:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   OPTIONAL — AUTH LINKS
+   À utiliser pour Register / Mot de passe oublié
+   ========================================================= */
+
+.auth-link {
+    color: var(--primary);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition: color 0.2s ease;
+}
+
+.auth-link:hover {
+    color: var(--secondary);
+}
+
+.auth-footer {
+    margin-top: 24px;
+
+    padding-top: 22px;
+
+    border-top: 1px solid var(--line);
+
+    color: var(--lp-muted-navy);
+
+    font-size: 13px;
+
+    text-align: center;
+}
+
+.auth-footer a {
+    color: var(--primary);
+
+    font-weight: 700;
+
+    text-decoration: none;
+}
+
+.auth-footer a:hover {
+    color: var(--secondary);
+}
+
+
+/* =========================================================
+   REGISTER — champs supplémentaires
+   ========================================================= */
+
+.auth-form-grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 16px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .auth-page {
+        padding: 24px 16px;
+    }
+
+    .auth-card {
+        max-width: 100%;
+
+        padding: 34px 24px;
+
+        border-radius: 16px;
+    }
+
+    .auth-card h1 {
+        font-size: 25px;
+    }
+
+    .auth-logo {
+        margin-bottom: 24px;
+    }
+
+    .auth-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-height: 700px) {
+
+    .auth-page {
+        align-items: flex-start;
+
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
+
+    .auth-card {
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .lp-section-inner {
         opacity: 1;

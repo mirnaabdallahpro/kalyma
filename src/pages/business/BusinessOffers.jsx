@@ -1,51 +1,26 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import BusinessCard from "../../components/business/BusinessCard";
 import ConfirmModal from "../../components/business/ConfirmModal";
 import OfferFormModal from "../../components/business/OfferFormModal";
 
+import {
+  createBusinessOffer,
+  deleteBusinessOffer,
+  getBusinessOffers,
+  updateBusinessOffer,
+  updateBusinessOfferStatus,
+} from "../../../services/businessOffersService";
+
+
+
 function BusinessOffers() {
-  const [offers, setOffers] = useState([
-    {
-      id: 1,
-      name: "Growth Sprint",
-      type: "Accompagnement",
-      description:
-        "Accompagnement intensif de 6 semaines pour structurer l'acquisition et construire un système commercial.",
-      price: 15000,
-      priceType: "one_time",
-      duration: "6 semaines",
-      status: "active",
-      featured: true,
-      clients: 8,
-    },
-    {
-      id: 2,
-      name: "Growth Partner",
-      type: "Accompagnement",
-      description:
-        "Accompagnement stratégique mensuel avec suivi continu, CRM et reporting.",
-      price: 8000,
-      priceType: "monthly",
-      duration: "Mensuel",
-      status: "active",
-      featured: false,
-      clients: 5,
-    },
-    {
-      id: 3,
-      name: "Diagnostic Stratégique",
-      type: "Conseil",
-      description:
-        "Audit complet du positionnement, de l'offre et du système commercial.",
-      price: 3000,
-      priceType: "one_time",
-      duration: "1 session",
-      status: "draft",
-      featured: false,
-      clients: 0,
-    },
-  ]);
+  const [offers, setOffers] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const [error, setError] = useState("");
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -53,102 +28,252 @@ function BusinessOffers() {
   const [offerModal, setOfferModal] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
+  /*
+   * ==========================================
+   * CHARGEMENT
+   * ==========================================
+   */
+
+  useEffect(() => {
+    loadOffers();
+  }, []);
+
+  async function loadOffers() {
+    try {
+      setLoading(true);
+      setError("");
+
+      const data = await getBusinessOffers();
+
+      setOffers(data || []);
+    } catch (err) {
+      console.error(
+        "Erreur chargement offres :",
+        err
+      );
+
+      setError(
+        "Impossible de charger vos offres."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  /*
+   * ==========================================
+   * FILTRES
+   * ==========================================
+   */
+
   const filteredOffers = useMemo(() => {
+    const normalizedSearch =
+      search.trim().toLowerCase();
+
     return offers.filter((offer) => {
       const matchesSearch =
+        !normalizedSearch ||
         offer.name
-          .toLowerCase()
-          .includes(search.toLowerCase()) ||
+          ?.toLowerCase()
+          .includes(normalizedSearch) ||
         offer.description
-          .toLowerCase()
-          .includes(search.toLowerCase());
+          ?.toLowerCase()
+          .includes(normalizedSearch) ||
+        offer.type
+          ?.toLowerCase()
+          .includes(normalizedSearch);
 
       const matchesStatus =
         statusFilter === "all" ||
         offer.status === statusFilter;
 
-      return matchesSearch && matchesStatus;
+      return (
+        matchesSearch &&
+        matchesStatus
+      );
     });
-  }, [offers, search, statusFilter]);
+  }, [
+    offers,
+    search,
+    statusFilter,
+  ]);
+
+  /*
+   * ==========================================
+   * STATISTIQUES
+   * ==========================================
+   */
 
   const activeOffers = offers.filter(
-    (offer) => offer.status === "active"
+    (offer) =>
+      offer.status === "active"
   ).length;
 
   const draftOffers = offers.filter(
-    (offer) => offer.status === "draft"
+    (offer) =>
+      offer.status === "draft"
   ).length;
 
   const totalClients = offers.reduce(
-    (total, offer) => total + (offer.clients || 0),
+    (total, offer) =>
+      total + (Number(offer.clients) || 0),
     0
   );
 
-  const handleSaveOffer = (offer) => {
-    setOffers((currentOffers) => {
+  /*
+   * ==========================================
+   * CREATION / MODIFICATION
+   * ==========================================
+   */
+
+  async function handleSaveOffer(offer) {
+    try {
+      setSaving(true);
+      setError("");
+
+      /*
+       * Modification
+       */
       if (offer.id) {
-        return currentOffers.map((currentOffer) =>
-          currentOffer.id === offer.id
-            ? {
-                ...currentOffer,
-                ...offer,
-              }
-            : currentOffer
+        const updated =
+          await updateBusinessOffer(
+            offer.id,
+            offer
+          );
+
+        setOffers((current) =>
+          current.map((item) =>
+            item.id === updated.id
+              ? updated
+              : item
+          )
         );
       }
 
-      const nextId =
-        currentOffers.length > 0
-          ? Math.max(
-              ...currentOffers.map((item) => item.id)
-            ) + 1
-          : 1;
+      /*
+       * Création
+       */
+      else {
+        const created =
+          await createBusinessOffer(
+            offer
+          );
 
-      return [
-        ...currentOffers,
-        {
-          ...offer,
-          id: nextId,
-          clients: 0,
-        },
-      ];
-    });
+        setOffers((current) => [
+          created,
+          ...current,
+        ]);
+      }
 
-    setOfferModal(null);
-  };
+      setOfferModal(null);
+    } catch (err) {
+      console.error(
+        "Erreur sauvegarde offre :",
+        err
+      );
 
-  const handleDeleteOffer = () => {
-    if (!deleteTarget) return;
+      setError(
+        "Impossible d'enregistrer l'offre."
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
 
-    setOffers((currentOffers) =>
-      currentOffers.filter(
-        (offer) => offer.id !== deleteTarget.id
-      )
-    );
+  /*
+   * ==========================================
+   * SUPPRESSION
+   * ==========================================
+   */
 
-    setDeleteTarget(null);
-  };
+  async function handleDeleteOffer() {
+    if (!deleteTarget) {
+      return;
+    }
 
-  const toggleOfferStatus = (offer) => {
-    setOffers((currentOffers) =>
-      currentOffers.map((currentOffer) =>
-        currentOffer.id === offer.id
-          ? {
-              ...currentOffer,
-              status:
-                currentOffer.status === "active"
-                  ? "draft"
-                  : "active",
-            }
-          : currentOffer
-      )
-    );
-  };
+    try {
+      setSaving(true);
+      setError("");
+
+      await deleteBusinessOffer(
+        deleteTarget.id
+      );
+
+      setOffers((current) =>
+        current.filter(
+          (offer) =>
+            offer.id !== deleteTarget.id
+        )
+      );
+
+      setDeleteTarget(null);
+    } catch (err) {
+      console.error(
+        "Erreur suppression offre :",
+        err
+      );
+
+      setError(
+        "Impossible de supprimer cette offre."
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  /*
+   * ==========================================
+   * CHANGEMENT DE STATUT
+   * ==========================================
+   */
+
+  async function toggleOfferStatus(
+    offer
+  ) {
+    const newStatus =
+      offer.status === "active"
+        ? "draft"
+        : "active";
+
+    try {
+      setError("");
+
+      const updated =
+        await updateBusinessOfferStatus(
+          offer.id,
+          newStatus
+        );
+
+      setOffers((current) =>
+        current.map((item) =>
+          item.id === updated.id
+            ? updated
+            : item
+        )
+      );
+    } catch (err) {
+      console.error(
+        "Erreur changement statut :",
+        err
+      );
+
+      setError(
+        "Impossible de modifier le statut."
+      );
+    }
+  }
+
+  /*
+   * ==========================================
+   * RENDER
+   * ==========================================
+   */
 
   return (
     <div className="business-offers-page">
 
-      {/* Header */}
+      {/* HEADER */}
+
       <div className="business-page-header">
 
         <div>
@@ -156,25 +281,40 @@ function BusinessOffers() {
             BUSINESS / OFFRES
           </span>
 
-          <h1>Offres</h1>
+          <h1>
+            Offres
+          </h1>
 
           <p>
-            Structurez les produits et services que
-            vous proposez à vos clients.
+            Structurez les produits et
+            services que vous proposez
+            à vos clients.
           </p>
         </div>
 
         <button
           type="button"
           className="btn btn-primary"
-          onClick={() => setOfferModal("new")}
+          onClick={() =>
+            setOfferModal("new")
+          }
+          disabled={saving}
         >
           + Nouvelle offre
         </button>
 
       </div>
 
-      {/* KPIs */}
+      {/* ERROR */}
+
+      {error && (
+        <div className="business-alert business-alert-error">
+          {error}
+        </div>
+      )}
+
+      {/* STATISTIQUES */}
+
       <div className="offers-stats">
 
         <OfferStat
@@ -203,108 +343,137 @@ function BusinessOffers() {
 
       </div>
 
-      {/* Main */}
+      {/* CATALOGUE */}
+
       <BusinessCard
         title="Catalogue d'offres"
         subtitle="Gérez les offres qui composent votre activité."
       >
 
-        {/* Filters */}
-        <div className="offers-toolbar">
-
-          <div className="offers-search">
-            <span>⌕</span>
-
-            <input
-              type="text"
-              placeholder="Rechercher une offre..."
-              value={search}
-              onChange={(event) =>
-                setSearch(event.target.value)
-              }
-            />
-          </div>
-
-          <div className="offers-filters">
-
-            <button
-              type="button"
-              className={
-                statusFilter === "all"
-                  ? "active"
-                  : ""
-              }
-              onClick={() =>
-                setStatusFilter("all")
-              }
-            >
-              Toutes
-            </button>
-
-            <button
-              type="button"
-              className={
-                statusFilter === "active"
-                  ? "active"
-                  : ""
-              }
-              onClick={() =>
-                setStatusFilter("active")
-              }
-            >
-              Actives
-            </button>
-
-            <button
-              type="button"
-              className={
-                statusFilter === "draft"
-                  ? "active"
-                  : ""
-              }
-              onClick={() =>
-                setStatusFilter("draft")
-              }
-            >
-              Brouillons
-            </button>
-
-          </div>
-
-        </div>
-
-        {/* Offers */}
-        {filteredOffers.length > 0 ? (
-          <div className="offers-list">
-
-            {filteredOffers.map((offer) => (
-              <OfferRow
-                key={offer.id}
-                offer={offer}
-                onEdit={() =>
-                  setOfferModal(offer)
-                }
-                onDelete={() =>
-                  setDeleteTarget(offer)
-                }
-                onToggleStatus={() =>
-                  toggleOfferStatus(offer)
-                }
-              />
-            ))}
-
+        {loading ? (
+          <div className="offers-loading">
+            Chargement de vos offres...
           </div>
         ) : (
-          <EmptyOffers
-            onAdd={() =>
-              setOfferModal("new")
-            }
-          />
+          <>
+
+            {/* TOOLBAR */}
+
+            <div className="offers-toolbar">
+
+              <div className="offers-search">
+
+                <span>
+                  ⌕
+                </span>
+
+                <input
+                  type="text"
+                  placeholder="Rechercher une offre..."
+                  value={search}
+                  onChange={(event) =>
+                    setSearch(
+                      event.target.value
+                    )
+                  }
+                />
+
+              </div>
+
+              <div className="offers-filters">
+
+                <button
+                  type="button"
+                  className={
+                    statusFilter === "all"
+                      ? "active"
+                      : ""
+                  }
+                  onClick={() =>
+                    setStatusFilter("all")
+                  }
+                >
+                  Toutes
+                </button>
+
+                <button
+                  type="button"
+                  className={
+                    statusFilter === "active"
+                      ? "active"
+                      : ""
+                  }
+                  onClick={() =>
+                    setStatusFilter("active")
+                  }
+                >
+                  Actives
+                </button>
+
+                <button
+                  type="button"
+                  className={
+                    statusFilter === "draft"
+                      ? "active"
+                      : ""
+                  }
+                  onClick={() =>
+                    setStatusFilter("draft")
+                  }
+                >
+                  Brouillons
+                </button>
+
+              </div>
+
+            </div>
+
+            {/* LISTE */}
+
+            {filteredOffers.length > 0 ? (
+              <div className="offers-list">
+
+                {filteredOffers.map(
+                  (offer) => (
+                    <OfferRow
+                      key={offer.id}
+                      saving={saving}
+                      offer={offer}
+                      onEdit={() =>
+                        setOfferModal(
+                          offer
+                        )
+                      }
+                      onDelete={() =>
+                        setDeleteTarget(
+                          offer
+                        )
+                      }
+                      onToggleStatus={() =>
+                        toggleOfferStatus(
+                          offer
+                        )
+                      }
+                    />
+                  )
+                )}
+
+              </div>
+            ) : (
+              <EmptyOffers
+                onAdd={() =>
+                  setOfferModal("new")
+                }
+              />
+            )}
+
+          </>
         )}
 
       </BusinessCard>
 
-      {/* Modal création / édition */}
+      {/* MODALE CREATION / MODIFICATION */}
+
       {offerModal && (
         <OfferFormModal
           initialOffer={
@@ -319,14 +488,17 @@ function BusinessOffers() {
         />
       )}
 
-      {/* Confirmation suppression */}
+      {/* MODALE SUPPRESSION */}
+
       {deleteTarget && (
         <ConfirmModal
           message={`Supprimer "${deleteTarget.name}" ? Cette action est irréversible.`}
           onCancel={() =>
             setDeleteTarget(null)
           }
-          onConfirm={handleDeleteOffer}
+          onConfirm={
+            handleDeleteOffer
+          }
         />
       )}
 
@@ -334,9 +506,12 @@ function BusinessOffers() {
   );
 }
 
-/* =========================================
-   STAT
-========================================= */
+
+/*
+ * ==========================================
+ * STATISTIQUE
+ * ==========================================
+ */
 
 function OfferStat({
   label,
@@ -346,22 +521,32 @@ function OfferStat({
   return (
     <div className="offer-stat-card">
 
-      <span>{label}</span>
+      <span>
+        {label}
+      </span>
 
-      <strong>{value}</strong>
+      <strong>
+        {value}
+      </strong>
 
-      <small>{description}</small>
+      <small>
+        {description}
+      </small>
 
     </div>
   );
 }
 
-/* =========================================
-   OFFER ROW
-========================================= */
+
+/*
+ * ==========================================
+ * LIGNE OFFRE
+ * ==========================================
+ */
 
 function OfferRow({
   offer,
+  saving,
   onEdit,
   onDelete,
   onToggleStatus,
@@ -369,11 +554,13 @@ function OfferRow({
   return (
     <div className="offer-row">
 
+      {/* IDENTITE */}
+
       <div className="offer-row-main">
 
         <div className="offer-icon">
           {offer.name
-            .charAt(0)
+            ?.charAt(0)
             .toUpperCase()}
         </div>
 
@@ -381,66 +568,102 @@ function OfferRow({
 
           <div className="offer-title">
 
-            <h3>{offer.name}</h3>
+            <h3>
+              {offer.name}
+            </h3>
 
             {offer.featured && (
               <span className="offer-featured">
-                ⭐ Offre principale
+                Offre principale
               </span>
             )}
 
           </div>
 
-          <span className="offer-type">
-            {offer.type}
-          </span>
+          {offer.type && (
+            <span className="offer-type">
+              {offer.type}
+            </span>
+          )}
 
-          <p>{offer.description}</p>
+          <p>
+            {offer.description ||
+              "Aucune description."}
+          </p>
 
         </div>
 
       </div>
 
+      {/* PRIX */}
+
       <div className="offer-row-price">
 
         <strong>
-          {formatPrice(offer.price)}
+          {formatPrice(
+            offer.price
+          )}
         </strong>
 
         <span>
           {formatPriceType(
-            offer.priceType
+            offer.priceType ??
+              offer.price_type
           )}
         </span>
 
       </div>
 
+      {/* DUREE */}
+
       <div className="offer-row-duration">
-        <span>Durée</span>
-        <strong>{offer.duration}</strong>
+
+        <span>
+          Durée
+        </span>
+
+        <strong>
+          {offer.duration ||
+            "—"}
+        </strong>
+
       </div>
 
+      {/* CLIENTS */}
+
       <div className="offer-row-clients">
-        <span>Clients</span>
-        <strong>{offer.clients || 0}</strong>
+
+        <span>
+          Clients
+        </span>
+
+        <strong>
+          {offer.clients || 0}
+        </strong>
+
       </div>
+
+      {/* STATUT */}
 
       <div className="offer-row-status">
 
         <button
           type="button"
-          className={`offer-status ${
-            offer.status
-          }`}
+          className={`offer-status ${offer.status}`}
           onClick={onToggleStatus}
         >
+
           <span />
+
           {offer.status === "active"
             ? "Active"
             : "Brouillon"}
+
         </button>
 
       </div>
+
+      {/* ACTIONS */}
 
       <div className="offer-row-actions">
 
@@ -448,6 +671,7 @@ function OfferRow({
           type="button"
           title="Modifier"
           onClick={onEdit}
+          disabled={saving}
         >
           ✎
         </button>
@@ -456,6 +680,7 @@ function OfferRow({
           type="button"
           title="Supprimer"
           onClick={onDelete}
+          disabled={saving}
         >
           ×
         </button>
@@ -466,11 +691,16 @@ function OfferRow({
   );
 }
 
-/* =========================================
-   EMPTY STATE
-========================================= */
 
-function EmptyOffers({ onAdd }) {
+/*
+ * ==========================================
+ * EMPTY STATE
+ * ==========================================
+ */
+
+function EmptyOffers({
+  onAdd,
+}) {
   return (
     <div className="offers-empty">
 
@@ -478,11 +708,14 @@ function EmptyOffers({ onAdd }) {
         +
       </div>
 
-      <h3>Aucune offre trouvée</h3>
+      <h3>
+        Aucune offre trouvée
+      </h3>
 
       <p>
-        Créez votre première offre pour
-        commencer à structurer votre catalogue.
+        Créez votre première offre
+        pour commencer à structurer
+        votre catalogue.
       </p>
 
       <button
@@ -497,22 +730,33 @@ function EmptyOffers({ onAdd }) {
   );
 }
 
-/* =========================================
-   HELPERS
-========================================= */
+
+/*
+ * ==========================================
+ * HELPERS
+ * ==========================================
+ */
 
 function formatPrice(price) {
-  if (price === null || price === undefined) {
+  if (
+    price === null ||
+    price === undefined ||
+    price === ""
+  ) {
     return "Prix non défini";
   }
 
-  return `${Number(price).toLocaleString(
+  return `${Number(
+    price
+  ).toLocaleString(
     "fr-FR"
   )} MAD`;
 }
 
+
 function formatPriceType(type) {
   switch (type) {
+
     case "monthly":
       return "/ mois";
 
@@ -520,11 +764,13 @@ function formatPriceType(type) {
       return "/ an";
 
     case "one_time":
-      return "paiement unique";
+      return "Paiement unique";
 
     default:
       return "";
+
   }
 }
+
 
 export default BusinessOffers;

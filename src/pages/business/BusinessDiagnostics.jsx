@@ -1,166 +1,307 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import AIDiagnosticModal from "../../components/business/AIDiagnosticModal";
 import BusinessCard from "../../components/business/BusinessCard";
 
+import {
+  getCurrentBusinessDiagnosticFull,
+} from "../../../services/businessDiagnostics";
+
+import { supabase } from "../../../lib/supabase";
+
 function BusinessDiagnostics() {
+  const [diagnostic, setDiagnostic] = useState(null);
+  const [profile, setProfile] = useState(null);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [showAnalysis, setShowAnalysis] = useState(false);
 
+  useEffect(() => {
+    loadDiagnostic();
+  }, []);
+
+  async function loadDiagnostic() {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError) {
+        throw sessionError;
+      }
+
+      if (!session?.user) {
+        throw new Error(
+          "Utilisateur non authentifié."
+        );
+      }
+
+      /*
+       * Récupération du profil business.
+       */
+      const {
+        data: businessProfile,
+        error: profileError,
+      } = await supabase
+        .from("business_profiles")
+        .select("*")
+        .eq("user_id", session.user.id)
+        .maybeSingle();
+
+      if (profileError) {
+        throw profileError;
+      }
+
+      setProfile(businessProfile);
+
+      /*
+       * Récupération du diagnostic courant
+       * + dimensions
+       * + recommandations.
+       */
+      const currentDiagnostic =
+        await getCurrentBusinessDiagnosticFull();
+
+      setDiagnostic(currentDiagnostic);
+    } catch (err) {
+      console.error(
+        "Erreur chargement diagnostic business :",
+        err
+      );
+
+      setError(
+        err?.message ||
+          "Impossible de charger le diagnostic."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
   /*
-   * V1 : données mockées.
-   *
-   * Plus tard, ces données viendront de l'API :
-   * GET /api/business/diagnostics/latest
+   * Point fort = meilleure dimension.
    */
-
-  const profile = {
-    companyName: "Kalyma",
-    sector: "Conseil & Growth",
-    positioning: "Clair",
-    icp: "PME B2B",
-
-    valueProposition:
-      "Nous aidons les entreprises à transformer leur stratégie commerciale en système de croissance mesurable, grâce au conseil, au marketing et à la technologie.",
-
-    valuePropositionScore: 82,
-  };
-
-  const diagnostic = {
-    overallScore: 78,
-
-    status: "good",
-
-    summary:
-      "Votre entreprise dispose de fondations solides. Le positionnement et la proposition de valeur sont relativement clairs, mais le système commercial et la différenciation de l'offre peuvent encore être renforcés.",
-
-    dimensions: [
-      {
-        key: "positioning",
-        label: "Positionnement",
-        score: 86,
-        status: "strong",
-        description:
-          "Votre positionnement est clair et compréhensible par votre marché.",
-      },
-
-      {
-        key: "icp",
-        label: "Client idéal",
-        score: 81,
-        status: "strong",
-        description:
-          "Votre cible est définie, mais peut encore être davantage segmentée.",
-      },
-
-      {
-        key: "value",
-        label: "Proposition de valeur",
-        score: 82,
-        status: "strong",
-        description:
-          "La promesse est claire, mais la différenciation mérite d'être renforcée.",
-      },
-
-      {
-        key: "offers",
-        label: "Offres",
-        score: 74,
-        status: "medium",
-        description:
-          "Les offres sont structurées mais leur architecture pourrait être simplifiée.",
-      },
-
-      {
-        key: "acquisition",
-        label: "Acquisition",
-        score: 67,
-        status: "medium",
-        description:
-          "Le système d'acquisition représente actuellement votre principal levier de progression.",
-      },
-
-      {
-        key: "commercial",
-        label: "Système commercial",
-        score: 69,
-        status: "medium",
-        description:
-          "Le processus commercial doit être davantage structuré et mesuré.",
-      },
-    ],
-
-    recommendations: [
-      {
-        priority: "high",
-        title:
-          "Renforcer la différenciation de votre offre principale",
-        description:
-          "Clarifiez pourquoi votre solution est différente des alternatives disponibles sur votre marché.",
-        impact: "Fort",
-      },
-
-      {
-        priority: "high",
-        title:
-          "Structurer votre système d'acquisition",
-        description:
-          "Définissez un canal principal, une mécanique de génération de prospects et des indicateurs de suivi.",
-        impact: "Fort",
-      },
-
-      {
-        priority: "medium",
-        title:
-          "Formaliser votre processus commercial",
-        description:
-          "Documentez les différentes étapes entre le premier contact et la conversion.",
-        impact: "Moyen",
-      },
-    ],
-
-    nextAction: {
-      title:
-        "Travailler le système d'acquisition",
-      description:
-        "C'est actuellement le levier présentant le plus fort potentiel d'amélioration.",
-    },
-  };
-
   const strongestDimension = useMemo(() => {
+    if (
+      !diagnostic?.dimensions?.length
+    ) {
+      return null;
+    }
+
     return [...diagnostic.dimensions].sort(
       (a, b) => b.score - a.score
     )[0];
-  }, [diagnostic.dimensions]);
+  }, [diagnostic]);
 
+  /*
+   * Priorité = dimension avec le score
+   * le plus faible.
+   */
   const weakestDimension = useMemo(() => {
+    if (
+      !diagnostic?.dimensions?.length
+    ) {
+      return null;
+    }
+
     return [...diagnostic.dimensions].sort(
       (a, b) => a.score - b.score
     )[0];
-  }, [diagnostic.dimensions]);
+  }, [diagnostic]);
+
+  /*
+   * =========================================
+   * LOADING
+   * =========================================
+   */
+
+  if (loading) {
+    return (
+      <div className="business-diagnostics-page">
+        <div className="business-page-header">
+          <div>
+            <span className="business-page-eyebrow">
+              BUSINESS / DIAGNOSTIC
+            </span>
+
+            <h1>
+              Diagnostic stratégique
+            </h1>
+
+            <p>
+              Analysez la maturité actuelle de
+              votre entreprise et identifiez
+              vos prochains leviers de croissance.
+            </p>
+          </div>
+        </div>
+
+        <BusinessCard
+          title="Diagnostic en cours de chargement"
+          subtitle="Récupération de vos dernières données business."
+        >
+          <div className="diagnostic-loading">
+            Chargement du diagnostic...
+          </div>
+        </BusinessCard>
+      </div>
+    );
+  }
+
+  /*
+   * =========================================
+   * ERROR
+   * =========================================
+   */
+
+  if (error) {
+    return (
+      <div className="business-diagnostics-page">
+        <div className="business-page-header">
+          <div>
+            <span className="business-page-eyebrow">
+              BUSINESS / DIAGNOSTIC
+            </span>
+
+            <h1>
+              Diagnostic stratégique
+            </h1>
+
+            <p>
+              Analysez la maturité actuelle de
+              votre entreprise et identifiez
+              vos prochains leviers de croissance.
+            </p>
+          </div>
+        </div>
+
+        <BusinessCard
+          title="Impossible de charger le diagnostic"
+          subtitle="Une erreur est survenue lors de la récupération de vos données."
+        >
+          <div className="diagnostic-error">
+            <p>{error}</p>
+
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={loadDiagnostic}
+            >
+              Réessayer
+            </button>
+          </div>
+        </BusinessCard>
+      </div>
+    );
+  }
+
+  /*
+   * =========================================
+   * AUCUN DIAGNOSTIC
+   * =========================================
+   */
+
+  if (!diagnostic) {
+    return (
+      <div className="business-diagnostics-page">
+        <div className="business-page-header">
+          <div>
+            <span className="business-page-eyebrow">
+              BUSINESS / DIAGNOSTIC
+            </span>
+
+            <h1>
+              Diagnostic stratégique
+            </h1>
+
+            <p>
+              Analysez la maturité actuelle de
+              votre entreprise et identifiez
+              vos prochains leviers de croissance.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() =>
+              setShowAnalysis(true)
+            }
+          >
+            ✦ Analyse Kalyma AI
+          </button>
+        </div>
+
+        <BusinessCard
+          title="Votre diagnostic n'est pas encore disponible"
+          subtitle="Complétez votre profil business afin de pouvoir générer votre diagnostic."
+        >
+          <div className="diagnostic-empty">
+            <p>
+              Votre diagnostic stratégique sera
+              généré à partir des informations de
+              votre profil business, de vos offres,
+              de vos objectifs et de vos priorités.
+            </p>
+
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() =>
+                setShowAnalysis(true)
+              }
+            >
+              Générer mon diagnostic
+            </button>
+          </div>
+        </BusinessCard>
+
+        {showAnalysis && (
+          <AIDiagnosticModal
+            profile={profile}
+            diagnostic={null}
+            onClose={() =>
+              setShowAnalysis(false)
+            }
+          />
+        )}
+      </div>
+    );
+  }
+
+  /*
+   * =========================================
+   * DIAGNOSTIC DISPONIBLE
+   * =========================================
+   */
 
   return (
     <div className="business-diagnostics-page">
-
       {/* =========================================
           HEADER
       ========================================= */}
 
       <div className="business-page-header">
-
         <div>
-
           <span className="business-page-eyebrow">
             BUSINESS / DIAGNOSTIC
           </span>
 
-          <h1>Diagnostic stratégique</h1>
+          <h1>
+            Diagnostic stratégique
+          </h1>
 
           <p>
-            Analysez la maturité actuelle de votre
-            entreprise et identifiez vos prochains
-            leviers de croissance.
+            Analysez la maturité actuelle de
+            votre entreprise et identifiez
+            vos prochains leviers de croissance.
           </p>
-
         </div>
 
         <button
@@ -172,7 +313,6 @@ function BusinessDiagnostics() {
         >
           ✦ Analyse Kalyma AI
         </button>
-
       </div>
 
       {/* =========================================
@@ -180,85 +320,99 @@ function BusinessDiagnostics() {
       ========================================= */}
 
       <div className="diagnostic-overview">
-
         <div className="diagnostic-score-card">
-
           <div className="diagnostic-score-label">
             SCORE BUSINESS
           </div>
 
           <div className="diagnostic-score">
-            {diagnostic.overallScore}
+            {diagnostic.business_score}
+
             <span>/100</span>
           </div>
 
           <div className="diagnostic-score-status">
             <span className="diagnostic-status-dot" />
 
-            Bon niveau de maturité
+            {getBusinessScoreLabel(
+              diagnostic.business_score
+            )}
           </div>
 
           <div className="diagnostic-score-progress">
-
             <div
               style={{
-                width: `${diagnostic.overallScore}%`,
+                width: `${diagnostic.business_score}%`,
               }}
             />
-
           </div>
 
           <p>
-            Dernier diagnostic : aujourd'hui
+            {diagnostic.generated_at
+              ? `Dernier diagnostic : ${formatDiagnosticDate(
+                  diagnostic.generated_at
+                )}`
+              : "Diagnostic disponible"}
           </p>
-
         </div>
 
         <div className="diagnostic-summary-card">
-
           <span className="diagnostic-section-label">
             SYNTHÈSE
           </span>
 
           <h2>
-            Votre entreprise possède de bonnes
-            fondations.
+            {diagnostic.synthesis_title}
           </h2>
 
           <p>
-            {diagnostic.summary}
+            {diagnostic.synthesis_description}
           </p>
 
           <div className="diagnostic-highlights">
-
             <div>
-              <span>Point fort</span>
+              <span>
+                Point fort
+              </span>
 
               <strong>
-                {strongestDimension.label}
+                {strongestDimension
+                  ? strongestDimension.name
+                  : diagnostic.strength_dimension ||
+                    "—"}
               </strong>
 
               <small>
-                {strongestDimension.score}/100
+                {strongestDimension
+                  ? `${strongestDimension.score}/100`
+                  : diagnostic.strength_score
+                    ? `${diagnostic.strength_score}/100`
+                    : "—"}
               </small>
             </div>
 
             <div>
-              <span>Priorité</span>
+              <span>
+                Priorité
+              </span>
 
               <strong>
-                {weakestDimension.label}
+                {weakestDimension
+                  ? weakestDimension.name
+                  : diagnostic.priority_dimension ||
+                    "—"}
               </strong>
 
               <small>
-                {weakestDimension.score}/100
+                {weakestDimension
+                  ? `${weakestDimension.score}/100`
+                  : diagnostic.priority_score
+                    ? `${diagnostic.priority_score}/100`
+                    : "—"}
               </small>
             </div>
-
           </div>
-
         </div>
-
       </div>
 
       {/* =========================================
@@ -269,20 +423,22 @@ function BusinessDiagnostics() {
         title="Analyse des dimensions"
         subtitle="Évaluation des principaux fondamentaux de votre business."
       >
-
         <div className="diagnostic-dimensions">
-
-          {diagnostic.dimensions.map(
-            (dimension) => (
-              <DiagnosticDimension
-                key={dimension.key}
-                dimension={dimension}
-              />
+          {diagnostic.dimensions?.length > 0 ? (
+            diagnostic.dimensions.map(
+              (dimension) => (
+                <DiagnosticDimension
+                  key={dimension.id}
+                  dimension={dimension}
+                />
+              )
             )
+          ) : (
+            <div className="diagnostic-empty-state">
+              Aucune dimension disponible.
+            </div>
           )}
-
         </div>
-
       </BusinessCard>
 
       {/* =========================================
@@ -290,55 +446,61 @@ function BusinessDiagnostics() {
       ========================================= */}
 
       <div className="diagnostic-lower-grid">
-
         <BusinessCard
           title="Recommandations"
           subtitle="Les actions prioritaires identifiées par Kalyma."
         >
-
           <div className="diagnostic-recommendations">
-
-            {diagnostic.recommendations.map(
-              (recommendation, index) => (
-                <Recommendation
-                  key={index}
-                  recommendation={recommendation}
-                  index={index + 1}
-                />
+            {diagnostic.recommendations?.length >
+            0 ? (
+              diagnostic.recommendations.map(
+                (
+                  recommendation,
+                  index
+                ) => (
+                  <Recommendation
+                    key={
+                      recommendation.id
+                    }
+                    recommendation={
+                      recommendation
+                    }
+                    index={index + 1}
+                  />
+                )
               )
+            ) : (
+              <div className="diagnostic-empty-state">
+                Aucune recommandation disponible.
+              </div>
             )}
-
           </div>
-
         </BusinessCard>
 
         <BusinessCard
           title="Prochaine action"
           subtitle="Le prochain levier à travailler."
         >
-
           <div className="diagnostic-next-action">
-
             <div className="diagnostic-next-icon">
               →
             </div>
 
             <div>
-
               <span>
                 PRIORITÉ ACTUELLE
               </span>
 
               <h3>
-                {diagnostic.nextAction.title}
+                {diagnostic.next_action_title ||
+                  "Aucune action définie"}
               </h3>
 
               <p>
-                {diagnostic.nextAction.description}
+                {diagnostic.next_action_description ||
+                  "Votre prochaine action sera définie à partir de votre diagnostic."}
               </p>
-
             </div>
-
           </div>
 
           <button
@@ -347,9 +509,7 @@ function BusinessDiagnostics() {
           >
             Travailler ce levier
           </button>
-
         </BusinessCard>
-
       </div>
 
       {/* =========================================
@@ -365,67 +525,65 @@ function BusinessDiagnostics() {
           }
         />
       )}
-
     </div>
   );
 }
 
-/* =========================================
-   DIMENSION
-========================================= */
+/*
+ * =========================================
+ * DIMENSION
+ * =========================================
+ */
 
 function DiagnosticDimension({
   dimension,
 }) {
   return (
     <div className="diagnostic-dimension">
-
       <div className="diagnostic-dimension-header">
-
         <div>
-
           <strong>
-            {dimension.label}
+            {dimension.name}
           </strong>
 
           <span
-            className={`diagnostic-dimension-status ${dimension.status}`}
+            className={`diagnostic-dimension-status ${mapDimensionStatus(
+              dimension.status
+            )}`}
           >
             {getStatusLabel(
               dimension.status
             )}
           </span>
-
         </div>
 
         <strong className="diagnostic-dimension-score">
           {dimension.score}
+
           <small>/100</small>
         </strong>
-
       </div>
 
       <div className="diagnostic-dimension-progress">
-
         <div
           style={{
             width: `${dimension.score}%`,
           }}
         />
-
       </div>
 
       <p>
         {dimension.description}
       </p>
-
     </div>
   );
 }
 
-/* =========================================
-   RECOMMENDATION
-========================================= */
+/*
+ * =========================================
+ * RECOMMENDATION
+ * =========================================
+ */
 
 function Recommendation({
   recommendation,
@@ -433,15 +591,12 @@ function Recommendation({
 }) {
   return (
     <div className="diagnostic-recommendation">
-
       <div className="diagnostic-recommendation-number">
         {index}
       </div>
 
       <div className="diagnostic-recommendation-content">
-
         <div className="diagnostic-recommendation-header">
-
           <h3>
             {recommendation.title}
           </h3>
@@ -449,12 +604,10 @@ function Recommendation({
           <span
             className={`recommendation-priority ${recommendation.priority}`}
           >
-            {recommendation.priority ===
-            "high"
-              ? "Prioritaire"
-              : "À travailler"}
+            {getRecommendationPriorityLabel(
+              recommendation.priority
+            )}
           </span>
-
         </div>
 
         <p>
@@ -464,33 +617,122 @@ function Recommendation({
         <small>
           Impact :{" "}
           <strong>
-            {recommendation.impact}
+            {getImpactLabel(
+              recommendation.impact
+            )}
           </strong>
         </small>
-
       </div>
-
     </div>
   );
 }
 
-/* =========================================
-   HELPERS
-========================================= */
+/*
+ * =========================================
+ * HELPERS
+ * =========================================
+ */
 
-function getStatusLabel(status) {
+function mapDimensionStatus(status) {
   switch (status) {
-    case "strong":
-      return "Solide";
+    case "solide":
+      return "strong";
 
-    case "medium":
-      return "À optimiser";
+    case "a_optimiser":
+      return "medium";
 
-    case "weak":
-      return "Prioritaire";
+    case "prioritaire":
+      return "weak";
+
+    case "critique":
+      return "weak";
 
     default:
       return "";
+  }
+}
+
+function getStatusLabel(status) {
+  switch (status) {
+    case "solide":
+      return "Solide";
+
+    case "a_optimiser":
+      return "À optimiser";
+
+    case "prioritaire":
+      return "Prioritaire";
+
+    case "critique":
+      return "Critique";
+
+    default:
+      return "";
+  }
+}
+
+function getRecommendationPriorityLabel(
+  priority
+) {
+  switch (priority) {
+    case "priority":
+      return "Prioritaire";
+
+    case "work_on":
+      return "À travailler";
+
+    case "optional":
+      return "Optionnel";
+
+    default:
+      return "";
+  }
+}
+
+function getImpactLabel(impact) {
+  switch (impact) {
+    case "high":
+      return "Fort";
+
+    case "medium":
+      return "Moyen";
+
+    case "low":
+      return "Faible";
+
+    default:
+      return impact || "";
+  }
+}
+
+function getBusinessScoreLabel(score) {
+  if (score >= 85) {
+    return "Excellent niveau de maturité";
+  }
+
+  if (score >= 70) {
+    return "Bon niveau de maturité";
+  }
+
+  if (score >= 50) {
+    return "Niveau de maturité à renforcer";
+  }
+
+  return "Niveau de maturité prioritaire";
+}
+
+function formatDiagnosticDate(date) {
+  try {
+    return new Intl.DateTimeFormat(
+      "fr-FR",
+      {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      }
+    ).format(new Date(date));
+  } catch {
+    return "date inconnue";
   }
 }
 

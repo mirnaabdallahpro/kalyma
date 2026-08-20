@@ -1,62 +1,43 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
+import { Sparkles } from "lucide-react";
 import BusinessCard from "../../components/business/BusinessCard";
 import Modal from "../../components/business/Modal";
 
+import {
+  createBusinessStrategyPriority,
+  deleteBusinessStrategyPriority,
+  getBusinessStrategyPriorities,
+  getBusinessStrategyProfile,
+  updateBusinessStrategyPriorityStatus,
+} from "../../../services/businessStrategyService";
+
+import { updateBusinessProfile } from "../../../services/businessProfileService";
+
+
 function BusinessStrategy() {
-  const [strategy, setStrategy] = useState({
-    vision:
-      "Construire une entreprise de référence dans son marché grâce à une croissance rentable, prévisible et durable.",
+  /* =========================================
+     STATE
+  ========================================= */
 
-    mission:
-      "Aider les PME à structurer leur stratégie, leur acquisition et leurs opérations afin de transformer leur potentiel en croissance concrète.",
+  const [strategy, setStrategy] = useState(null);
 
-    positioning:
-      "Partenaire stratégique des PME B2B qui souhaitent structurer leur système commercial et accélérer leur croissance.",
+  const [priorities, setPriorities] = useState([]);
 
-    icp: {
-      sector: "PME B2B",
-      size: "10 à 50 employés",
-      revenue: "1 à 10 M MAD / an",
-      geography: "Maroc",
-    },
+  const [loading, setLoading] = useState(true);
 
-    differentiators: [
-      "Approche stratégique personnalisée",
-      "Combinaison conseil + marketing + technologie",
-      "Accompagnement dans la durée",
-    ],
+  const [error, setError] = useState("");
 
-    priorities: [
-      {
-        id: 1,
-        title: "Clarifier le positionnement",
-        description:
-          "Affiner la cible, la promesse et la différenciation.",
-        status: "in_progress",
-        priority: "high",
-      },
-      {
-        id: 2,
-        title: "Structurer le système commercial",
-        description:
-          "Mettre en place un processus de prospection et de conversion prévisible.",
-        status: "todo",
-        priority: "high",
-      },
-      {
-        id: 3,
-        title: "Développer l'acquisition",
-        description:
-          "Construire une machine d'acquisition basée sur LinkedIn, contenu et SEO.",
-        status: "todo",
-        priority: "medium",
-      },
-    ],
-  });
+  const [saving, setSaving] = useState(false);
 
   const [editingSection, setEditingSection] =
     useState(null);
+
+    const [aiLoading, setAiLoading] =
+    useState(false);
+
+  const [aiSuggestions, setAiSuggestions] =
+    useState([]);
 
   const [priorityModal, setPriorityModal] =
     useState(null);
@@ -68,109 +49,552 @@ function BusinessStrategy() {
       priority: "medium",
     });
 
+
   /* =========================================
-     SAVE STRATEGY SECTION
+     LOAD STRATEGY
   ========================================= */
 
-  const handleSaveSection = (section, value) => {
-    setStrategy((current) => ({
-      ...current,
-      [section]: value,
-    }));
+  useEffect(() => {
+    loadStrategy();
+  }, []);
 
-    setEditingSection(null);
-  };
+
+  async function loadStrategy() {
+    try {
+      setLoading(true);
+      setError("");
+
+      const [
+        profile,
+        strategyPriorities,
+      ] = await Promise.all([
+        getBusinessStrategyProfile(),
+        getBusinessStrategyPriorities(),
+      ]);
+
+      if (!profile) {
+        setStrategy(null);
+        setPriorities([]);
+        return;
+      }
+
+      setStrategy({
+        id: profile.id,
+
+        vision:
+          profile.vision ?? "",
+
+        mission:
+          profile.mission ?? "",
+
+        positioning:
+          profile.positioning ?? "",
+
+        icp: {
+          sector:
+            profile.icp_sector ?? "",
+
+          size:
+            profile.icp_size ?? "",
+
+          revenue:
+            profile.icp_revenue ?? "",
+
+          geography:
+            profile.icp_geography ?? "",
+        },
+
+        differentiators:
+          Array.isArray(
+            profile.differentiators
+          )
+            ? profile.differentiators
+            : [],
+      });
+
+      setPriorities(
+        strategyPriorities ?? []
+      );
+
+    } catch (err) {
+      console.error(
+        "Erreur chargement stratégie :",
+        err
+      );
+
+      setError(
+        "Impossible de charger votre stratégie."
+      );
+
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
+  /* =========================================
+     STRATEGIC MATURITY SCORE
+  ========================================= */
+
+  const strategicScore = useMemo(() => {
+    if (!strategy) {
+      return 0;
+    }
+
+    let score = 0;
+
+    if (
+      strategy.vision?.trim()
+    ) {
+      score += 20;
+    }
+
+    if (
+      strategy.mission?.trim()
+    ) {
+      score += 20;
+    }
+
+    if (
+      strategy.positioning?.trim()
+    ) {
+      score += 20;
+    }
+
+    const icpComplete =
+      strategy.icp?.sector?.trim() &&
+      strategy.icp?.size?.trim() &&
+      strategy.icp?.revenue?.trim() &&
+      strategy.icp?.geography?.trim();
+
+    if (icpComplete) {
+      score += 20;
+    }
+
+    if (
+      strategy.differentiators?.length > 0
+    ) {
+      score += 20;
+    }
+
+    return score;
+  }, [strategy]);
+
+
+  const strategicScoreLabel =
+    strategicScore >= 80
+      ? "Très bonne base"
+      : strategicScore >= 60
+      ? "Bonne base · À renforcer"
+      : strategicScore >= 40
+      ? "En construction"
+      : "À structurer";
+
+
+  /* =========================================
+     SAVE TEXT SECTION
+  ========================================= */
+
+  async function handleSaveSection(
+    section,
+    value
+  ) {
+    try {
+      setSaving(true);
+      setError("");
+
+      const updates = {};
+
+      if (section === "vision") {
+        updates.vision = value;
+      }
+
+      if (section === "mission") {
+        updates.mission = value;
+      }
+
+      if (section === "positioning") {
+        updates.positioning = value;
+      }
+
+      const updatedProfile =
+        await updateBusinessProfile(
+          updates
+        );
+
+      setStrategy((current) => ({
+        ...current,
+
+        vision:
+          updatedProfile.vision ??
+          current.vision,
+
+        mission:
+          updatedProfile.mission ??
+          current.mission,
+
+        positioning:
+          updatedProfile.positioning ??
+          current.positioning,
+      }));
+
+      setEditingSection(null);
+
+    } catch (err) {
+      console.error(
+        "Erreur sauvegarde stratégie :",
+        err
+      );
+
+      setError(
+        "Impossible d'enregistrer cette modification."
+      );
+
+    } finally {
+      setSaving(false);
+    }
+  }
+
 
   /* =========================================
      SAVE ICP
   ========================================= */
 
-  const handleSaveICP = (icp) => {
-    setStrategy((current) => ({
-      ...current,
-      icp,
-    }));
+  async function handleSaveICP(icp) {
+    try {
+      setSaving(true);
+      setError("");
 
-    setEditingSection(null);
-  };
+      const updatedProfile =
+        await updateBusinessProfile({
+          icpSector: icp.sector,
+          icpSize: icp.size,
+          icpRevenue: icp.revenue,
+          icpGeography:
+            icp.geography,
+        });
+
+      setStrategy((current) => ({
+        ...current,
+
+        icp: {
+          sector:
+            updatedProfile.icp_sector ??
+            icp.sector,
+
+          size:
+            updatedProfile.icp_size ??
+            icp.size,
+
+          revenue:
+            updatedProfile.icp_revenue ??
+            icp.revenue,
+
+          geography:
+            updatedProfile.icp_geography ??
+            icp.geography,
+        },
+      }));
+
+      setEditingSection(null);
+
+    } catch (err) {
+      console.error(
+        "Erreur sauvegarde ICP :",
+        err
+      );
+
+      setError(
+        "Impossible d'enregistrer votre client idéal."
+      );
+
+    } finally {
+      setSaving(false);
+    }
+  }
+
+
+  /* =========================================
+     SAVE DIFFERENTIATORS
+  ========================================= */
+
+  async function handleSaveDifferentiators(
+    differentiators
+  ) {
+    try {
+      setSaving(true);
+      setError("");
+
+      const updatedProfile =
+        await updateBusinessProfile({
+          differentiators,
+        });
+
+      setStrategy((current) => ({
+        ...current,
+
+        differentiators:
+          updatedProfile.differentiators ??
+          differentiators,
+      }));
+
+      setEditingSection(null);
+
+    } catch (err) {
+      console.error(
+        "Erreur sauvegarde différenciation :",
+        err
+      );
+
+      setError(
+        "Impossible d'enregistrer vos éléments de différenciation."
+      );
+
+    } finally {
+      setSaving(false);
+    }
+  }
+
 
   /* =========================================
      ADD PRIORITY
   ========================================= */
 
-  const handleAddPriority = (event) => {
+  async function handleAddPriority(event) {
     event.preventDefault();
 
-    if (!newPriority.title.trim()) {
+    if (
+      !newPriority.title.trim()
+    ) {
       return;
     }
 
-    const priority = {
-      id: Date.now(),
-      ...newPriority,
-      status: "todo",
-    };
+    try {
+      setSaving(true);
+      setError("");
 
-    setStrategy((current) => ({
-      ...current,
-      priorities: [
-        ...current.priorities,
-        priority,
-      ],
-    }));
+      const createdPriority =
+        await createBusinessStrategyPriority(
+          {
+            title:
+              newPriority.title.trim(),
 
-    setNewPriority({
-      title: "",
-      description: "",
-      priority: "medium",
-    });
+            description:
+              newPriority.description.trim(),
 
-    setPriorityModal(null);
-  };
+            priority:
+              newPriority.priority,
+
+            status: "todo",
+          }
+        );
+
+      setPriorities((current) => [
+        ...current,
+        createdPriority,
+      ]);
+
+      setNewPriority({
+        title: "",
+        description: "",
+        priority: "medium",
+      });
+
+      setPriorityModal(null);
+
+    } catch (err) {
+      console.error(
+        "Erreur création priorité :",
+        err
+      );
+
+      setError(
+        "Impossible de créer cette priorité."
+      );
+
+    } finally {
+      setSaving(false);
+    }
+  }
+
 
   /* =========================================
      TOGGLE PRIORITY STATUS
   ========================================= */
 
-  const togglePriorityStatus = (id) => {
-    setStrategy((current) => ({
-      ...current,
+  async function togglePriorityStatus(
+    priority
+  ) {
+    const nextStatus =
+      priority.status === "done"
+        ? "todo"
+        : "done";
 
-      priorities: current.priorities.map(
-        (priority) => {
-          if (priority.id !== id) {
-            return priority;
-          }
+    try {
+      setError("");
 
-          return {
-            ...priority,
-            status:
-              priority.status === "done"
-                ? "todo"
-                : "done",
-          };
-        }
-      ),
-    }));
-  };
+      const updatedPriority =
+        await updateBusinessStrategyPriorityStatus(
+          priority.id,
+          nextStatus
+        );
+
+      setPriorities((current) =>
+        current.map((item) =>
+          item.id === priority.id
+            ? {
+                ...item,
+                ...updatedPriority,
+              }
+            : item
+        )
+      );
+
+    } catch (err) {
+      console.error(
+        "Erreur changement statut :",
+        err
+      );
+
+      setError(
+        "Impossible de modifier le statut."
+      );
+    }
+  }
+
 
   /* =========================================
      DELETE PRIORITY
   ========================================= */
 
-  const deletePriority = (id) => {
-    setStrategy((current) => ({
-      ...current,
+  async function handleDeletePriority(
+    id
+  ) {
+    const confirmed =
+      window.confirm(
+        "Voulez-vous vraiment supprimer cette priorité ?"
+      );
 
-      priorities: current.priorities.filter(
-        (priority) =>
-          priority.id !== id
-      ),
-    }));
-  };
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setError("");
+
+      await deleteBusinessStrategyPriority(
+        id
+      );
+
+      setPriorities((current) =>
+        current.filter(
+          (priority) =>
+            priority.id !== id
+        )
+      );
+
+    } catch (err) {
+      console.error(
+        "Erreur suppression priorité :",
+        err
+      );
+
+      setError(
+        "Impossible de supprimer cette priorité."
+      );
+    }
+  }
+
+
+  /* =========================================
+     LOADING
+  ========================================= */
+
+  if (loading) {
+    return (
+      <div className="business-strategy-page">
+
+        <div className="business-page-header">
+          <div>
+            <span className="business-page-eyebrow">
+              BUSINESS / STRATÉGIE
+            </span>
+
+            <h1>Stratégie</h1>
+
+            <p>
+              Chargement de votre stratégie...
+            </p>
+          </div>
+        </div>
+
+        <div className="business-loading">
+          Chargement...
+        </div>
+
+      </div>
+    );
+  }
+
+
+  /* =========================================
+     NO PROFILE
+  ========================================= */
+
+  if (!strategy) {
+    return (
+      <div className="business-strategy-page">
+
+        <div className="business-page-header">
+
+          <div>
+            <span className="business-page-eyebrow">
+              BUSINESS / STRATÉGIE
+            </span>
+
+            <h1>Stratégie</h1>
+
+            <p>
+              Votre profil business n'est pas
+              encore disponible.
+            </p>
+          </div>
+
+        </div>
+
+        <BusinessCard
+          title="Stratégie indisponible"
+          subtitle="Commencez par compléter votre profil business."
+        >
+          <p>
+            Votre stratégie sera automatiquement
+            disponible une fois votre profil
+            business créé.
+          </p>
+        </BusinessCard>
+
+      </div>
+    );
+  }
+
+
+  /* =========================================
+     RENDER
+  ========================================= */
 
   return (
     <div className="business-strategy-page">
+
+      {/* =====================================
+          ERROR
+      ===================================== */}
+
+      {error && (
+        <div className="business-alert business-alert-error">
+          {error}
+        </div>
+      )}
+
 
       {/* =====================================
           HEADER
@@ -179,6 +603,7 @@ function BusinessStrategy() {
       <div className="business-page-header">
 
         <div>
+
           <span className="business-page-eyebrow">
             BUSINESS / STRATÉGIE
           </span>
@@ -189,19 +614,28 @@ function BusinessStrategy() {
             Définissez la direction stratégique
             de votre entreprise.
           </p>
+
         </div>
 
-        <div className="business-strategy-score">
-          <span>Maturité stratégique</span>
 
-          <strong>78%</strong>
+        <div className="business-strategy-score">
+
+          <span>
+            Maturité stratégique
+          </span>
+
+          <strong>
+            {strategicScore}%
+          </strong>
 
           <small>
-            Bonne base · À renforcer
+            {strategicScoreLabel}
           </small>
+
         </div>
 
       </div>
+
 
       {/* =====================================
           STRATEGIC FOUNDATION
@@ -219,15 +653,22 @@ function BusinessStrategy() {
               onClick={() =>
                 setEditingSection("vision")
               }
+              disabled={saving}
             >
               Modifier
             </button>
           }
         >
+
           <div className="strategy-big-text">
-            {strategy.vision}
+
+            {strategy.vision ||
+              "Votre vision n'est pas encore définie."}
+
           </div>
+
         </BusinessCard>
+
 
         <BusinessCard
           title="Mission"
@@ -239,17 +680,24 @@ function BusinessStrategy() {
               onClick={() =>
                 setEditingSection("mission")
               }
+              disabled={saving}
             >
               Modifier
             </button>
           }
         >
+
           <div className="strategy-big-text">
-            {strategy.mission}
+
+            {strategy.mission ||
+              "Votre mission n'est pas encore définie."}
+
           </div>
+
         </BusinessCard>
 
       </section>
+
 
       {/* =====================================
           POSITIONING
@@ -263,8 +711,11 @@ function BusinessStrategy() {
             type="button"
             className="business-edit-button"
             onClick={() =>
-              setEditingSection("positioning")
+              setEditingSection(
+                "positioning"
+              )
             }
+            disabled={saving}
           >
             Modifier
           </button>
@@ -280,22 +731,35 @@ function BusinessStrategy() {
             </span>
 
             <h2>
-              {strategy.positioning}
+
+              {strategy.positioning ||
+                "Votre positionnement n'est pas encore défini."}
+
             </h2>
 
           </div>
+
 
           <div className="strategy-positioning-status">
 
             <span className="strategy-status-dot" />
 
             <div>
-              <strong>Positionnement défini</strong>
+
+              <strong>
+                {strategy.positioning
+                  ? "Positionnement défini"
+                  : "Positionnement à définir"}
+              </strong>
 
               <small>
-                Votre positionnement est exploitable
-                mais peut encore être différencié.
+
+                {strategy.positioning
+                  ? "Votre positionnement est exploitable mais peut encore être différencié."
+                  : "Définissez clairement la place que votre entreprise souhaite occuper."}
+
               </small>
+
             </div>
 
           </div>
@@ -303,6 +767,7 @@ function BusinessStrategy() {
         </div>
 
       </BusinessCard>
+
 
       {/* =====================================
           ICP
@@ -318,6 +783,7 @@ function BusinessStrategy() {
             onClick={() =>
               setEditingSection("icp")
             }
+            disabled={saving}
           >
             Modifier
           </button>
@@ -328,27 +794,40 @@ function BusinessStrategy() {
 
           <StrategyData
             label="Secteur"
-            value={strategy.icp.sector}
+            value={
+              strategy.icp.sector ||
+              "Non défini"
+            }
           />
 
           <StrategyData
             label="Taille"
-            value={strategy.icp.size}
+            value={
+              strategy.icp.size ||
+              "Non définie"
+            }
           />
 
           <StrategyData
             label="Chiffre d'affaires"
-            value={strategy.icp.revenue}
+            value={
+              strategy.icp.revenue ||
+              "Non défini"
+            }
           />
 
           <StrategyData
             label="Zone géographique"
-            value={strategy.icp.geography}
+            value={
+              strategy.icp.geography ||
+              "Non définie"
+            }
           />
 
         </div>
 
       </BusinessCard>
+
 
       {/* =====================================
           DIFFERENTIATION
@@ -362,8 +841,11 @@ function BusinessStrategy() {
             type="button"
             className="business-edit-button"
             onClick={() =>
-              setEditingSection("differentiators")
+              setEditingSection(
+                "differentiators"
+              )
             }
+            disabled={saving}
           >
             Modifier
           </button>
@@ -372,27 +854,37 @@ function BusinessStrategy() {
 
         <div className="strategy-differentiators">
 
-          {strategy.differentiators.map(
-            (item, index) => (
-              <div
-                className="strategy-differentiator"
-                key={index}
-              >
-                <span>
-                  {String(index + 1).padStart(
-                    2,
-                    "0"
-                  )}
-                </span>
+          {strategy.differentiators.length >
+          0 ? (
+            strategy.differentiators.map(
+              (item, index) => (
+                <div
+                  className="strategy-differentiator"
+                  key={`${item}-${index}`}
+                >
 
-                <p>{item}</p>
-              </div>
+                  <span>
+                    {String(
+                      index + 1
+                    ).padStart(2, "0")}
+                  </span>
+
+                  <p>{item}</p>
+
+                </div>
+              )
             )
+          ) : (
+            <div className="strategy-empty-state">
+              Aucun élément de différenciation
+              n'a encore été défini.
+            </div>
           )}
 
         </div>
 
       </BusinessCard>
+
 
       {/* =====================================
           PRIORITIES
@@ -408,6 +900,7 @@ function BusinessStrategy() {
             onClick={() =>
               setPriorityModal("new")
             }
+            disabled={saving}
           >
             + Ajouter
           </button>
@@ -416,29 +909,51 @@ function BusinessStrategy() {
 
         <div className="strategy-priorities">
 
-          {strategy.priorities.map(
-            (priority, index) => (
-              <StrategyPriority
-                key={priority.id}
-                priority={priority}
-                index={index}
-                onToggle={() =>
-                  togglePriorityStatus(
-                    priority.id
-                  )
-                }
-                onDelete={() =>
-                  deletePriority(
-                    priority.id
-                  )
-                }
-              />
+          {priorities.length > 0 ? (
+
+            priorities.map(
+              (priority, index) => (
+
+                <StrategyPriority
+                  key={priority.id}
+                  priority={priority}
+                  index={index}
+                  onToggle={() =>
+                    togglePriorityStatus(
+                      priority
+                    )
+                  }
+                  onDelete={() =>
+                    handleDeletePriority(
+                      priority.id
+                    )
+                  }
+                />
+
+              )
             )
+
+          ) : (
+
+            <div className="strategy-empty-state">
+
+              <strong>
+                Aucune priorité stratégique
+              </strong>
+
+              <p>
+                Ajoutez les chantiers qui doivent
+                faire avancer votre entreprise.
+              </p>
+
+            </div>
+
           )}
 
         </div>
 
       </BusinessCard>
+
 
       {/* =====================================
           AI INSIGHT
@@ -452,19 +967,20 @@ function BusinessStrategy() {
 
         <div className="strategy-ai-content">
 
-          <span>KALYMA AI · ANALYSE STRATÉGIQUE</span>
+          <span>
+            KALYMA AI · ANALYSE STRATÉGIQUE
+          </span>
 
           <h3>
-            Votre prochaine priorité devrait
-            être la différenciation.
+            {getStrategicInsight(
+              strategy
+            ).title}
           </h3>
 
           <p>
-            Votre vision et votre cible sont
-            relativement claires. Le principal
-            risque actuel est que votre
-            positionnement reste trop proche des
-            alternatives existantes.
+            {getStrategicInsight(
+              strategy
+            ).description}
           </p>
 
         </div>
@@ -478,21 +994,30 @@ function BusinessStrategy() {
 
       </div>
 
+
       {/* =====================================
-          EDIT MODAL
+          TEXT MODAL
       ===================================== */}
 
       {editingSection &&
-        editingSection !== "icp" &&
-        editingSection !==
-          "differentiators" && (
+        [
+          "vision",
+          "mission",
+          "positioning",
+        ].includes(
+          editingSection
+        ) && (
+
           <StrategyTextModal
             title={getSectionTitle(
               editingSection
             )}
             value={
-              strategy[editingSection]
+              strategy[
+                editingSection
+              ]
             }
+            saving={saving}
             onClose={() =>
               setEditingSection(null)
             }
@@ -503,27 +1028,59 @@ function BusinessStrategy() {
               )
             }
           />
+
         )}
+
 
       {/* =====================================
           ICP MODAL
       ===================================== */}
 
       {editingSection === "icp" && (
+
         <ICPModal
           initialValue={strategy.icp}
+          saving={saving}
           onClose={() =>
             setEditingSection(null)
           }
           onSave={handleSaveICP}
         />
+
       )}
+
+
+      {/* =====================================
+          DIFFERENTIATORS MODAL
+      ===================================== */}
+
+      {editingSection ===
+        "differentiators" && (
+
+        <DifferentiatorsModal
+          initialValue={
+            strategy.differentiators
+          }
+          saving={saving}
+          onClose={() =>
+            setEditingSection(null)
+          }
+          onSave={
+            handleSaveDifferentiators
+          }
+          aiLoading={aiLoading }
+          aiSuggestions ={aiSuggestions }
+        />
+
+      )}
+
 
       {/* =====================================
           PRIORITY MODAL
       ===================================== */}
 
       {priorityModal === "new" && (
+
         <Modal
           title="Nouvelle priorité"
           subtitle="Ajoutez un chantier stratégique à votre roadmap."
@@ -532,12 +1089,14 @@ function BusinessStrategy() {
           }
           footer={
             <>
+
               <button
                 type="button"
                 className="business-modal-cancel"
                 onClick={() =>
                   setPriorityModal(null)
                 }
+                disabled={saving}
               >
                 Annuler
               </button>
@@ -546,16 +1105,22 @@ function BusinessStrategy() {
                 type="submit"
                 form="priority-form"
                 className="btn btn-primary"
+                disabled={saving}
               >
-                Ajouter
+                {saving
+                  ? "Enregistrement..."
+                  : "Ajouter"}
               </button>
+
             </>
           }
         >
 
           <form
             id="priority-form"
-            onSubmit={handleAddPriority}
+            onSubmit={
+              handleAddPriority
+            }
             className="business-form"
           >
 
@@ -563,17 +1128,24 @@ function BusinessStrategy() {
               Nom de la priorité
 
               <input
-                value={newPriority.title}
+                value={
+                  newPriority.title
+                }
                 onChange={(event) =>
-                  setNewPriority({
-                    ...newPriority,
-                    title:
-                      event.target.value,
-                  })
+                  setNewPriority(
+                    (current) => ({
+                      ...current,
+                      title:
+                        event.target.value,
+                    })
+                  )
                 }
                 placeholder="Ex. Structurer le système commercial"
+                disabled={saving}
               />
+
             </label>
+
 
             <label>
               Description
@@ -584,15 +1156,20 @@ function BusinessStrategy() {
                   newPriority.description
                 }
                 onChange={(event) =>
-                  setNewPriority({
-                    ...newPriority,
-                    description:
-                      event.target.value,
-                  })
+                  setNewPriority(
+                    (current) => ({
+                      ...current,
+                      description:
+                        event.target.value,
+                    })
+                  )
                 }
                 placeholder="Décrivez ce que vous souhaitez accomplir."
+                disabled={saving}
               />
+
             </label>
+
 
             <label>
               Niveau de priorité
@@ -602,13 +1179,17 @@ function BusinessStrategy() {
                   newPriority.priority
                 }
                 onChange={(event) =>
-                  setNewPriority({
-                    ...newPriority,
-                    priority:
-                      event.target.value,
-                  })
+                  setNewPriority(
+                    (current) => ({
+                      ...current,
+                      priority:
+                        event.target.value,
+                    })
+                  )
                 }
+                disabled={saving}
               >
+
                 <option value="high">
                   Haute
                 </option>
@@ -620,6 +1201,7 @@ function BusinessStrategy() {
                 <option value="low">
                   Faible
                 </option>
+
               </select>
 
             </label>
@@ -627,11 +1209,13 @@ function BusinessStrategy() {
           </form>
 
         </Modal>
+
       )}
 
     </div>
   );
 }
+
 
 /* =========================================
    DATA
@@ -651,6 +1235,7 @@ function StrategyData({
     </div>
   );
 }
+
 
 /* =========================================
    PRIORITY
@@ -682,12 +1267,15 @@ function StrategyPriority({
           : ""}
       </button>
 
+
       <div className="strategy-priority-number">
-        {String(index + 1).padStart(
-          2,
-          "0"
-        )}
+
+        {String(
+          index + 1
+        ).padStart(2, "0")}
+
       </div>
+
 
       <div className="strategy-priority-content">
 
@@ -700,15 +1288,13 @@ function StrategyPriority({
           <span
             className={`priority-badge ${priority.priority}`}
           >
-            {priority.priority === "high"
-              ? "Prioritaire"
-              : priority.priority ===
-                "medium"
-              ? "Important"
-              : "Secondaire"}
+            {getPriorityLabel(
+              priority.priority
+            )}
           </span>
 
         </div>
+
 
         <p>
           {priority.description}
@@ -716,16 +1302,15 @@ function StrategyPriority({
 
       </div>
 
+
       <span
         className={`strategy-priority-status ${priority.status}`}
       >
-        {priority.status === "done"
-          ? "Terminé"
-          : priority.status ===
-            "in_progress"
-          ? "En cours"
-          : "À faire"}
+        {getStatusLabel(
+          priority.status
+        )}
       </span>
+
 
       <button
         type="button"
@@ -740,6 +1325,7 @@ function StrategyPriority({
   );
 }
 
+
 /* =========================================
    TEXT MODAL
 ========================================= */
@@ -747,11 +1333,12 @@ function StrategyPriority({
 function StrategyTextModal({
   title,
   value,
+  saving,
   onClose,
   onSave,
 }) {
   const [text, setText] =
-    useState(value);
+    useState(value ?? "");
 
   return (
     <Modal
@@ -760,10 +1347,12 @@ function StrategyTextModal({
       onClose={onClose}
       footer={
         <>
+
           <button
             type="button"
             className="business-modal-cancel"
             onClick={onClose}
+            disabled={saving}
           >
             Annuler
           </button>
@@ -774,9 +1363,13 @@ function StrategyTextModal({
             onClick={() =>
               onSave(text)
             }
+            disabled={saving}
           >
-            Enregistrer
+            {saving
+              ? "Enregistrement..."
+              : "Enregistrer"}
           </button>
+
         </>
       }
     >
@@ -794,6 +1387,7 @@ function StrategyTextModal({
                 event.target.value
               )
             }
+            disabled={saving}
           />
 
         </label>
@@ -804,17 +1398,32 @@ function StrategyTextModal({
   );
 }
 
+
 /* =========================================
    ICP MODAL
 ========================================= */
 
 function ICPModal({
   initialValue,
+  saving,
   onClose,
   onSave,
 }) {
   const [form, setForm] =
-    useState(initialValue);
+    useState({
+      sector:
+        initialValue?.sector ?? "",
+
+      size:
+        initialValue?.size ?? "",
+
+      revenue:
+        initialValue?.revenue ?? "",
+
+      geography:
+        initialValue?.geography ?? "",
+    });
+
 
   const update = (
     field,
@@ -826,6 +1435,7 @@ function ICPModal({
     }));
   };
 
+
   return (
     <Modal
       title="Client idéal"
@@ -833,10 +1443,12 @@ function ICPModal({
       onClose={onClose}
       footer={
         <>
+
           <button
             type="button"
             className="business-modal-cancel"
             onClick={onClose}
+            disabled={saving}
           >
             Annuler
           </button>
@@ -847,9 +1459,13 @@ function ICPModal({
             onClick={() =>
               onSave(form)
             }
+            disabled={saving}
           >
-            Enregistrer
+            {saving
+              ? "Enregistrement..."
+              : "Enregistrer"}
           </button>
+
         </>
       }
     >
@@ -867,8 +1483,11 @@ function ICPModal({
                 event.target.value
               )
             }
+            disabled={saving}
           />
+
         </label>
+
 
         <label>
           Taille
@@ -881,8 +1500,11 @@ function ICPModal({
                 event.target.value
               )
             }
+            disabled={saving}
           />
+
         </label>
+
 
         <label>
           Chiffre d'affaires
@@ -895,8 +1517,11 @@ function ICPModal({
                 event.target.value
               )
             }
+            disabled={saving}
           />
+
         </label>
+
 
         <label>
           Zone géographique
@@ -909,7 +1534,9 @@ function ICPModal({
                 event.target.value
               )
             }
+            disabled={saving}
           />
+
         </label>
 
       </div>
@@ -918,12 +1545,420 @@ function ICPModal({
   );
 }
 
+
+/* =========================================
+   DIFFERENTIATORS MODAL
+========================================= */
+
+function DifferentiatorsModal({
+  initialValue,
+  saving,
+  aiLoading,
+  aiSuggestions,
+  onClose,
+  onSave,
+}) {
+  const [items, setItems] =
+    useState(
+      Array.isArray(initialValue)
+        ? initialValue
+        : []
+    );
+
+
+  function updateItem(
+    index,
+    value
+  ) {
+    setItems((current) =>
+      current.map(
+        (item, itemIndex) =>
+          itemIndex === index
+            ? value
+            : item
+      )
+    );
+  }
+
+
+  function addItem() {
+    setItems((current) => [
+      ...current,
+      "",
+    ]);
+  }
+
+
+  function removeItem(index) {
+    setItems((current) =>
+      current.filter(
+        (_, itemIndex) =>
+          itemIndex !== index
+      )
+    );
+  }
+
+
+  function handleSave() {
+    const cleanedItems =
+      items
+        .map((item) =>
+          item.trim()
+        )
+        .filter(Boolean);
+
+    onSave(cleanedItems);
+  }
+
+  /* =========================================
+     AI SUGGESTIONS
+  ========================================= */
+
+  const handleAiSuggestion = async () => {
+    try {
+      setAiLoading(true);
+      setAiSuggestions([]);
+
+      /*
+       * Ici nous brancherons ensuite
+       * ton service IA / Edge Function Supabase.
+       *
+       * Exemple :
+       *
+       * const suggestions =
+       *   await generateDifferentiationSuggestions();
+       *
+       * setAiSuggestions(suggestions);
+       */
+
+      // TEMPORAIRE : simulation
+      await new Promise((resolve) =>
+        setTimeout(resolve, 1200)
+      );
+
+      setAiSuggestions([
+        "Une approche stratégique personnalisée qui combine conseil, marketing et technologie pour transformer les ambitions de croissance en résultats mesurables.",
+
+        "Un accompagnement de bout en bout qui associe réflexion stratégique et mise en œuvre opérationnelle, là où les alternatives se limitent souvent au conseil.",
+
+        "Une approche orientée résultats qui permet aux PME B2B de structurer leur acquisition et leur système commercial avec un accompagnement personnalisé dans la durée.",
+      ]);
+
+    } catch (error) {
+      console.error(
+        "Erreur génération IA :",
+        error
+      );
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+
+  /* =========================================
+     USE AI SUGGESTION
+  ========================================= */
+
+  const useAiSuggestion = (
+    suggestion
+  ) => {
+
+    /*
+     * On cherche d'abord un champ vide.
+     * Sinon on ajoute automatiquement
+     * une nouvelle différenciation.
+     */
+
+    const emptyIndex =
+      items.findIndex(
+        (item) =>
+          !item ||
+          !item.trim()
+      );
+
+    if (emptyIndex !== -1) {
+
+      updateItem(
+        emptyIndex,
+        suggestion
+      );
+
+    } else {
+
+      setItems((current) => [
+        ...current,
+        suggestion,
+      ]);
+
+    }
+
+    setAiSuggestions([]);
+  };
+
+
+
+
+  return (
+     <Modal
+      title="Différenciation"
+      subtitle="Définissez les éléments qui rendent votre entreprise différente."
+      onClose={onClose}
+      footer={
+        <>
+
+          <button
+            type="button"
+            className="business-modal-cancel"
+            onClick={onClose}
+            disabled={saving}
+          >
+            Annuler
+          </button>
+
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleSave}
+            disabled={saving}
+          >
+            {saving
+              ? "Enregistrement..."
+              : "Enregistrer"}
+          </button>
+
+        </>
+      }
+    >
+
+      <div className="business-form">
+
+        {/* =====================================
+            AI ACTION
+        ===================================== */}
+
+        <div className="ai-assistant-card">
+
+          <div className="ai-assistant-content">
+
+            <div className="ai-assistant-icon">
+              <Sparkles
+                size={17}
+                strokeWidth={2}
+              />
+            </div>
+
+            <div>
+
+              <strong>
+                Besoin d'inspiration ?
+              </strong>
+
+              <p>
+                Laissez Kalyma AI identifier
+                des pistes de différenciation
+                à partir de votre profil.
+              </p>
+
+            </div>
+
+          </div>
+
+          <button
+            type="button"
+            className="ai-suggestion-btn"
+            onClick={
+              handleAiSuggestion
+            }
+            disabled={
+              aiLoading ||
+              saving
+            }
+          >
+
+            <Sparkles
+              size={15}
+              strokeWidth={2}
+            />
+
+            {aiLoading
+              ? "Analyse..."
+              : "Générer avec l’IA"}
+
+          </button>
+
+        </div>
+
+
+        {/* =====================================
+            AI SUGGESTIONS
+        ===================================== */}
+
+        {aiSuggestions.length > 0 && (
+
+          <div className="ai-suggestions-list">
+
+            <div className="ai-suggestions-header">
+
+              <div>
+
+                <Sparkles
+                  size={15}
+                  strokeWidth={2}
+                />
+
+                <strong>
+                  Suggestions IA
+                </strong>
+
+              </div>
+
+              <button
+                type="button"
+                className="ai-suggestion-close"
+                onClick={() =>
+                  setAiSuggestions([])
+                }
+              >
+                ×
+              </button>
+
+            </div>
+
+
+            {aiSuggestions.map(
+              (
+                suggestion,
+                index
+              ) => (
+
+                <div
+                  className="ai-suggestion-item"
+                  key={index}
+                >
+
+                  <div className="ai-suggestion-number">
+                    {String(
+                      index + 1
+                    ).padStart(
+                      2,
+                      "0"
+                    )}
+                  </div>
+
+                  <div className="ai-suggestion-text">
+                    {suggestion}
+                  </div>
+
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() =>
+                      useAiSuggestion(
+                        suggestion
+                      )
+                    }
+                  >
+                    Utiliser
+                  </button>
+
+                </div>
+
+              )
+            )}
+
+          </div>
+
+        )}
+
+
+        {/* =====================================
+            DIFFERENTIATION FIELDS
+        ===================================== */}
+
+        <div className="strategy-differentiation-fields">
+
+          {items.map(
+            (item, index) => (
+
+              <div
+                className="strategy-differentiator-form-row"
+                key={index}
+              >
+
+                <div className="strategy-differentiator-form-index">
+                  {String(
+                    index + 1
+                  ).padStart(
+                    2,
+                    "0"
+                  )}
+                </div>
+
+                <input
+                  value={item}
+                  onChange={(event) =>
+                    updateItem(
+                      index,
+                      event.target.value
+                    )
+                  }
+                  placeholder={`Élément ${
+                    index + 1
+                  }`}
+                  disabled={saving}
+                />
+
+                <button
+                  type="button"
+                  className="strategy-delete-button"
+                  onClick={() =>
+                    removeItem(index)
+                  }
+                  disabled={
+                    saving
+                  }
+                  title="Supprimer"
+                >
+                  ×
+                </button>
+
+              </div>
+
+            )
+          )}
+
+        </div>
+
+
+        {/* =====================================
+            ADD
+        ===================================== */}
+
+        <button
+          type="button"
+          className="business-edit-button"
+          onClick={addItem}
+          disabled={saving}
+        >
+          + Ajouter un élément
+        </button>
+
+      </div>
+
+    </Modal>
+  );
+}
+
+
 /* =========================================
    HELPERS
 ========================================= */
 
-function getSectionTitle(section) {
+function getSectionTitle(
+  section
+) {
   switch (section) {
+
     case "vision":
       return "Vision";
 
@@ -937,5 +1972,128 @@ function getSectionTitle(section) {
       return "Modifier";
   }
 }
+
+
+function getPriorityLabel(
+  priority
+) {
+  switch (priority) {
+
+    case "high":
+      return "Prioritaire";
+
+    case "medium":
+      return "Important";
+
+    case "low":
+      return "Secondaire";
+
+    default:
+      return "Important";
+  }
+}
+
+
+function getStatusLabel(
+  status
+) {
+  switch (status) {
+
+    case "done":
+      return "Terminé";
+
+    case "in_progress":
+      return "En cours";
+
+    case "todo":
+      return "À faire";
+
+    default:
+      return "À faire";
+  }
+}
+
+
+/* =========================================
+   AI INSIGHT
+========================================= */
+
+function getStrategicInsight(
+  strategy
+) {
+  if (!strategy.vision?.trim()) {
+    return {
+      title:
+        "Votre prochaine étape devrait être de clarifier votre vision.",
+
+      description:
+        "Une vision claire permet de donner une direction cohérente aux décisions stratégiques et aux priorités de votre entreprise.",
+    };
+  }
+
+
+  if (!strategy.mission?.trim()) {
+    return {
+      title:
+        "Votre mission mérite encore d'être clarifiée.",
+
+      description:
+        "Votre mission doit expliquer clairement pourquoi votre entreprise existe et quelle transformation elle cherche à créer pour ses clients.",
+    };
+  }
+
+
+  if (!strategy.positioning?.trim()) {
+    return {
+      title:
+        "Votre prochaine priorité devrait être le positionnement.",
+
+      description:
+        "Votre entreprise a besoin d'une position clairement identifiable pour être comprise et différenciée par son marché.",
+    };
+  }
+
+
+  const icpComplete =
+    strategy.icp?.sector?.trim() &&
+    strategy.icp?.size?.trim() &&
+    strategy.icp?.revenue?.trim() &&
+    strategy.icp?.geography?.trim();
+
+
+  if (!icpComplete) {
+    return {
+      title:
+        "Votre prochaine priorité devrait être de préciser votre client idéal.",
+
+      description:
+        "Votre positionnement sera plus puissant lorsque votre ICP sera suffisamment précis pour guider vos décisions commerciales et marketing.",
+    };
+  }
+
+
+  if (
+    !strategy.differentiators ||
+    strategy.differentiators.length === 0
+  ) {
+    return {
+      title:
+        "Votre prochaine priorité devrait être la différenciation.",
+
+      description:
+        "Votre vision, votre mission et votre cible sont relativement claires. Le prochain enjeu consiste à identifier pourquoi votre marché devrait vous choisir plutôt qu'une alternative.",
+    };
+  }
+
+
+  return {
+    title:
+      "Votre fondation stratégique est bien structurée.",
+
+    description:
+      "Les principaux éléments de votre stratégie sont renseignés. La prochaine étape consiste maintenant à transformer cette stratégie en priorités concrètes et mesurables.",
+  };
+}
+
 
 export default BusinessStrategy;

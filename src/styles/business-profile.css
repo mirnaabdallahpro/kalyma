@@ -714,7 +714,7 @@
 }
 
 .ai-suggestion-btn:disabled {
-    opacity: 0.6;
+    opacity: 1;
     cursor: not-allowed;
 }
 
@@ -805,4 +805,70 @@
         flex-direction: column-reverse;
         align-items: stretch;
     }
+}
+
+/* ================================
+   BUSINESS PROFILE — RESPONSIVE
+================================ */
+
+.business-profile-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 24px;
+    align-items: start;
+}
+
+.business-profile-main {
+    min-width: 0;
+}
+
+.business-profile-sidebar {
+    min-width: 0;
+}
+
+
+/* TABLETTE */
+
+@media (max-width: 1024px) {
+
+    .business-profile-layout {
+        grid-template-columns: minmax(0, 1fr) 280px;
+        gap: 18px;
+    }
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+    .business-profile-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .business-profile-sidebar {
+        width: 100%;
+    }
+
+    .business-profile-main {
+        width: 100%;
+    }
+
+}
+
+
+/* PETITS MOBILES */
+
+@media (max-width: 480px) {
+
+    .business-profile-page {
+        padding: 16px;
+    }
+
+    .business-profile-layout {
+        gap: 16px;
+    }
+
 }

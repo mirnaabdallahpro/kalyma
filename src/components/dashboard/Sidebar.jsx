@@ -1,6 +1,21 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { signOut } from "../../../services/authService";
 
 function Sidebar() {
+
+   const navigate = useNavigate();
+
+  async function handleSignOut() {
+    try {
+      await signOut();
+
+      navigate("/login", {
+        replace: true,
+      });
+    } catch (error) {
+      console.error("Erreur lors de la déconnexion :", error);
+    }
+  }
   return (
     <aside className="sidebar">
 
@@ -104,6 +119,20 @@ function Sidebar() {
         </div>
 
       </div>
+
+      <button
+        type="button"
+        className="sidebar-logout"
+        onClick={handleSignOut}
+      >
+        <span className="sidebar-logout-icon">
+          ↪
+        </span>
+
+        <span>
+          Se déconnecter
+        </span>
+      </button>
 
     </aside>
   );

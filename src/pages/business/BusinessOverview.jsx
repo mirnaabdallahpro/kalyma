@@ -1,4 +1,8 @@
-import { useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import BusinessAIDiagnostic from "../../components/business/BusinessAIDiagnostic";
 import GoalsPanel from "../../components/business/GoalsPanel";
@@ -11,237 +15,466 @@ import EditProfileModal from "../../components/business/EditProfileModal";
 import GoalFormModal from "../../components/business/GoalFormModal";
 import OfferFormModal from "../../components/business/OfferFormModal";
 
+import {
+  getBusinessProfile,
+  updateBusinessProfile,
+} from "../../../services/businessProfileService";
+
+import {
+  createBusinessOffer,
+  deleteBusinessOffer,
+  getBusinessOffers,
+  updateBusinessOffer,
+} from "../../../services/businessOffersService";
+
+import {
+  createBusinessGoal,
+  deleteBusinessGoal,
+  getBusinessGoals,
+  updateBusinessGoal,
+} from "../../../services/businessGoalService";
+
+
 function BusinessOverview() {
   /* =========================================
-     BUSINESS PROFILE
+     DATA STATE
   ========================================= */
 
-  const [profile, setProfile] = useState({
-    companyName: "Kalyma",
-    sector: "Conseil & Growth",
+  const [profile, setProfile] =
+    useState(null);
 
-    positioning: "Clair",
+  const [offers, setOffers] =
+    useState([]);
 
-    icp: "PME B2B",
+  const [goals, setGoals] =
+    useState([]);
 
-    description:
-      "Entreprise spécialisée dans l'accompagnement stratégique et la croissance des entreprises.",
+  const [loading, setLoading] =
+    useState(true);
 
-    valueProposition:
-      "Nous aidons les entreprises à transformer leur stratégie commerciale en système de croissance mesurable, grâce au conseil, au marketing et à la technologie.",
+  const [saving, setSaving] =
+    useState(false);
 
-    valuePropositionScore: 82,
+  const [error, setError] =
+    useState("");
 
-    completion: 82,
-  });
-
-  /* =========================================
-     OFFERS
-  ========================================= */
-
-  const [offers, setOffers] = useState([
-    {
-      id: 1,
-      name: "Growth Sprint",
-      price: 15000,
-      priceType: "one_time",
-      status: "active",
-
-      description:
-        "Accompagnement intensif de 6 semaines pour structurer l'acquisition.",
-    },
-
-    {
-      id: 2,
-      name: "Growth Partner",
-      price: 8000,
-      priceType: "monthly",
-      status: "active",
-
-      description:
-        "Abonnement mensuel avec suivi continu, CRM et reporting.",
-    },
-
-    {
-      id: 3,
-      name: "Diagnostic Stratégique",
-      price: 3000,
-      priceType: "one_time",
-      status: "draft",
-
-      description:
-        "Audit complet du positionnement et du système commercial.",
-    },
-  ]);
-
-  /* =========================================
-     GOALS
-  ========================================= */
-
-  const [goals, setGoals] = useState([
-    {
-      id: 1,
-      title: "Atteindre 50 000 MAD / mois",
-      target: 50000,
-      current: 31000,
-      deadline: "décembre",
-      color: "secondary",
-    },
-
-    {
-      id: 2,
-      title: "100 prospects qualifiés",
-      target: 100,
-      current: 64,
-      deadline: "",
-      color: "accent",
-    },
-
-    {
-      id: 3,
-      title: "Structurer l'offre Growth",
-      target: null,
-      current: null,
-      statusLabel: "En cours",
-      color: "primary",
-    },
-  ]);
 
   /* =========================================
      UI STATE
   ========================================= */
 
-  const [editingProfile, setEditingProfile] =
-    useState(false);
+  const [
+    editingProfile,
+    setEditingProfile,
+  ] = useState(false);
 
-  const [offerModal, setOfferModal] =
-    useState(null);
+  const [
+    offerModal,
+    setOfferModal,
+  ] = useState(null);
 
-  const [goalModal, setGoalModal] =
-    useState(null);
+  const [
+    goalModal,
+    setGoalModal,
+  ] = useState(null);
 
-  const [deleteTarget, setDeleteTarget] =
-    useState(null);
+  const [
+    deleteTarget,
+    setDeleteTarget,
+  ] = useState(null);
 
-  const [showDiagnostic, setShowDiagnostic] =
-    useState(false);
+  const [
+    showDiagnostic,
+    setShowDiagnostic,
+  ] = useState(false);
+
+
+  /* =========================================
+     LOAD BUSINESS DATA
+  ========================================= */
+
+  useEffect(() => {
+    loadOverview();
+  }, []);
+
+
+  async function loadOverview() {
+    try {
+      setLoading(true);
+      setError("");
+
+      const [
+        profileData,
+        offersData,
+        goalsData,
+      ] = await Promise.all([
+        getBusinessProfile(),
+        getBusinessOffers(),
+        getBusinessGoals(),
+      ]);
+
+      setProfile(profileData);
+      setOffers(offersData ?? []);
+      setGoals(goalsData ?? []);
+
+    } catch (err) {
+      console.error(
+        "Erreur chargement BusinessOverview :",
+        err
+      );
+
+      setError(
+        "Impossible de charger les données de votre entreprise."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
+  /* =========================================
+     PROFILE VIEW MODEL
+  ========================================= */
+
+  const profileView = useMemo(() => {
+    if (!profile) {
+      return null;
+    }
+
+    return {
+      ...profile,
+
+      companyName:
+        profile.company_name ?? "",
+
+      sector:
+        profile.sector ?? "",
+
+      positioning:
+        profile.positioning ?? "",
+
+      description:
+        profile.description ?? "",
+
+      valueProposition:
+        profile.value_proposition ?? "",
+
+      valuePropositionScore:
+        profile.value_score ?? 0,
+
+      icp:
+        profile.target_market ?? "",
+
+      completion:
+        calculateProfileCompletion(
+          profile
+        ),
+
+      offersCount:
+        offers.length,
+    };
+  }, [
+    profile,
+    offers.length,
+  ]);
+
 
   /* =========================================
      PROFILE
   ========================================= */
 
-  const handleSaveProfile = (form) => {
-    setProfile((currentProfile) => ({
-      ...currentProfile,
-      ...form,
-    }));
+  async function handleSaveProfile(form) {
+    try {
+      setSaving(true);
+      setError("");
 
-    setEditingProfile(false);
-  };
+      const updates =
+        normalizeProfileForm(form);
+
+      const updatedProfile =
+        await updateBusinessProfile(
+          updates
+        );
+
+      setProfile(updatedProfile);
+
+      setEditingProfile(false);
+
+    } catch (err) {
+      console.error(
+        "Erreur sauvegarde profil :",
+        err
+      );
+
+      setError(
+        "Impossible d'enregistrer le profil."
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
 
   /* =========================================
      OFFERS
   ========================================= */
 
-  const handleSaveOffer = (offer) => {
-    setOffers((currentOffers) => {
+  async function handleSaveOffer(offer) {
+    try {
+      setSaving(true);
+      setError("");
+
       if (offer.id) {
-        return currentOffers.map((currentOffer) =>
-          currentOffer.id === offer.id
-            ? {
-                ...currentOffer,
-                ...offer,
-              }
-            : currentOffer
+        const updatedOffer =
+          await updateBusinessOffer(
+            offer.id,
+            offer
+          );
+
+        setOffers((current) =>
+          current.map((item) =>
+            item.id === offer.id
+              ? updatedOffer
+              : item
+          )
         );
+      } else {
+        const newOffer =
+          await createBusinessOffer(
+            offer
+          );
+
+        setOffers((current) => [
+          ...current,
+          newOffer,
+        ]);
       }
 
-      const nextId =
-        currentOffers.length > 0
-          ? Math.max(
-              ...currentOffers.map(
-                (item) => item.id
-              )
-            ) + 1
-          : 1;
+      setOfferModal(null);
 
-      return [
-        ...currentOffers,
-        {
-          ...offer,
-          id: nextId,
-        },
-      ];
-    });
+    } catch (err) {
+      console.error(
+        "Erreur sauvegarde offre :",
+        err
+      );
 
-    setOfferModal(null);
-  };
+      setError(
+        "Impossible d'enregistrer l'offre."
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
 
   /* =========================================
      GOALS
   ========================================= */
 
-  const handleSaveGoal = (goal) => {
-    setGoals((currentGoals) => {
+  async function handleSaveGoal(goal) {
+    try {
+      setSaving(true);
+      setError("");
+
       if (goal.id) {
-        return currentGoals.map((currentGoal) =>
-          currentGoal.id === goal.id
-            ? {
-                ...currentGoal,
-                ...goal,
-              }
-            : currentGoal
+        const updatedGoal =
+          await updateBusinessGoal(
+            goal.id,
+            goal
+          );
+
+        setGoals((current) =>
+          current.map((item) =>
+            item.id === goal.id
+              ? updatedGoal
+              : item
+          )
         );
+      } else {
+        const newGoal =
+          await createBusinessGoal(
+            goal
+          );
+
+        setGoals((current) => [
+          ...current,
+          newGoal,
+        ]);
       }
 
-      const nextId =
-        currentGoals.length > 0
-          ? Math.max(
-              ...currentGoals.map(
-                (item) => item.id
-              )
-            ) + 1
-          : 1;
+      setGoalModal(null);
 
-      return [
-        ...currentGoals,
-        {
-          ...goal,
-          id: nextId,
-        },
-      ];
-    });
+    } catch (err) {
+      console.error(
+        "Erreur sauvegarde objectif :",
+        err
+      );
 
-    setGoalModal(null);
-  };
+      setError(
+        "Impossible d'enregistrer l'objectif."
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
 
   /* =========================================
      DELETE
   ========================================= */
 
-  const confirmDelete = () => {
-    if (!deleteTarget) return;
-
-    if (deleteTarget.type === "offer") {
-      setOffers((currentOffers) =>
-        currentOffers.filter(
-          (offer) =>
-            offer.id !== deleteTarget.item.id
-        )
-      );
+  async function confirmDelete() {
+    if (!deleteTarget) {
+      return;
     }
 
-    if (deleteTarget.type === "goal") {
-      setGoals((currentGoals) =>
-        currentGoals.filter(
-          (goal) =>
-            goal.id !== deleteTarget.item.id
-        )
+    try {
+      setSaving(true);
+      setError("");
+
+      const {
+        type,
+        item,
+      } = deleteTarget;
+
+      if (type === "offer") {
+        await deleteBusinessOffer(
+          item.id
+        );
+
+        setOffers((current) =>
+          current.filter(
+            (offer) =>
+              offer.id !== item.id
+          )
+        );
+      }
+
+      if (type === "goal") {
+        await deleteBusinessGoal(
+          item.id
+        );
+
+        setGoals((current) =>
+          current.filter(
+            (goal) =>
+              goal.id !== item.id
+          )
+        );
+      }
+
+      setDeleteTarget(null);
+
+    } catch (err) {
+      console.error(
+        "Erreur suppression :",
+        err
       );
+
+      setError(
+        "Impossible de supprimer cet élément."
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+
+  /* =========================================
+     AI INSIGHT
+  ========================================= */
+
+  const aiInsight = useMemo(() => {
+    if (!profile) {
+      return "";
     }
 
-    setDeleteTarget(null);
-  };
+    return generateBusinessInsight(
+      profile,
+      offers,
+      goals
+    );
+  }, [
+    profile,
+    offers,
+    goals,
+  ]);
+
+
+  /* =========================================
+     LOADING
+  ========================================= */
+
+  if (loading) {
+    return (
+      <div className="business-overview">
+
+        <div className="business-page-header">
+
+          <div>
+            <span className="business-page-eyebrow">
+              BUSINESS
+            </span>
+
+            <h1>
+              Vue d'ensemble
+            </h1>
+
+            <p>
+              Chargement de votre cockpit
+              stratégique...
+            </p>
+          </div>
+
+        </div>
+
+        <div className="business-loading">
+          Chargement...
+        </div>
+
+      </div>
+    );
+  }
+
+
+  /* =========================================
+     NO PROFILE
+  ========================================= */
+
+  if (!profile) {
+    return (
+      <div className="business-overview">
+
+        <div className="business-page-header">
+
+          <div>
+
+            <span className="business-page-eyebrow">
+              BUSINESS
+            </span>
+
+            <h1>
+              Vue d'ensemble
+            </h1>
+
+            <p>
+              Votre entreprise n'est pas
+              encore configurée.
+            </p>
+
+          </div>
+
+        </div>
+
+        <div className="business-alert">
+          Commencez par créer votre
+          profil business.
+        </div>
+
+      </div>
+    );
+  }
+
 
   /* =========================================
      RENDER
@@ -250,43 +483,58 @@ function BusinessOverview() {
   return (
     <div className="business-overview">
 
-      {/* HEADER */}
+      {/* =====================================
+          ERROR
+      ===================================== */}
+
+      {error && (
+        <div className="business-alert business-alert-error">
+          {error}
+        </div>
+      )}
+
+
+      {/* =====================================
+          HEADER
+      ===================================== */}
 
       <div className="business-page-header">
 
         <div>
+
           <span className="business-page-eyebrow">
             BUSINESS
           </span>
 
-          <h1>Vue d'ensemble</h1>
+          <h1>
+            Vue d'ensemble
+          </h1>
 
           <p>
             Le cockpit stratégique de votre
             entreprise.
           </p>
+
         </div>
 
         <div className="business-page-date">
-          Dernière mise à jour : aujourd'hui
+          Dernière mise à jour :{" "}
+          {formatLastUpdate(
+            profile.updated_at
+          )}
         </div>
 
       </div>
 
-      {/* PROFILE + GOALS */}
+
+      {/* =====================================
+          PROFILE + GOALS
+      ===================================== */}
 
       <div className="grid-main">
 
         <ProfileOverviewPanel
-          profile={{
-            ...profile,
-
-            completion:
-              profile.completion,
-
-            offersCount:
-              offers.length,
-          }}
+          profile={profileView}
           onEdit={() =>
             setEditingProfile(true)
           }
@@ -311,9 +559,7 @@ function BusinessOverview() {
           />
 
           <BusinessAIDiagnostic
-            insight={
-              "Votre proposition de valeur est claire. Le prochain levier à travailler est la preuve sociale et la différenciation de vos offres."
-            }
+            insight={aiInsight}
             onSeeAnalysis={() =>
               setShowDiagnostic(true)
             }
@@ -323,9 +569,16 @@ function BusinessOverview() {
 
       </div>
 
-      {/* OFFERS */}
 
-      <div style={{ marginTop: 18 }}>
+      {/* =====================================
+          OFFERS
+      ===================================== */}
+
+      <div
+        style={{
+          marginTop: 18,
+        }}
+      >
 
         <OffersPanel
           offers={offers}
@@ -345,11 +598,14 @@ function BusinessOverview() {
 
       </div>
 
-      {/* PROFILE MODAL */}
+
+      {/* =====================================
+          PROFILE MODAL
+      ===================================== */}
 
       {editingProfile && (
         <EditProfileModal
-          profile={profile}
+          profile={profileView}
           onClose={() =>
             setEditingProfile(false)
           }
@@ -357,7 +613,10 @@ function BusinessOverview() {
         />
       )}
 
-      {/* OFFER MODAL */}
+
+      {/* =====================================
+          OFFER MODAL
+      ===================================== */}
 
       {offerModal && (
         <OfferFormModal
@@ -373,7 +632,10 @@ function BusinessOverview() {
         />
       )}
 
-      {/* GOAL MODAL */}
+
+      {/* =====================================
+          GOAL MODAL
+      ===================================== */}
 
       {goalModal && (
         <GoalFormModal
@@ -389,7 +651,10 @@ function BusinessOverview() {
         />
       )}
 
-      {/* DELETE MODAL */}
+
+      {/* =====================================
+          DELETE MODAL
+      ===================================== */}
 
       {deleteTarget && (
         <ConfirmModal
@@ -404,13 +669,38 @@ function BusinessOverview() {
         />
       )}
 
-      {/* AI DIAGNOSTIC */}
+
+      {/* =====================================
+          AI DIAGNOSTIC
+      ===================================== */}
 
       {showDiagnostic && (
         <AIDiagnosticModal
           profile={{
-            ...profile,
-            offersCount: offers.length,
+            ...profileView,
+
+            offersCount:
+              offers.length,
+
+            goalsCount:
+              goals.length,
+
+            activeOffersCount:
+              offers.filter(
+                (offer) =>
+                  offer.status ===
+                  "active"
+              ).length,
+
+            completedGoalsCount:
+              goals.filter(
+                (goal) =>
+                  goal.status ===
+                  "done"
+              ).length,
+
+            offers,
+            goals,
           }}
           onClose={() =>
             setShowDiagnostic(false)
@@ -421,5 +711,259 @@ function BusinessOverview() {
     </div>
   );
 }
+
+
+/* =========================================
+   PROFILE FORM NORMALIZATION
+========================================= */
+
+function normalizeProfileForm(form) {
+  const updates = {};
+
+  if (
+    form.companyName !== undefined
+  ) {
+    updates.companyName =
+      form.companyName;
+  }
+
+  if (
+    form.sector !== undefined
+  ) {
+    updates.sector =
+      form.sector;
+  }
+
+  if (
+    form.location !== undefined
+  ) {
+    updates.location =
+      form.location;
+  }
+
+  if (
+    form.stage !== undefined
+  ) {
+    updates.stage =
+      form.stage;
+  }
+
+  if (
+    form.description !== undefined
+  ) {
+    updates.description =
+      form.description;
+  }
+
+  if (
+    form.vision !== undefined
+  ) {
+    updates.vision =
+      form.vision;
+  }
+
+  if (
+    form.mission !== undefined
+  ) {
+    updates.mission =
+      form.mission;
+  }
+
+  if (
+    form.ambition !== undefined
+  ) {
+    updates.ambition =
+      form.ambition;
+  }
+
+  if (
+    form.positioning !== undefined
+  ) {
+    updates.positioning =
+      form.positioning;
+  }
+
+  if (
+    form.category !== undefined
+  ) {
+    updates.category =
+      form.category;
+  }
+
+  if (
+    form.problemSolved !== undefined
+  ) {
+    updates.problemSolved =
+      form.problemSolved;
+  }
+
+  if (
+    form.differentiation !== undefined
+  ) {
+    updates.differentiation =
+      form.differentiation;
+  }
+
+  if (
+    form.valueProposition !== undefined
+  ) {
+    updates.valueProposition =
+      form.valueProposition;
+  }
+
+  if (
+    form.businessModel !== undefined
+  ) {
+    updates.businessModel =
+      form.businessModel;
+  }
+
+  if (
+    form.revenueSources !== undefined
+  ) {
+    updates.revenueSources =
+      form.revenueSources;
+  }
+
+  if (
+    form.targetMarket !== undefined
+  ) {
+    updates.targetMarket =
+      form.targetMarket;
+  }
+
+  return updates;
+}
+
+
+/* =========================================
+   PROFILE COMPLETION
+========================================= */
+
+function calculateProfileCompletion(
+  profile
+) {
+  const fields = [
+    profile.company_name,
+    profile.sector,
+    profile.location,
+    profile.stage,
+    profile.description,
+    profile.vision,
+    profile.mission,
+    profile.positioning,
+    profile.value_proposition,
+    profile.business_model,
+    profile.target_market,
+  ];
+
+  const completed =
+    fields.filter(
+      (value) =>
+        value !== null &&
+        value !== undefined &&
+        String(value).trim() !== ""
+    ).length;
+
+  return Math.round(
+    (completed / fields.length) *
+      100
+  );
+}
+
+
+/* =========================================
+   AI INSIGHT
+========================================= */
+
+function generateBusinessInsight(
+  profile,
+  offers,
+  goals
+) {
+  if (
+    !profile.value_proposition ||
+    !profile.value_proposition.trim()
+  ) {
+    return (
+      "Votre proposition de valeur n'est pas encore définie. C'est un élément prioritaire à clarifier pour rendre votre offre plus lisible et différenciante."
+    );
+  }
+
+  if (offers.length === 0) {
+    return (
+      "Votre profil business est renseigné, mais aucune offre n'est encore structurée. La prochaine étape consiste à transformer votre proposition de valeur en offres concrètes."
+    );
+  }
+
+  const activeOffers =
+    offers.filter(
+      (offer) =>
+        offer.status === "active"
+    );
+
+  if (activeOffers.length === 0) {
+    return (
+      "Vous avez des offres enregistrées, mais aucune n'est actuellement active. Clarifiez votre offre principale avant de concentrer vos efforts d'acquisition."
+    );
+  }
+
+  if (goals.length === 0) {
+    return (
+      "Votre offre est structurée, mais aucun objectif stratégique n'est encore défini. Fixez quelques objectifs mesurables pour donner une direction claire à votre croissance."
+    );
+  }
+
+  const completedGoals =
+    goals.filter(
+      (goal) =>
+        goal.status === "done"
+    );
+
+  if (
+    completedGoals.length ===
+    goals.length
+  ) {
+    return (
+      "Vos objectifs actuels sont terminés. C'est le bon moment pour définir la prochaine étape de croissance et actualiser votre roadmap."
+    );
+  }
+
+  return (
+    "Votre proposition de valeur est claire et votre offre est structurée. Le prochain levier consiste à transformer vos objectifs en actions mesurables et à renforcer progressivement votre différenciation."
+  );
+}
+
+
+/* =========================================
+   DATE
+========================================= */
+
+function formatLastUpdate(date) {
+  if (!date) {
+    return "aujourd'hui";
+  }
+
+  const parsedDate =
+    new Date(date);
+
+  if (
+    Number.isNaN(
+      parsedDate.getTime()
+    )
+  ) {
+    return "aujourd'hui";
+  }
+
+  return parsedDate.toLocaleDateString(
+    "fr-FR",
+    {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }
+  );
+}
+
 
 export default BusinessOverview;

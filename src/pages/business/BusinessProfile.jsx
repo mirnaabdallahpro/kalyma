@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import BusinessCard from "../../components/business/BusinessCard";
 import BusinessPageHeader from "../../components/business/BusinessPageHeader";
@@ -11,70 +11,312 @@ import BusinessProfilePositioning from "../../components/business/profile/Busine
 import BusinessProfileStrategy from "../../components/business/profile/BusinessProfileStrategy";
 import BusinessProfileValue from "../../components/business/profile/BusinessProfileValue";
 
+import {
+  createBusinessProfile,
+  getBusinessProfile,
+  updateBusinessProfile
+} from "../../../services/businessProfileService";
 import EditBusinessProfileModal from "../../components/business/profile/EditBusinessProfileModal";
+
+import { mapBusinessProfile } from "../../utils/businessProfileMapper";
+
 
 import "../../styles/business-profile.css";
 
 function BusinessProfile() {
-  const [profile, setProfile] = useState({
-    companyName: "Kalyma",
-    sector: "Conseil & Growth",
-    location: "Casablanca, Maroc",
-    stage: "En développement",
+  
+   const [profile, setProfile] = useState(null);
 
-    description:
-      "Kalyma accompagne les entrepreneurs et entreprises dans la structuration et le développement de leur activité.",
+  const [loading, setLoading] = useState(true);
 
-    vision:
-      "Construire des entreprises plus claires, plus structurées et capables de transformer leur potentiel en croissance durable.",
+  const [saving, setSaving] = useState(false);
 
-    mission:
-      "Aider les entrepreneurs à clarifier leur stratégie, développer leur acquisition et construire les systèmes nécessaires à leur croissance.",
-
-    ambition:
-      "Devenir un acteur de référence de l'accompagnement business des entrepreneurs et PME en Afrique.",
-
-    positioning:
-      "Partenaire stratégique des entrepreneurs qui veulent transformer leur activité en véritable système de croissance.",
-
-    category:
-      "Conseil stratégique & Growth",
-
-    problemSolved:
-      "Manque de clarté stratégique, acquisition irrégulière et absence de système structuré pour piloter la croissance.",
-
-    differentiation:
-      "Une approche intégrée combinant stratégie, acquisition, technologie et accompagnement.",
-
-    valueProposition:
-      "Nous aidons les entrepreneurs et PME à structurer leur stratégie, leur acquisition et leurs outils afin de construire une croissance mesurable et durable.",
-
-    valueScore: 82,
-
-    businessModel: "Services & accompagnement",
-
-    revenueSources: [
-      "Conseil stratégique",
-      "Accompagnement",
-      "Formation",
-      "Technologie / SaaS",
-    ],
-
-    targetMarket:
-      "Entrepreneurs, indépendants et PME en phase de structuration ou de croissance.",
-  });
+  const [error, setError] = useState(null);
 
   const [editingSection, setEditingSection] =
     useState(null);
 
-  const handleSave = (updates) => {
-    setProfile((current) => ({
-      ...current,
-      ...updates,
-    }));
+  useEffect(() => {
+    loadProfile();
+  }, []);
 
-    setEditingSection(null);
+function calculateProfileCompletion(profile) {
+  if (!profile) {
+    return 0;
+  }
+
+  const fields = [
+    profile.companyName,
+    profile.sector,
+    profile.location,
+    profile.stage,
+    profile.description,
+    profile.vision,
+    profile.mission,
+    profile.ambition,
+    profile.positioning,
+    profile.category,
+    profile.problemSolved,
+    profile.differentiation,
+    profile.valueProposition,
+    profile.businessModel,
+    profile.targetMarket,
+  ];
+
+  const completed = fields.filter((value) => {
+    if (value === null || value === undefined) {
+      return false;
+    }
+
+    if (Array.isArray(value)) {
+      return value.length > 0;
+    }
+
+    if (typeof value === "string") {
+      return value.trim() !== "";
+    }
+
+    return true;
+  }).length;
+
+  if (fields.length === 0) {
+    return 0;
+  }
+
+  return Math.round(
+    (completed / fields.length) * 100
+  );
+}
+
+function getProfileCompletionStatus(score) {
+  if (score >= 80) {
+    return {
+      status: "success",
+      label: "Excellent niveau",
+    };
+  }
+
+  if (score >= 60) {
+    return {
+      status: "success",
+      label: "Bonne base",
+    };
+  }
+
+  if (score >= 40) {
+    return {
+      status: "warning",
+      label: "À développer",
+    };
+  }
+
+  if (score >= 20) {
+    return {
+      status: "warning",
+      label: "Encore incomplet",
+    };
+  }
+
+  return {
+    status: "danger",
+    label: "À construire",
   };
+}
+
+const completion =
+  calculateProfileCompletion(profile);
+
+
+ async function loadProfile() {
+  try {
+    setLoading(true);
+    setError(null);
+
+    console.log("1. Recherche du profil...");
+
+    let data = await getBusinessProfile();
+
+    console.log("2. Profil récupéré :", data);
+
+    if (!data) {
+      console.log("3. Aucun profil → création...");
+
+      data = await createBusinessProfile();
+
+      console.log("4. Profil créé :", data);
+    }
+
+    console.log("5. Mapping du profil...");
+
+    setProfile(mapBusinessProfile(data));
+
+  } catch (err) {
+    console.error("❌ ERREUR LOAD PROFILE :", err);
+    console.error("message:", err?.message);
+    console.error("code:", err?.code);
+    console.error("details:", err?.details);
+    console.error("hint:", err?.hint);
+
+    setError(
+      "Impossible de charger votre profil Business."
+    );
+  } finally {
+    setLoading(false);
+  }
+}
+
+
+
+  async function handleSave(updates) {
+    try {
+      setSaving(true);
+      setError(null);
+
+      const updated =
+        await updateBusinessProfile(updates);
+
+      setProfile(
+        mapBusinessProfile(updated)
+      );
+
+      setEditingSection(null);
+    } catch (err) {
+      console.error(err);
+
+      setError(
+        "Impossible d'enregistrer les modifications."
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="business-profile-loading">
+        Chargement du profil...
+      </div>
+    );
+  }
+
+   if (error) {
+    return (
+      <div className="business-profile-error">
+        {error}
+
+        <button
+          className="btn btn-primary"
+          onClick={loadProfile}
+        >
+          Réessayer
+        </button>
+      </div>
+    );
+  }
+
+
+if (!profile) {
+    return (
+      <EmptyBusinessProfile
+        onCreate={async () => {
+          try {
+            setSaving(true);
+
+            const data =
+              await createBusinessProfile({
+                companyName: "",
+                sector: "",
+                location: "",
+                stage: "",
+
+                description: "",
+
+                vision: "",
+                mission: "",
+                ambition: "",
+
+                positioning: "",
+                category: "",
+
+                problemSolved: "",
+                differentiation: "",
+
+                valueProposition: "",
+
+                valueScore: 0,
+
+                businessModel: "",
+
+                revenueSources: [],
+
+                targetMarket: "",
+              });
+
+              setProfile(
+              mapBusinessProfile(data)
+            );
+          } catch (err) {
+            console.error(err);
+
+            setError(
+              "Impossible de créer votre profil Business."
+            );
+          } finally {
+            setSaving(false);
+          }
+        }}
+        saving={saving}
+      />
+    );
+  }
+
+function getProfileCompletionItems(profile) {
+  return [
+    {
+      label: "Identité",
+      completed: Boolean(
+        profile?.companyName &&
+        profile?.sector &&
+        profile?.location &&
+        profile?.stage
+      ),
+    },
+    {
+      label: "Vision & Mission",
+      completed: Boolean(
+        profile?.vision &&
+        profile?.mission
+      ),
+    },
+    {
+      label: "Positionnement",
+      completed: Boolean(
+        profile?.positioning &&
+        profile?.category
+      ),
+    },
+    {
+      label: "Proposition de valeur",
+      completed: Boolean(
+        profile?.valueProposition
+      ),
+    },
+    {
+      label: "Business Model",
+      completed: Boolean(
+        profile?.businessModel &&
+        profile?.revenueSources?.length
+      ),
+    },
+  ];
+}
+
+const completion2 = calculateProfileCompletion(profile);
+
+const completionStatus = getProfileCompletionStatus(completion);
+
+const completionItems = getProfileCompletionItems(profile);
+
 
   return (
     <div className="business-profile-page">
@@ -131,48 +373,32 @@ function BusinessProfile() {
         <aside className="business-profile-sidebar">
 
           <BusinessCard
-            title="Complétion du profil"
-            subtitle="Votre fondation stratégique"
-          >
-            <div className="profile-completion-score">
-              <strong>82%</strong>
-              <span>Profil complété</span>
-            </div>
+  title="Complétion du profil"
+  subtitle="Votre fondation stratégique"
+>
+  <div className="profile-completion-score">
+    <strong>{completion2}%</strong>
 
-            <BusinessProgress
-              value={82}
-              showValue={false}
-            />
+    <span>
+      {completionStatus.label}
+    </span>
+  </div>
 
-            <div className="profile-completion-list">
+  <BusinessProgress
+    value={completion2}
+    showValue={false}
+  />
 
-              <ProfileCompletionItem
-                label="Identité"
-                completed
-              />
-
-              <ProfileCompletionItem
-                label="Vision & Mission"
-                completed
-              />
-
-              <ProfileCompletionItem
-                label="Positionnement"
-                completed
-              />
-
-              <ProfileCompletionItem
-                label="Proposition de valeur"
-                completed
-              />
-
-              <ProfileCompletionItem
-                label="Business Model"
-                completed={false}
-              />
-
-            </div>
-          </BusinessCard>
+  <div className="profile-completion-list">
+    {completionItems.map((item) => (
+      <ProfileCompletionItem
+        key={item.label}
+        label={item.label}
+        completed={item.completed}
+      />
+    ))}
+  </div>
+</BusinessCard>
 
           <BusinessCard
             title="Score stratégique"
@@ -180,24 +406,21 @@ function BusinessProfile() {
             className="profile-score-card"
           >
             <div className="profile-strategic-score">
-              <strong>82</strong>
+              <strong>{calculateProfileCompletion(profile)}</strong>
               <span>/100</span>
             </div>
 
-            <BusinessStatusBadge status="success">
-              Bonne base
+            <BusinessStatusBadge status={getProfileCompletionStatus(calculateProfileCompletion(profile)).status}>
+             {getProfileCompletionStatus(calculateProfileCompletion(profile)).label}
             </BusinessStatusBadge>
 
-            <p>
-              Votre positionnement est cohérent.
-              Le principal axe d'amélioration concerne
-              la différenciation et la formalisation de
-              votre proposition de valeur.
-            </p>
+          <p>
+            Votre diagnostic stratégique apparaîtra ici une fois disponible.
+          </p>
 
-            <button className="btn btn-primary">
-              Voir le diagnostic →
-            </button>
+          <button className="btn btn-primary">
+            Voir le diagnostic →
+          </button>
           </BusinessCard>
 
         </aside>
