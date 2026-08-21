@@ -311,6 +311,7 @@ function BusinessDiagnostics() {
           onClick={() =>
             setShowAnalysis(true)
           }
+          disabled={true}
         >
           ✦ Analyse Kalyma AI
         </button>

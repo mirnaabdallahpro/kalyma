@@ -1,3 +1,4 @@
+import { NavLink } from "react-router-dom";
 import AIRecommendation from "../components/dashboard/AIRecommendation";
 import Panel from "../components/dashboard/Panel";
 import PipelineStage from "../components/dashboard/PipelineStage";
@@ -90,7 +91,16 @@ function Dashboard() {
   ];
 
   return (
+    
+      <div className="dashboard-preview-wrapper">
+
+    {/* CONTENU DU DASHBOARD */}
+    <div className="dashboard-preview-content">
+      <div className="business-overview">
+
+      
     <div className="dashboard-body">
+
       <div className="app">
 
         <Sidebar />
@@ -199,6 +209,46 @@ function Dashboard() {
         </main>
 
       </div>
+    </div>
+    </div>
+     <div className="development-overlay">
+      <div className="development-card">
+
+        <div className="development-icon">
+          <span>✦</span>
+        </div>
+
+        <span className="development-eyebrow">
+          EN COURS DE DÉVELOPPEMENT
+        </span>
+
+        <h1>
+          Votre espace Dashboard
+          <br />
+          arrive bientôt.
+        </h1>
+
+        <p>
+          Nous finalisons cette partie de Kalyma
+          pour vous offrir une expérience complète,
+          claire et intuitive.
+        </p>
+
+        <NavLink
+          to="/business"
+          className="development-button"
+        >
+          Découvrir Business
+          <span>→</span>
+        </NavLink>
+
+        <span className="development-hint">
+          Le module Business est actuellement disponible
+        </span>
+
+      </div>
+    </div>
+    </div>
     </div>
   );
 }

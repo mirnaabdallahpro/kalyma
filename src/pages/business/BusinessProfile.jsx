@@ -21,6 +21,7 @@ import EditBusinessProfileModal from "../../components/business/profile/EditBusi
 import { mapBusinessProfile } from "../../utils/businessProfileMapper";
 
 
+import { NavLink } from "react-router-dom";
 import "../../styles/business-profile.css";
 
 function BusinessProfile() {
@@ -418,9 +419,9 @@ const completionItems = getProfileCompletionItems(profile);
             Votre diagnostic stratégique apparaîtra ici une fois disponible.
           </p>
 
-          <button className="btn btn-primary">
+          <NavLink to={"/business/diagnostics"} className="btn btn-primary">
             Voir le diagnostic →
-          </button>
+          </NavLink>
           </BusinessCard>
 
         </aside>

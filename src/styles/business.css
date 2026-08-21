@@ -4341,3 +4341,110 @@
         box-sizing: border-box;
     }
 }
+
+/* =========================================
+   DESKTOP BUSINESS SIDEBAR
+   DISABLED ITEMS
+========================================= */
+
+.business-sidebar-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.business-sidebar-link-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.business-sidebar-link-disabled {
+    color: #8c9ab5;
+    opacity: 0.55;
+    cursor: not-allowed;
+    user-select: none;
+
+    transition:
+        opacity 0.2s ease,
+        background 0.2s ease;
+}
+
+.business-sidebar-link-disabled:hover {
+    opacity: 0.75;
+}
+
+.business-sidebar-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 28px;
+    height: 18px;
+
+    padding: 0 5px;
+
+    border-radius: 5px;
+
+    background: rgba(228, 160, 43, 0.12);
+
+    color: #e4a02b;
+
+    font-size: 8px;
+    font-weight: 700;
+
+    letter-spacing: 0.5px;
+
+    flex-shrink: 0;
+}
+
+/* =========================================
+   MOBILE BUSINESS NAV
+   DISABLED ITEMS
+========================================= */
+
+.business-mobile-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.business-mobile-link-label {
+    flex: 1;
+}
+
+.business-mobile-link-disabled {
+    color: #8c9ab5;
+    opacity: 0.55;
+    cursor: not-allowed;
+    user-select: none;
+}
+
+.business-mobile-link-disabled:hover {
+    opacity: 0.75;
+}
+
+.business-mobile-link-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 28px;
+    height: 18px;
+
+    padding: 0 5px;
+
+    border-radius: 5px;
+
+    background: rgba(228, 160, 43, 0.12);
+
+    color: #e4a02b;
+
+    font-size: 8px;
+    font-weight: 700;
+
+    letter-spacing: 0.5px;
+
+    flex-shrink: 0;
+}

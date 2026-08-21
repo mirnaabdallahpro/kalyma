@@ -2,13 +2,11 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { signOut } from "../../../services/authService";
 
 function Sidebar() {
-
-   const navigate = useNavigate();
+  const navigate = useNavigate();
 
   async function handleSignOut() {
     try {
       await signOut();
-
       navigate("/login", {
         replace: true,
       });
@@ -16,6 +14,104 @@ function Sidebar() {
       console.error("Erreur lors de la déconnexion :", error);
     }
   }
+
+  const menuItems = [
+    {
+      to: "/dashboard",
+      icon: "◈",
+      label: "Dashboard",
+      disabled: false,
+    },
+    {
+      to: "/business",
+      icon: "◉",
+      label: "Business",
+      disabled: false,
+    },
+    {
+      to: "/crm",
+      icon: "◎",
+      label: "CRM",
+      disabled: true,
+    },
+    {
+      to: "/tasks",
+      icon: "✓",
+      label: "Tâches",
+      disabled: false,
+    },
+    {
+      to: "/meetings",
+      icon: "▣",
+      label: "Rendez-vous",
+      disabled: true,
+    },
+    {
+      to: "/messages",
+      icon: "✉",
+      label: "Messages",
+      disabled: true,
+    },
+    {
+      to: "/documents",
+      icon: "□",
+      label: "Documents",
+      disabled: true,
+    },
+  ];
+
+  const accountItems = [
+    {
+      to: "/settings",
+      icon: "⚙",
+      label: "Paramètres",
+      disabled: true,
+    },
+  ];
+
+  function renderMenuItem(item) {
+    if (item.disabled) {
+      return (
+        <div
+          key={item.to}
+          className="menu-item menu-item-disabled"
+          title="Cette fonctionnalité est en développement"
+          aria-disabled="true"
+        >
+          <span className="menu-item-content">
+            <span className="menu-item-icon">
+              {item.icon}
+            </span>
+
+            <span>{item.label}</span>
+          </span>
+
+          <span className="menu-item-status">
+            <span className="menu-item-status-icon">⚙</span>
+          </span>
+        </div>
+      );
+    }
+
+    return (
+      <NavLink
+        key={item.to}
+        to={item.to}
+        className={({ isActive }) =>
+          isActive ? "active" : undefined
+        }
+      >
+        <span className="menu-item-content">
+          <span className="menu-item-icon">
+            {item.icon}
+          </span>
+
+          <span>{item.label}</span>
+        </span>
+      </NavLink>
+    );
+  }
+
   return (
     <aside className="sidebar">
 
@@ -28,56 +124,7 @@ function Sidebar() {
       </div>
 
       <nav className="menu">
-
-        <NavLink
-          to="/dashboard"
-          className={({ isActive }) => (isActive ? "active" : undefined)}
-        >
-          ◈ &nbsp; Dashboard
-        </NavLink>
-
-        <NavLink
-          to="/business"
-          className={({ isActive }) => (isActive ? "active" : undefined)}
-        >
-          ◉ &nbsp; Business
-        </NavLink>
-
-        <NavLink
-          to="/crm"
-          className={({ isActive }) => (isActive ? "active" : undefined)}
-        >
-          ◎ &nbsp; CRM
-        </NavLink>
-
-        <NavLink
-          to="/tasks"
-          className={({ isActive }) => (isActive ? "active" : undefined)}
-        >
-          ✓ &nbsp; Tâches
-        </NavLink>
-
-        <NavLink
-          to="/meetings"
-          className={({ isActive }) => (isActive ? "active" : undefined)}
-        >
-          ▣ &nbsp; Rendez-vous
-        </NavLink>
-
-        <NavLink
-          to="/messages"
-          className={({ isActive }) => (isActive ? "active" : undefined)}
-        >
-          ✉ &nbsp; Messages
-        </NavLink>
-
-        <NavLink
-          to="/documents"
-          className={({ isActive }) => (isActive ? "active" : undefined)}
-        >
-          □ &nbsp; Documents
-        </NavLink>
-
+        {menuItems.map(renderMenuItem)}
       </nav>
 
       <div className="menu-label">
@@ -85,16 +132,10 @@ function Sidebar() {
       </div>
 
       <nav className="menu">
-        <NavLink
-          to="/settings"
-          className={({ isActive }) => (isActive ? "active" : undefined)}
-        >
-          ⚙ &nbsp; Paramètres
-        </NavLink>
+        {accountItems.map(renderMenuItem)}
       </nav>
 
       <div className="side-bottom">
-
         <div
           style={{
             fontSize: "11px",
@@ -117,7 +158,6 @@ function Sidebar() {
         >
           Accès complet
         </div>
-
       </div>
 
       <button

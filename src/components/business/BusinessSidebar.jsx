@@ -10,41 +10,159 @@ function BusinessSidebar() {
       path: "/business",
       icon: "◈",
       end: true,
+      disabled: false,
     },
     {
       label: "Profil Business",
       path: "/business/profile",
       icon: "◎",
+      disabled: false,
     },
     {
       label: "Stratégie",
       path: "/business/strategy",
       icon: "◇",
+      disabled: false,
     },
     {
       label: "Offres",
       path: "/business/offers",
       icon: "▣",
+      disabled: false,
     },
     {
       label: "Objectifs",
       path: "/business/goals",
       icon: "✓",
+      disabled: true,
     },
     {
       label: "KPIs",
       path: "/business/kpis",
       icon: "◒",
+      disabled: true,
     },
     {
       label: "Diagnostics",
       path: "/business/diagnostics",
       icon: "✦",
+      disabled: false,
     },
   ];
 
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
+  };
+
+  /*
+   * =========================================
+   * DESKTOP MENU ITEM
+   * =========================================
+   */
+  const renderDesktopItem = (item) => {
+    if (item.disabled) {
+      return (
+        <div
+          key={item.path}
+          className="business-sidebar-link business-sidebar-link-disabled"
+          title="Cette fonctionnalité est en développement"
+          aria-disabled="true"
+        >
+          <span className="business-sidebar-link-content">
+            <span className="business-sidebar-icon">
+              {item.icon}
+            </span>
+
+            <span>
+              {item.label}
+            </span>
+          </span>
+
+          <span className="business-sidebar-status">
+            DEV
+          </span>
+        </div>
+      );
+    }
+
+    return (
+      <NavLink
+        key={item.path}
+        to={item.path}
+        end={item.end}
+        className={({ isActive }) =>
+          `business-sidebar-link ${
+            isActive ? "active" : ""
+          }`
+        }
+      >
+        <span className="business-sidebar-link-content">
+          <span className="business-sidebar-icon">
+            {item.icon}
+          </span>
+
+          <span>
+            {item.label}
+          </span>
+        </span>
+      </NavLink>
+    );
+  };
+
+  /*
+   * =========================================
+   * MOBILE MENU ITEM
+   * =========================================
+   */
+  const renderMobileItem = (item) => {
+    if (item.disabled) {
+      return (
+        <div
+          key={item.path}
+          className="business-mobile-link business-mobile-link-disabled"
+          title="Cette fonctionnalité est en développement"
+          aria-disabled="true"
+        >
+          <span className="business-mobile-link-icon">
+            {item.icon}
+          </span>
+
+          <span className="business-mobile-link-label">
+            {item.label}
+          </span>
+
+          <span className="business-mobile-link-status">
+            DEV
+          </span>
+        </div>
+      );
+    }
+
+    return (
+      <NavLink
+        key={item.path}
+        to={item.path}
+        end={item.end}
+        onClick={closeMobileMenu}
+        className={({ isActive }) =>
+          `business-mobile-link ${
+            isActive ? "active" : ""
+          }`
+        }
+      >
+        <span className="business-mobile-link-icon">
+          {item.icon}
+        </span>
+
+        <span className="business-mobile-link-label">
+          {item.label}
+        </span>
+
+        <span className="business-mobile-link-arrow">
+          →
+        </span>
+      </NavLink>
+    );
   };
 
   return (
@@ -64,40 +182,25 @@ function BusinessSidebar() {
         </div>
 
         <nav className="business-sidebar-nav">
-          {menu.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              end={item.end}
-              className={({ isActive }) =>
-                `business-sidebar-link ${
-                  isActive ? "active" : ""
-                }`
-              }
-            >
-              <span className="business-sidebar-icon">
-                {item.icon}
-              </span>
-
-              <span>
-                {item.label}
-              </span>
-            </NavLink>
-          ))}
+          {menu.map(renderDesktopItem)}
         </nav>
 
         <div className="business-sidebar-footer">
+
           <div className="business-sidebar-ai">
             <span>✦</span>
 
             <div>
-              <strong>Kalyma AI</strong>
+              <strong>
+                Kalyma AI
+              </strong>
 
               <small>
                 Assistant stratégique
               </small>
             </div>
           </div>
+
         </div>
 
       </aside>
@@ -141,10 +244,13 @@ function BusinessSidebar() {
 
 
         {/* MENU */}
+
         {mobileMenuOpen && (
+
           <div className="business-mobile-menu">
 
             <div className="business-mobile-menu-header">
+
               <span>
                 NAVIGATION BUSINESS
               </span>
@@ -156,38 +262,19 @@ function BusinessSidebar() {
               >
                 ×
               </button>
+
             </div>
 
+
             <nav>
-              {menu.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  end={item.end}
-                  onClick={closeMobileMenu}
-                  className={({ isActive }) =>
-                    `business-mobile-link ${
-                      isActive ? "active" : ""
-                    }`
-                  }
-                >
-                  <span className="business-mobile-link-icon">
-                    {item.icon}
-                  </span>
-
-                  <span>
-                    {item.label}
-                  </span>
-
-                  <span className="business-mobile-link-arrow">
-                    →
-                  </span>
-                </NavLink>
-              ))}
+              {menu.map(renderMobileItem)}
             </nav>
 
+
             {/* IA */}
+
             <div className="business-mobile-ai">
+
               <span>✦</span>
 
               <div>
@@ -199,9 +286,11 @@ function BusinessSidebar() {
                   Assistant stratégique
                 </small>
               </div>
+
             </div>
 
           </div>
+
         )}
 
       </div>
