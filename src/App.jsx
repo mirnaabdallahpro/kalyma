@@ -16,6 +16,7 @@ import BusinessProfile from "./pages/business/BusinessProfile";
 import BusinessStrategy from "./pages/business/BusinessStrategy";
 import ComingSoon from "./pages/ComingSoon";
 import Dashboard from "./pages/Dashboard";
+import Tasks from "./pages/Tasks";
 
 
 import { AuthProvider } from "./context/AuthContext";
@@ -129,6 +130,8 @@ function App() {
   element={<BusinessDiagnostics />}
 />
         </Route>
+
+          <Route path="/tasks" element={<Tasks />} />
 
        
 

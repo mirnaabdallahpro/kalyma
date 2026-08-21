@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { Link } from "react-router-dom";
 import AIDiagnosticModal from "../../components/business/AIDiagnosticModal";
 import BusinessCard from "../../components/business/BusinessCard";
 
@@ -503,12 +504,13 @@ function BusinessDiagnostics() {
             </div>
           </div>
 
-          <button
+          <Link
             type="button"
+            to={"/tasks"}
             className="btn btn-primary diagnostic-action-button"
           >
             Travailler ce levier
-          </button>
+          </Link>
         </BusinessCard>
       </div>
 
