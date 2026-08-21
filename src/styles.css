@@ -1249,3 +1249,481 @@ button {
         overflow-y: auto;
     }
 }
+
+/* =========================================
+   BUSINESS SIDEBAR
+========================================= */
+
+.business-sidebar {
+    width: 250px;
+    flex-shrink: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    background: #ffffff;
+    border-right: 1px solid #e8edf3;
+}
+
+
+/* Header */
+
+.business-sidebar-header {
+    padding: 22px 20px 18px;
+
+    display: flex;
+    flex-direction: column;
+
+    border-bottom: 1px solid #edf0f4;
+}
+
+.business-sidebar-header>span {
+    font-size: 9px;
+    font-weight: 700;
+
+    letter-spacing: 0.12em;
+
+    color: #9aa6b8;
+}
+
+.business-sidebar-header strong {
+    margin-top: 4px;
+
+    font-size: 14px;
+
+    color: #0e2a47;
+}
+
+
+/* Navigation */
+
+.business-sidebar-nav {
+    padding: 14px 10px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.business-sidebar-link {
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+
+    padding: 10px 12px;
+
+    border-radius: 9px;
+
+    text-decoration: none;
+
+    color: #63718a;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    transition:
+        background 0.18s ease,
+        color 0.18s ease;
+}
+
+.business-sidebar-link:hover {
+    background: #f5f7fa;
+    color: #0e2a47;
+}
+
+.business-sidebar-link.active {
+    background: #eef3f8;
+    color: #0e2a47;
+
+    font-weight: 600;
+}
+
+.business-sidebar-icon {
+    width: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 14px;
+}
+
+
+/* Footer */
+
+.business-sidebar-footer {
+    margin-top: auto;
+
+    padding: 15px;
+}
+
+.business-sidebar-ai {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    background: #f7f8fa;
+}
+
+.business-sidebar-ai>span {
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #0e2a47;
+    color: #ffffff;
+
+    font-size: 12px;
+}
+
+.business-sidebar-ai div {
+    display: flex;
+    flex-direction: column;
+}
+
+.business-sidebar-ai strong {
+    font-size: 12px;
+    color: #0e2a47;
+}
+
+.business-sidebar-ai small {
+    margin-top: 2px;
+
+    font-size: 10px;
+    color: #8995a8;
+}
+
+
+/* =========================================
+   MOBILE NAVIGATION
+   CACHÉE PAR DÉFAUT
+========================================= */
+
+.business-mobile-navigation {
+    display: none;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+
+
+@media (max-width: 768px) {
+
+    .business-sidebar {
+        display: none;
+    }
+
+    /* BARRE FIXÉE EN BAS */
+    .business-mobile-navigation {
+        display: block;
+
+        position: fixed;
+        left: 0;
+        bottom: 0;
+
+        width: 100%;
+
+        z-index: 9999;
+
+        background: #ffffff;
+
+        border-top: 1px solid #e5eaf0;
+
+        box-shadow:
+            0 -8px 25px rgba(14, 42, 71, 0.08);
+    }
+
+
+    /* BOUTON BUSINESS */
+    .business-mobile-menu-button {
+        width: 100%;
+        height: 64px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 8px 16px;
+
+        border: none;
+
+        background: #ffffff;
+
+        cursor: pointer;
+    }
+
+
+    .business-mobile-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+
+    .business-mobile-icon {
+        width: 36px;
+        height: 36px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 9px;
+
+        background: #eef3f8;
+
+        color: #0e2a47;
+    }
+
+
+    .business-mobile-title div {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+    }
+
+
+    .business-mobile-title div>span {
+        font-size: 9px;
+        font-weight: 700;
+
+        letter-spacing: 0.1em;
+
+        color: #9aa6b8;
+    }
+
+
+    .business-mobile-title strong {
+        margin-top: 2px;
+
+        font-size: 13px;
+
+        color: #0e2a47;
+    }
+
+
+    .business-mobile-chevron {
+        font-size: 16px;
+        color: #7c899b;
+    }
+
+
+    /* =====================================
+     MENU OUVERT
+  ===================================== */
+
+    .business-mobile-menu {
+        position: fixed;
+
+        left: 10px;
+        right: 10px;
+
+        bottom: 72px;
+
+        width: auto;
+
+        max-height: calc(100vh - 100px);
+
+        overflow-y: auto;
+
+        background: #ffffff;
+
+        border: 1px solid #e5eaf0;
+
+        border-radius: 14px;
+
+        padding: 9px;
+
+        z-index: 10000;
+
+        box-shadow:
+            0 10px 40px rgba(14, 42, 71, 0.18);
+
+        animation: businessMenuBottomIn 0.18s ease;
+    }
+
+
+    @keyframes businessMenuBottomIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+
+    /* =====================================
+     HEADER DU MENU
+  ===================================== */
+
+    .business-mobile-menu-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 8px 10px 10px;
+    }
+
+
+    .business-mobile-menu-header span {
+        font-size: 9px;
+        font-weight: 700;
+
+        letter-spacing: 0.1em;
+
+        color: #9aa6b8;
+    }
+
+
+    .business-mobile-menu-header button {
+        border: none;
+
+        background: transparent;
+
+        cursor: pointer;
+
+        font-size: 20px;
+
+        color: #7c899b;
+    }
+
+
+    /* =====================================
+     LIENS
+  ===================================== */
+
+    .business-mobile-link {
+        display: flex;
+        align-items: center;
+
+        gap: 11px;
+
+        width: 100%;
+
+        box-sizing: border-box;
+
+        padding: 11px;
+
+        border-radius: 9px;
+
+        text-decoration: none;
+
+        color: #596880;
+
+        font-size: 13px;
+    }
+
+
+    .business-mobile-link:hover {
+        background: #f5f7fa;
+    }
+
+
+    .business-mobile-link.active {
+        background: #eef3f8;
+
+        color: #0e2a47;
+
+        font-weight: 600;
+    }
+
+
+    .business-mobile-link-icon {
+        width: 22px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+
+    .business-mobile-link-arrow {
+        margin-left: auto;
+
+        color: #a1adbd;
+    }
+
+
+    /* =====================================
+     KALYMA AI
+  ===================================== */
+
+    .business-mobile-ai {
+        display: flex;
+        align-items: center;
+
+        gap: 10px;
+
+        margin-top: 8px;
+        padding: 11px;
+
+        border-top: 1px solid #edf0f4;
+    }
+
+
+    .business-mobile-ai>span {
+        width: 28px;
+        height: 28px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 8px;
+
+        background: #0e2a47;
+        color: #ffffff;
+    }
+
+
+    .business-mobile-ai div {
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    .business-mobile-ai strong {
+        font-size: 12px;
+        color: #0e2a47;
+    }
+
+
+    .business-mobile-ai small {
+        margin-top: 2px;
+
+        font-size: 10px;
+        color: #8995a8;
+    }
+
+
+    /* =====================================
+     ESPACE POUR LE CONTENU
+  ===================================== */
+
+    .business-content {
+        width: 100%;
+        min-width: 0;
+
+        padding-bottom: 85px;
+        padding: 0.45rem;
+    }
+}
