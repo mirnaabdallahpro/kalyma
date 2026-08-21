@@ -1,9 +1,9 @@
 import { useState } from "react";
 import {
-    Link,
-    Navigate,
-    useLocation,
-    useNavigate
+  Link,
+  Navigate,
+  useLocation,
+  useNavigate
 } from "react-router-dom";
 
 import { supabase } from "../../../lib/supabase";
@@ -157,7 +157,7 @@ function Login() {
           </span>
 
           <Link to="/register">
-            Se connecter
+            Créer un compte
           </Link>
 
         </div>
