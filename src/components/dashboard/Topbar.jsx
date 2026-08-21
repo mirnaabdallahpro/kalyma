@@ -1,171 +1,131 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { accountMenu, workspaceMenu } from "./navigation";
 
 function Topbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
 
   const closeMenu = () => {
     setMenuOpen(false);
   };
 
-  return (
-    <>
-      <header className="topbar">
+  // Fermer le menu lorsqu'on clique à l'extérieur
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target)
+      ) {
+        closeMenu();
+      }
+    }
 
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
+    };
+  }, []);
+
+  return (
+    <header className="topbar">
+      <div className="search">
+        ⌕ &nbsp; Rechercher...
+      </div>
+
+      <div
+        className="user-space"
+        ref={menuRef}
+      >
         <button
           type="button"
-          className="mobile-menu-button"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Ouvrir le menu"
+          className={`user ${menuOpen ? "open" : ""}`}
+          onClick={() => setMenuOpen((prev) => !prev)}
+          aria-expanded={menuOpen}
+          aria-haspopup="true"
         >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        <div className="search">
-          ⌕ &nbsp; Rechercher...
-        </div>
-
-        <div className="user">
-          <span>
-            Mon espace
-          </span>
+          <span>Mon espace</span>
 
           <div className="avatar">
             FA
           </div>
-        </div>
 
-      </header>
+          <span className="user-chevron">
+            {menuOpen ? "⌃" : "⌄"}
+          </span>
+        </button>
 
-      {menuOpen && (
-        <>
-          <div
-            className="mobile-menu-overlay"
-            onClick={closeMenu}
-          />
-
-          <aside className="mobile-menu">
-
-            <div className="mobile-menu-header">
-              <NavLink
-                className="logo"
-                to="/dashboard"
-                onClick={closeMenu}
-              >
-                kaly<span>ma</span>
-              </NavLink>
-
-              <button
-                type="button"
-                className="mobile-menu-close"
-                onClick={closeMenu}
-              >
-                ×
-              </button>
+        {menuOpen && (
+          <div className="workspace-dropdown">
+            <div className="workspace-dropdown-header">
+              <span>MON ESPACE</span>
+              <strong>Kalyma</strong>
             </div>
 
-            <div className="menu-label">
-              Workspace
+            <div className="workspace-dropdown-section">
+              <div className="workspace-dropdown-label">
+                Workspace
+              </div>
+
+              <nav>
+                {workspaceMenu.map((item) => (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    end={item.path === "/dashboard"}
+                    onClick={closeMenu}
+                    className={({ isActive }) =>
+                      `workspace-dropdown-link ${
+                        isActive ? "active" : ""
+                      }`
+                    }
+                  >
+                    <span className="workspace-dropdown-icon">
+                      {item.icon}
+                    </span>
+
+                    <span>{item.label}</span>
+                  </NavLink>
+                ))}
+              </nav>
             </div>
 
-            <nav className="menu">
+            <div className="workspace-dropdown-divider" />
 
-              <NavLink
-                to="/dashboard"
-                onClick={closeMenu}
-                className={({ isActive }) =>
-                  isActive ? "active" : undefined
-                }
-              >
-                ◈ &nbsp; Dashboard
-              </NavLink>
+            <div className="workspace-dropdown-section">
+              <div className="workspace-dropdown-label">
+                Compte
+              </div>
 
-              <NavLink
-                to="/business"
-                onClick={closeMenu}
-                className={({ isActive }) =>
-                  isActive ? "active" : undefined
-                }
-              >
-                ◉ &nbsp; Business
-              </NavLink>
+              <nav>
+                {accountMenu.map((item) => (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={closeMenu}
+                    className={({ isActive }) =>
+                      `workspace-dropdown-link ${
+                        isActive ? "active" : ""
+                      }`
+                    }
+                  >
+                    <span className="workspace-dropdown-icon">
+                      {item.icon}
+                    </span>
 
-              <NavLink
-                to="/crm"
-                onClick={closeMenu}
-                className={({ isActive }) =>
-                  isActive ? "active" : undefined
-                }
-              >
-                ◎ &nbsp; CRM
-              </NavLink>
-
-              <NavLink
-                to="/tasks"
-                onClick={closeMenu}
-                className={({ isActive }) =>
-                  isActive ? "active" : undefined
-                }
-              >
-                ✓ &nbsp; Tâches
-              </NavLink>
-
-              <NavLink
-                to="/meetings"
-                onClick={closeMenu}
-                className={({ isActive }) =>
-                  isActive ? "active" : undefined
-                }
-              >
-                ▣ &nbsp; Rendez-vous
-              </NavLink>
-
-              <NavLink
-                to="/messages"
-                onClick={closeMenu}
-                className={({ isActive }) =>
-                  isActive ? "active" : undefined
-                }
-              >
-                ✉ &nbsp; Messages
-              </NavLink>
-
-              <NavLink
-                to="/documents"
-                onClick={closeMenu}
-                className={({ isActive }) =>
-                  isActive ? "active" : undefined
-                }
-              >
-                □ &nbsp; Documents
-              </NavLink>
-
-            </nav>
-
-            <div className="menu-label">
-              Compte
+                    <span>{item.label}</span>
+                  </NavLink>
+                ))}
+              </nav>
             </div>
-
-            <nav className="menu">
-
-              <NavLink
-                to="/settings"
-                onClick={closeMenu}
-                className={({ isActive }) =>
-                  isActive ? "active" : undefined
-                }
-              >
-                ⚙ &nbsp; Paramètres
-              </NavLink>
-
-            </nav>
-
-          </aside>
-        </>
-      )}
-    </>
+          </div>
+        )}
+      </div>
+    </header>
   );
 }
 
