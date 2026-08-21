@@ -877,49 +877,128 @@ button {
 
 }
 
-/* ================================
+/* =========================================
    TOPBAR
-================================ */
+========================================= */
 
 .topbar {
     position: relative;
     z-index: 100;
-}
-
-.user-space {
-    position: relative;
-}
-
-.user {
-    border: none;
-    background: transparent;
-    cursor: pointer;
 
     display: flex;
     align-items: center;
-    gap: 10px;
+
+    width: 100%;
+    min-height: 70px;
+
+    padding: 0 24px;
+
+    background: #ffffff;
+    border-bottom: 1px solid #e9edf3;
+}
+
+
+/* =========================================
+   LOGO
+========================================= */
+
+.topbar-logo {
+    display: none;
+
+    text-decoration: none;
+
+    font-size: 22px;
+    font-weight: 800;
+
+    letter-spacing: -0.04em;
+
+    color: #0e2a47;
+}
+
+.topbar-logo span {
+    color: #e4a02b;
+}
+
+
+/* =========================================
+   SEARCH
+========================================= */
+
+.search {
+    flex: 1;
+
+    color: #8b97aa;
+    font-size: 13px;
+}
+
+
+/* =========================================
+   USER
+========================================= */
+
+.user-space {
+    position: relative;
+    margin-left: auto;
+}
+
+.user {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    border: none;
+    background: transparent;
+
+    cursor: pointer;
 
     padding: 6px 8px;
-    border-radius: 12px;
 
-    transition: background 0.2s ease;
+    border-radius: 10px;
+
+    color: #0e2a47;
+
+    transition:
+        background 0.2s ease;
 }
 
 .user:hover,
 .user.open {
-    background: #f4f6fa;
+    background: #f5f7fa;
+}
+
+.user-label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.avatar {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #0e2a47;
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 700;
 }
 
 .user-chevron {
     font-size: 13px;
-    color: #71809b;
-    margin-left: 2px;
+    color: #8290a5;
 }
 
 
-/* ================================
-   WORKSPACE DROPDOWN
-================================ */
+/* =========================================
+   DROPDOWN
+========================================= */
 
 .workspace-dropdown {
     position: absolute;
@@ -931,14 +1010,14 @@ button {
 
     background: #ffffff;
 
-    border: 1px solid #e7ebf2;
+    border: 1px solid #e5eaf0;
     border-radius: 14px;
 
-    box-shadow:
-        0 15px 40px rgba(14, 42, 71, 0.12),
-        0 4px 12px rgba(14, 42, 71, 0.06);
+    padding: 9px;
 
-    padding: 10px;
+    box-shadow:
+        0 18px 45px rgba(14, 42, 71, 0.13),
+        0 5px 15px rgba(14, 42, 71, 0.06);
 
     animation: workspaceDropdownIn 0.18s ease;
 }
@@ -946,7 +1025,7 @@ button {
 @keyframes workspaceDropdownIn {
     from {
         opacity: 0;
-        transform: translateY(-5px);
+        transform: translateY(-6px);
     }
 
     to {
@@ -956,7 +1035,9 @@ button {
 }
 
 
-/* Header */
+/* =========================================
+   DROPDOWN HEADER
+========================================= */
 
 .workspace-dropdown-header {
     display: flex;
@@ -977,16 +1058,15 @@ button {
 .workspace-dropdown-header strong {
     margin-top: 3px;
 
-    font-size: 14px;
     color: #0e2a47;
+
+    font-size: 14px;
 }
 
 
-/* Section */
-
-.workspace-dropdown-section {
-    padding: 3px 0;
-}
+/* =========================================
+   LABEL
+========================================= */
 
 .workspace-dropdown-label {
     padding: 7px 11px;
@@ -995,13 +1075,16 @@ button {
     font-weight: 700;
 
     text-transform: uppercase;
+
     letter-spacing: 0.08em;
 
     color: #a0aabd;
 }
 
 
-/* Links */
+/* =========================================
+   LINKS
+========================================= */
 
 .workspace-dropdown-link {
     display: flex;
@@ -1033,6 +1116,7 @@ button {
 .workspace-dropdown-link.active {
     background: #eef3f8;
     color: #0e2a47;
+
     font-weight: 600;
 }
 
@@ -1040,6 +1124,7 @@ button {
     width: 20px;
 
     display: inline-flex;
+
     align-items: center;
     justify-content: center;
 
@@ -1047,12 +1132,120 @@ button {
 }
 
 
-/* Divider */
+/* =========================================
+   DIVIDER
+========================================= */
 
 .workspace-dropdown-divider {
     height: 1px;
 
-    background: #edf0f4;
-
     margin: 7px 4px;
+
+    background: #edf0f4;
+}
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+.workspace-dropdown-logout {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+
+    padding: 9px 11px;
+
+    border: none;
+    border-radius: 9px;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    color: #b04a4a;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    text-align: left;
+
+    transition:
+        background 0.18s ease,
+        color 0.18s ease;
+}
+
+.workspace-dropdown-logout:hover {
+    background: #fff4f4;
+    color: #a13e3e;
+}
+
+@media (max-width: 768px) {
+
+    .sidebar {
+        display: none;
+    }
+
+    .topbar {
+        min-height: 64px;
+
+        padding: 0 14px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 12px;
+    }
+
+    /* Logo à gauche */
+    .topbar-logo {
+        display: block;
+
+        flex-shrink: 0;
+    }
+
+    /* Recherche cachée */
+    .search {
+        display: none;
+    }
+
+    /* Mon espace reste TOUJOURS à droite */
+    .user-space {
+        margin-left: auto;
+
+        flex-shrink: 0;
+    }
+
+    .user {
+        padding: 4px 2px;
+
+        gap: 7px;
+    }
+
+    .user-label {
+        display: none;
+    }
+
+    .avatar {
+        width: 34px;
+        height: 34px;
+    }
+
+    /* Menu mobile */
+    .workspace-dropdown {
+        position: fixed;
+
+        top: 58px;
+        right: 10px;
+
+        width: min(280px, calc(100vw - 20px));
+
+        max-height: calc(100vh - 75px);
+
+        overflow-y: auto;
+    }
 }
