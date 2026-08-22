@@ -1,5 +1,7 @@
+import ComingSoonOverlay from "../../shared/ComingSoonOverlay";
 import BusinessCard from "../BusinessCard";
 import BusinessProgress from "../BusinessProgress";
+
 
 function BusinessProfileValue({ profile, onEdit }) {
   const score = profile?.valueScore ?? 0;
@@ -35,6 +37,7 @@ function BusinessProfileValue({ profile, onEdit }) {
         </div>
 
         {/* Score */}
+        <ComingSoonOverlay>
         <div className="profile-value-score">
           <div className="profile-value-score-header">
             <span>Score Kalyma</span>
@@ -51,6 +54,8 @@ function BusinessProfileValue({ profile, onEdit }) {
             {getScoreMessage(score)}
           </small>
         </div>
+        </ComingSoonOverlay>
+
       </div>
     </BusinessCard>
   );
