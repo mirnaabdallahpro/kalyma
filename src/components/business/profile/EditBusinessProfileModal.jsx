@@ -1,5 +1,6 @@
 import { Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
+import { getBusinessAiSuggestion } from "../../../../services/ai/businessSuggestionService";
 import Modal from "../Modal";
 
 function EditBusinessProfileModal({
@@ -7,7 +8,7 @@ function EditBusinessProfileModal({
   section,
   onClose,
   onSave,
-  onAiSuggest,
+ 
 }) {
   const [form, setForm] = useState(profile || {});
   const [aiLoading, setAiLoading] = useState(false);
@@ -32,6 +33,7 @@ function EditBusinessProfileModal({
     onSave(form);
   };
 
+  /*
   const handleAiSuggestion = async (field) => {
     if (!onAiSuggest) return;
 
@@ -52,7 +54,31 @@ function EditBusinessProfileModal({
     } finally {
       setAiLoading(false);
     }
-  };
+  }; */
+
+ const handleAiSuggestion = async (field) => {
+  setAiLoading(true);
+  setAiField(field);
+  setAiSuggestion(null);
+
+  try {
+    const result = await getBusinessAiSuggestion({
+      field,
+      value: form[field] || "",
+      profile: form,
+    });
+
+    setAiSuggestion(result.suggestion);
+  } catch (error) {
+    console.error("Erreur suggestion IA :", error);
+
+    setAiSuggestion(
+      "Impossible de générer une suggestion pour le moment."
+    );
+  } finally {
+    setAiLoading(false);
+  }
+};
 
   const applyAiSuggestion = () => {
     if (!aiSuggestion || !aiField) return;
