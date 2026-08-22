@@ -84,6 +84,7 @@ function DealCard({ deal, dragging, onDragStart, onDragEnd, onDropBefore, onEdit
             <span className={deal.qualificationBesoin ? "qb-on" : "qb-off"}>Besoin</span>
             <span className={deal.qualificationBudget ? "qb-on" : "qb-off"}>Budget</span>
             <span className={deal.qualificationTiming ? "qb-on" : "qb-off"}>Timing</span>
+            <span className={deal.qualificationAuthority ? "qb-on" : "qb-off"}>Autorité</span>
           </div>
         )}
 

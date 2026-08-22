@@ -63,6 +63,7 @@ function mapProspect(row) {
     qualificationBesoin: row.qualification_besoin,
     qualificationBudget: row.qualification_budget,
     qualificationTiming: row.qualification_timing,
+    qualificationAuthority: row.qualification_authority,
     offer: row.business_offers
       ? {
           id: row.business_offers.id,
@@ -240,11 +241,11 @@ export { ACTIVE_STAGES };
 // Évalue les 3 critères (besoin / budget / timing) et route
 // automatiquement : qualifié → RDV, sinon → Nurturing (avec
 // une séquence de relances qui repart).
-export async function qualifyProspect(id, { besoin, budget, timing }) {
+export async function qualifyProspect(id, { besoin, budget, timing, authority }) {
   const user = await getAuthenticatedUser();
   if (!user) throw new Error("Utilisateur non authentifié.");
 
-  const qualified = Boolean(besoin && budget && timing);
+  const qualified = Boolean(besoin && budget && timing && authority);
   const newStage = qualified ? "rdv" : "nurturing";
 
   const { data: existing, error: fetchError } = await supabase
@@ -265,6 +266,7 @@ export async function qualifyProspect(id, { besoin, budget, timing }) {
       qualification_besoin: besoin,
       qualification_budget: budget,
       qualification_timing: timing,
+      qualification_authority: authority,
       stage: newStage,
       position: nextPosition,
     })

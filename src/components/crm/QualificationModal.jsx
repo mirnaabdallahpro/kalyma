@@ -5,12 +5,13 @@ function QualificationModal({ deal, onClose, onSave }) {
   const [besoin, setBesoin] = useState(deal.qualificationBesoin || false);
   const [budget, setBudget] = useState(deal.qualificationBudget || false);
   const [timing, setTiming] = useState(deal.qualificationTiming || false);
+  const [authority, setAuthority] = useState(deal.qualificationAuthority || false);
 
-  const qualified = besoin && budget && timing;
+  const qualified = besoin && budget && timing && authority;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ besoin, budget, timing });
+    onSave({ besoin, budget, timing, authority });
   };
 
   return (
@@ -68,6 +69,18 @@ function QualificationModal({ deal, onClose, onSave }) {
           <div>
             <strong>Timing</strong>
             <p>Il est prêt à démarrer l&apos;accompagnement dès aujourd&apos;hui.</p>
+          </div>
+        </label>
+
+        <label className="qualif-check-row">
+          <input
+            type="checkbox"
+            checked={authority}
+            onChange={(e) => setAuthority(e.target.checked)}
+          />
+          <div>
+            <strong>Autorité</strong>
+            <p>Le contact a le pouvoir de décider, ou l&apos;accès direct au décideur.</p>
           </div>
         </label>
 
