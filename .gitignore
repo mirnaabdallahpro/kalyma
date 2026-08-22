@@ -21,4 +21,17 @@ dist-ssr
 *.ntvs*
 *.njsproj
 *.sln
+
+
 *.sw?
+
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.production.local
+
+# Supabase local secrets
+supabase/.env
+
