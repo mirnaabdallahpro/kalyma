@@ -32,7 +32,7 @@ function Sidebar() {
       to: "/crm",
       icon: "◎",
       label: "CRM",
-      disabled: true,
+      disabled: false,
     },
     {
       to: "/tasks",

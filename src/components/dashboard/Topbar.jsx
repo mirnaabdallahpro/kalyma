@@ -19,7 +19,7 @@ const workspaceMenu = [
     label: "CRM",
     path: "/crm",
     icon: "◎",
-    disabled: true,
+    disabled: false,
   },
   {
     label: "Tâches",

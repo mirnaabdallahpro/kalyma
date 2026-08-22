@@ -1,0 +1,105 @@
+import { useState } from "react";
+
+function formatAmount(amount, currency) {
+  if (amount === null || amount === undefined) return "";
+  return `${Number(amount).toLocaleString("fr-FR")} ${currency || "MAD"}`;
+}
+
+function DealCard({ deal, dragging, onDragStart, onDragEnd, onDropBefore, onEdit, onDelete, onWon, onLost }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+
+  return (
+    <div
+      className={`deal-card-wrap ${dragOver ? "task-drop-before" : ""}`}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setDragOver(true);
+      }}
+      onDragLeave={() => setDragOver(false)}
+      onDrop={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setDragOver(false);
+        onDropBefore(deal.id);
+      }}
+    >
+      <div
+        className={`deal-card ${dragging ? "task-dragging" : ""}`}
+        draggable
+        onDragStart={(e) => {
+          e.dataTransfer.setData("text/plain", deal.id);
+          e.dataTransfer.effectAllowed = "move";
+          onDragStart(deal.id);
+        }}
+        onDragEnd={onDragEnd}
+      >
+        <div className="deal-card-top">
+          <strong>{deal.companyName}</strong>
+
+          <div className="row-menu" tabIndex={0} onBlur={() => setMenuOpen(false)}>
+            <button
+              type="button"
+              className="icon-btn"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label="Options"
+            >
+              ⋮
+            </button>
+
+            {menuOpen && (
+              <div className="row-dropdown">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onEdit(deal);
+                  }}
+                >
+                  Modifier
+                </button>
+                <button
+                  type="button"
+                  className="danger"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onDelete(deal);
+                  }}
+                >
+                  Supprimer
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <span className="deal-amount">{formatAmount(deal.amount, deal.currency)}</span>
+
+        {deal.offer && <span className="deal-offer">{deal.offer.name}</span>}
+
+        {deal.source && <span className="deal-source">{deal.source}</span>}
+
+        <div className="deal-quick-actions">
+          <button
+            type="button"
+            className="deal-quick-btn deal-quick-won"
+            onClick={() => onWon(deal)}
+            title="Marquer gagné"
+          >
+            ✓ Gagné
+          </button>
+          <button
+            type="button"
+            className="deal-quick-btn deal-quick-lost"
+            onClick={() => onLost(deal)}
+            title="Marquer perdu"
+          >
+            ✕ Perdu
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default DealCard;

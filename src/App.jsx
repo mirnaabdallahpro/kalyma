@@ -15,6 +15,7 @@ import BusinessOverview from "./pages/business/BusinessOverview";
 import BusinessProfile from "./pages/business/BusinessProfile";
 import BusinessStrategy from "./pages/business/BusinessStrategy";
 import ComingSoon from "./pages/ComingSoon";
+import Crm from "./pages/Crm";
 import Dashboard from "./pages/Dashboard";
 import Tasks from "./pages/Tasks";
 
@@ -132,6 +133,7 @@ function App() {
         </Route>
 
           <Route path="/tasks" element={<Tasks />} />
+          <Route path="/crm" element={<Crm />} />
 
        
 
