@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ComingSoonOverlay from "../shared/ComingSoonOverlay";
 import TaskAIModal from "./TaskAIModal";
 
 function TaskAIPanel({ task }) {
@@ -9,7 +10,8 @@ function TaskAIPanel({ task }) {
     : "Aucune tâche à haute priorité en attente — bon rythme.";
 
   return (
-    <>
+    <ComingSoonOverlay>
+
       <section className="ai" style={{ marginTop: 18 }}>
         <span className="tag">KALYMA AI</span>
         <h3>Votre priorité</h3>
@@ -20,7 +22,7 @@ function TaskAIPanel({ task }) {
       </section>
 
       {open && <TaskAIModal onClose={() => setOpen(false)} />}
-    </>
+    </ComingSoonOverlay>
   );
 }
 
