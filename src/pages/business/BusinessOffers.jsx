@@ -12,6 +12,13 @@ import {
   updateBusinessOfferStatus,
 } from "../../../services/businessOffersService";
 
+import {
+  getOffersForSelect,
+  getProspects,
+  getRelanceSettings,
+  getUpcomingRelances
+} from "../../../services/crm";
+
 
 
 function BusinessOffers() {
@@ -28,6 +35,11 @@ function BusinessOffers() {
   const [offerModal, setOfferModal] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
+  const [deals, setDeals] = useState([]);
+  const [relances, setRelances] = useState([]);
+    const [errorMsg, setErrorMsg] = useState("");
+
+
   /*
    * ==========================================
    * CHARGEMENT
@@ -36,6 +48,7 @@ function BusinessOffers() {
 
   useEffect(() => {
     loadOffers();
+    loadAll();
   }, []);
 
   async function loadOffers() {
@@ -59,6 +72,26 @@ function BusinessOffers() {
       setLoading(false);
     }
   }
+
+   const loadAll = async () => {
+    try {
+      setErrorMsg("");
+      const [dealsData, offersData, relancesData, settingsData] = await Promise.all([
+        getProspects(),
+        getOffersForSelect(),
+        getUpcomingRelances(),
+        getRelanceSettings(),
+      ]);
+      setDeals(dealsData);
+      setOffers(offersData);
+      setRelances(relancesData);
+    } catch (err) {
+      setErrorMsg(err?.message || "Impossible de charger le CRM pour le moment.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   /*
    * ==========================================
@@ -114,11 +147,7 @@ function BusinessOffers() {
       offer.status === "draft"
   ).length;
 
-  const totalClients = offers.reduce(
-    (total, offer) =>
-      total + (Number(offer.clients) || 0),
-    0
-  );
+  const totalClients = deals.filter((deal) => deal.stage === "gagne").length;
 
   /*
    * ==========================================
