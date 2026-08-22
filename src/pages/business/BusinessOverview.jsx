@@ -14,6 +14,7 @@ import ConfirmModal from "../../components/business/ConfirmModal";
 import EditProfileModal from "../../components/business/EditProfileModal";
 import GoalFormModal from "../../components/business/GoalFormModal";
 import OfferFormModal from "../../components/business/OfferFormModal";
+import ComingSoonOverlay from "../../components/shared/ComingSoonOverlay";
 
 import {
   getBusinessProfile,
@@ -541,6 +542,7 @@ function BusinessOverview() {
         />
 
         <div>
+          <ComingSoonOverlay>
 
           <GoalsPanel
             goals={goals}
@@ -557,6 +559,7 @@ function BusinessOverview() {
               })
             }
           />
+          </ComingSoonOverlay>
 
           <BusinessAIDiagnostic
             insight={aiInsight}

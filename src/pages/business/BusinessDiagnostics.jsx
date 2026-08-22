@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import AIDiagnosticModal from "../../components/business/AIDiagnosticModal";
 import BusinessCard from "../../components/business/BusinessCard";
+import ComingSoonOverlay from "../../components/shared/ComingSoonOverlay";
 
 import {
   getCurrentBusinessDiagnosticFull,
@@ -228,6 +229,8 @@ function BusinessDiagnostics() {
             </p>
           </div>
 
+          <ComingSoonOverlay>
+
           <button
             type="button"
             className="btn btn-primary"
@@ -237,12 +240,15 @@ function BusinessDiagnostics() {
           >
             ✦ Analyse Kalyma AI
           </button>
+          </ComingSoonOverlay>
         </div>
 
         <BusinessCard
           title="Votre diagnostic n'est pas encore disponible"
           subtitle="Complétez votre profil business afin de pouvoir générer votre diagnostic."
         >
+          <ComingSoonOverlay>
+        
           <div className="diagnostic-empty">
             <p>
               Votre diagnostic stratégique sera
@@ -261,6 +267,8 @@ function BusinessDiagnostics() {
               Générer mon diagnostic
             </button>
           </div>
+          </ComingSoonOverlay>
+
         </BusinessCard>
 
         {showAnalysis && (
@@ -304,6 +312,8 @@ function BusinessDiagnostics() {
             vos prochains leviers de croissance.
           </p>
         </div>
+        
+        <ComingSoonOverlay>
 
         <button
           type="button"
@@ -315,6 +325,7 @@ function BusinessDiagnostics() {
         >
           ✦ Analyse Kalyma AI
         </button>
+        </ComingSoonOverlay>
       </div>
 
       {/* =========================================

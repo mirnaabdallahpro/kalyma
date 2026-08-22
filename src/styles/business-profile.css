@@ -1003,3 +1003,145 @@
     }
 
 }
+
+.coming-soon-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Contenu de la section */
+.coming-soon-content {
+    filter: blur(4px);
+    opacity: 0.65;
+    user-select: none;
+    pointer-events: none;
+}
+
+/* Voile */
+.coming-soon-overlay {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255, 255, 255, 0.55);
+
+    backdrop-filter: blur(2px);
+
+    z-index: 10;
+}
+
+/* Message */
+.coming-soon-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    max-width: 360px;
+    padding: 20px;
+
+    text-align: center;
+}
+
+.coming-soon-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+    margin-bottom: 10px;
+
+    border-radius: 50%;
+
+    background: rgba(14, 42, 71, 0.08);
+
+    font-size: 18px;
+}
+
+.coming-soon-message strong {
+    margin-bottom: 6px;
+
+    font-size: 15px;
+    color: #0e2a47;
+}
+
+.coming-soon-message span:last-child {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #6b7280;
+}
+
+.ai-disabled {
+    position: relative;
+    min-height: 220px;
+    opacity: 0.65;
+}
+
+/* Contenu derrière l'overlay */
+.ai-content-blurred {
+    filter: blur(4px);
+    user-select: none;
+    pointer-events: none;
+}
+
+/* Overlay transparent */
+.ai-coming-soon {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255, 255, 255, 0.55);
+
+    backdrop-filter: blur(2px);
+}
+
+/* Message central */
+.ai-coming-soon-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    max-width: 360px;
+
+    padding: 20px;
+
+    text-align: center;
+}
+
+.ai-lock-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    margin-bottom: 10px;
+
+    border-radius: 50%;
+
+    background: rgba(14, 42, 71, 0.08);
+
+    font-size: 18px;
+}
+
+.ai-coming-soon-content strong {
+    margin-bottom: 6px;
+
+    font-size: 15px;
+    color: #0e2a47;
+}
+
+.ai-coming-soon-content span:last-child {
+    font-size: 13px;
+    line-height: 1.5;
+
+    color: #6b7280;
+}
