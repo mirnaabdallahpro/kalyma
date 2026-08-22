@@ -238,6 +238,97 @@ export async function markProspectLost(id, reason) {
 
 export { ACTIVE_STAGES };
 
+// Import en masse depuis un CSV/Excel prétraité côté front.
+// rows = [{ companyName, contactName, contactEmail, contactPhone, source, amount, notes }]
+export async function bulkImportProspects(rows, { offerId, stage }) {
+  const user = await getAuthenticatedUser();
+  if (!user) throw new Error("Utilisateur non authentifié.");
+  if (!rows.length) return { created: [], relanceCount: 0 };
+
+  const targetStage = stage || "lead";
+  const CHUNK_SIZE = 200;
+
+  const { data: existing, error: fetchError } = await supabase
+    .from("prospects")
+    .select("position")
+    .eq("user_id", user.id)
+    .eq("stage", targetStage)
+    .order("position", { ascending: false })
+    .limit(1);
+
+  if (fetchError) throw fetchError;
+
+  let nextPosition = existing?.length ? existing[0].position + 1 : 0;
+
+  const payload = rows.map((r) => ({
+    user_id: user.id,
+    business_offer_id: offerId,
+    company_name: (r.companyName || "").toString().trim(),
+    contact_name: (r.contactName || "").toString().trim(),
+    contact_email: (r.contactEmail || "").toString().trim(),
+    contact_phone: (r.contactPhone || "").toString().trim(),
+    source: (r.source || "Import CSV").toString().trim(),
+    amount: r.amount ? Number(r.amount) || null : null,
+    currency: "MAD",
+    stage: targetStage,
+    position: nextPosition++,
+    notes: (r.notes || "").toString().trim(),
+  }));
+
+  const createdRows = [];
+  for (let i = 0; i < payload.length; i += CHUNK_SIZE) {
+    const chunk = payload.slice(i, i + CHUNK_SIZE);
+    const { data, error } = await supabase
+      .from("prospects")
+      .insert(chunk)
+      .select("*, business_offers(id, name, price)");
+
+    if (error) throw error;
+    createdRows.push(...data);
+  }
+
+  // Relances générées en masse (une seule lecture de config, un seul insert par lot)
+  const { data: settings, error: settingsError } = await supabase
+    .from("crm_relance_settings")
+    .select("*")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (settingsError) throw settingsError;
+
+  let relanceCount = 0;
+
+  if (!settings || settings.enabled !== false) {
+    const intervals = settings?.intervals?.length ? settings.intervals : DEFAULT_INTERVALS;
+    const relanceRows = [];
+
+    createdRows.forEach((p) => {
+      intervals.forEach((dayOffset) => {
+        const scheduled = new Date(p.created_at);
+        scheduled.setDate(scheduled.getDate() + dayOffset);
+
+        relanceRows.push({
+          user_id: user.id,
+          prospect_id: p.id,
+          day_offset: dayOffset,
+          scheduled_at: scheduled.toISOString(),
+          status: "pending",
+        });
+      });
+    });
+
+    for (let i = 0; i < relanceRows.length; i += CHUNK_SIZE) {
+      const chunk = relanceRows.slice(i, i + CHUNK_SIZE);
+      const { error } = await supabase.from("prospect_relances").insert(chunk);
+      if (error) throw error;
+    }
+
+    relanceCount = relanceRows.length;
+  }
+
+  return { created: createdRows.map(mapProspect), relanceCount };
+}
+
 // Évalue les 3 critères (besoin / budget / timing) et route
 // automatiquement : qualifié → RDV, sinon → Nurturing (avec
 // une séquence de relances qui repart).

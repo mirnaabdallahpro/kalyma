@@ -17,6 +17,7 @@ import {
   updateRelanceSettings,
 } from "../../services/crm";
 import ClosedDealsList from "../components/crm/ClosedDealsList";
+import ImportProspectsModal from "../components/crm/ImportProspectsModal";
 import LostReasonModal from "../components/crm/LostReasonModal";
 import PipelineBoard from "../components/crm/PipelineBoard";
 import ProspectFormModal from "../components/crm/ProspectFormModal";
@@ -52,6 +53,7 @@ function Crm() {
   const [qualifyTarget, setQualifyTarget] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
 
   const loadAll = async () => {
     try {
@@ -231,13 +233,25 @@ function Crm() {
                 <p>Transformez vos opportunités en clients.</p>
               </div>
 
-              <button
-                type="button"
-                className="btn btn-yellow"
-                onClick={() => setFormState({ stage: "lead" })}
-              >
-                + Nouvelle opportunité
-              </button>
+              <div className="crm-header-actions">
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => setImportOpen(true)}
+                  disabled={offers.length === 0}
+                  title={offers.length === 0 ? "Crée d'abord une offre" : "Importer un CSV/Excel"}
+                >
+                  ⇪ Importer un CSV
+                </button>
+
+                <button
+                  type="button"
+                  className="btn btn-yellow"
+                  onClick={() => setFormState({ stage: "lead" })}
+                >
+                  + Nouvelle opportunité
+                </button>
+              </div>
             </div>
 
             {errorMsg && (
@@ -332,6 +346,14 @@ function Crm() {
           message={`Supprimer "${deleteTarget.companyName}" ? Cette action est irréversible.`}
           onCancel={() => setDeleteTarget(null)}
           onConfirm={confirmDelete}
+        />
+      )}
+
+      {importOpen && (
+        <ImportProspectsModal
+          offers={offers}
+          onClose={() => setImportOpen(false)}
+          onImported={loadAll}
         />
       )}
 
