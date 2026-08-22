@@ -17,7 +17,7 @@ async function getAuthenticatedUser() {
   return session.user;
 }
 
-const ACTIVE_STAGES = ["lead", "rdv", "proposition", "negociation"];
+const ACTIVE_STAGES = ["lead", "qualification", "nurturing", "rdv"];
 const DEFAULT_INTERVALS = [3, 7, 30];
 
 
@@ -60,6 +60,9 @@ function mapProspect(row) {
     notes: row.notes,
     closedAt: row.closed_at,
     createdAt: row.created_at,
+    qualificationBesoin: row.qualification_besoin,
+    qualificationBudget: row.qualification_budget,
+    qualificationTiming: row.qualification_timing,
     offer: row.business_offers
       ? {
           id: row.business_offers.id,
@@ -233,6 +236,60 @@ export async function markProspectLost(id, reason) {
 }
 
 export { ACTIVE_STAGES };
+
+// Évalue les 3 critères (besoin / budget / timing) et route
+// automatiquement : qualifié → RDV, sinon → Nurturing (avec
+// une séquence de relances qui repart).
+export async function qualifyProspect(id, { besoin, budget, timing }) {
+  const user = await getAuthenticatedUser();
+  if (!user) throw new Error("Utilisateur non authentifié.");
+
+  const qualified = Boolean(besoin && budget && timing);
+  const newStage = qualified ? "rdv" : "nurturing";
+
+  const { data: existing, error: fetchError } = await supabase
+    .from("prospects")
+    .select("position")
+    .eq("user_id", user.id)
+    .eq("stage", newStage)
+    .order("position", { ascending: false })
+    .limit(1);
+
+  if (fetchError) throw fetchError;
+
+  const nextPosition = existing?.length ? existing[0].position + 1 : 0;
+
+  const { data, error } = await supabase
+    .from("prospects")
+    .update({
+      qualification_besoin: besoin,
+      qualification_budget: budget,
+      qualification_timing: timing,
+      stage: newStage,
+      position: nextPosition,
+    })
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .select("*, business_offers(id, name, price)")
+    .single();
+
+  if (error) throw error;
+
+  if (!qualified) {
+    await generateRelancesForProspect(user.id, id, new Date());
+  }
+
+  return { prospect: mapProspect(data), qualified };
+}
+
+// Relance une séquence de relances "fraîche" à partir d'aujourd'hui —
+// utilisé quand un lead bascule dans la colonne Nurturing.
+export async function restartNurturingSequence(prospectId) {
+  const user = await getAuthenticatedUser();
+  if (!user) throw new Error("Utilisateur non authentifié.");
+
+  await generateRelancesForProspect(user.id, prospectId, new Date());
+}
 
 
 /* =========================================================

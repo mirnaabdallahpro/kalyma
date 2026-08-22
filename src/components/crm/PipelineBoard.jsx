@@ -1,6 +1,6 @@
 import DealColumn from "./DealColumn";
 
-const STAGES = ["lead", "rdv", "proposition", "negociation"];
+const STAGES = ["lead", "qualification", "nurturing", "rdv"];
 
 function formatAmount(amount) {
   return `${Number(amount || 0).toLocaleString("fr-FR")} MAD`;
@@ -17,6 +17,7 @@ function PipelineBoard({
   onDelete,
   onWon,
   onLost,
+  onQualify,
 }) {
   const totalValue = deals.reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
 
@@ -44,6 +45,7 @@ function PipelineBoard({
             onDelete={onDelete}
             onWon={onWon}
             onLost={onLost}
+            onQualify={onQualify}
           />
         ))}
       </div>

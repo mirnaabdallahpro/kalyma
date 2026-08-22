@@ -9,7 +9,9 @@ import {
   getUpcomingRelances,
   markProspectLost,
   markProspectWon,
+  qualifyProspect,
   reorderProspects,
+  restartNurturingSequence,
   skipRelance,
   updateProspect,
   updateRelanceSettings,
@@ -18,6 +20,7 @@ import ClosedDealsList from "../components/crm/ClosedDealsList";
 import LostReasonModal from "../components/crm/LostReasonModal";
 import PipelineBoard from "../components/crm/PipelineBoard";
 import ProspectFormModal from "../components/crm/ProspectFormModal";
+import QualificationModal from "../components/crm/QualificationModal";
 import RelanceSettingsModal from "../components/crm/RelanceSettingsModal";
 import RelancesPanel from "../components/crm/RelancesPanel";
 import StatsCards from "../components/crm/StatsCards";
@@ -28,7 +31,7 @@ import "../styles/crm.css";
 
 const TABS = [
   { key: "pipeline", label: "Pipeline actif" },
-  { key: "gagne", label: "Gagnés" },
+  { key: "gagne", label: "Clients signés" },
   { key: "perdu", label: "Perdus" },
 ];
 
@@ -46,6 +49,7 @@ function Crm() {
 
   const [formState, setFormState] = useState(null); // null | { stage } | deal
   const [lostTarget, setLostTarget] = useState(null);
+  const [qualifyTarget, setQualifyTarget] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -96,6 +100,14 @@ function Crm() {
 
     try {
       await reorderProspects(orderedIds, dealId, newStage);
+
+      // Un lead qui bascule en Nurturing repart sur une séquence de
+      // relances fraîche (J3/J7/J30…) à partir de maintenant.
+      if (newStage === "nurturing" && dragged.stage !== "nurturing") {
+        await restartNurturingSequence(dealId);
+        const freshRelances = await getUpcomingRelances();
+        setRelances(freshRelances);
+      }
     } catch (err) {
       setErrorMsg(err?.message || "Le déplacement n'a pas pu être enregistré.");
       loadAll();
@@ -152,6 +164,22 @@ function Crm() {
       setErrorMsg(err?.message || "Impossible de marquer ce deal comme perdu.");
     } finally {
       setLostTarget(null);
+    }
+  };
+
+  const handleQualify = async (criteria) => {
+    if (!qualifyTarget) return;
+    try {
+      const { prospect } = await qualifyProspect(qualifyTarget.id, criteria);
+      setDeals((prev) => prev.map((d) => (d.id === prospect.id ? prospect : d)));
+      if (prospect.stage === "nurturing") {
+        const freshRelances = await getUpcomingRelances();
+        setRelances(freshRelances);
+      }
+    } catch (err) {
+      setErrorMsg(err?.message || "Impossible d'enregistrer la qualification.");
+    } finally {
+      setQualifyTarget(null);
     }
   };
 
@@ -241,7 +269,7 @@ function Crm() {
                 {tab === "pipeline" && (
                   <PipelineBoard
                     deals={deals.filter((d) =>
-                      ["lead", "rdv", "proposition", "negociation"].includes(d.stage)
+                      ["lead", "qualification", "nurturing", "rdv"].includes(d.stage)
                     )}
                     draggingId={draggingId}
                     onDragStart={setDraggingId}
@@ -252,6 +280,7 @@ function Crm() {
                     onDelete={(deal) => setDeleteTarget(deal)}
                     onWon={handleWon}
                     onLost={(deal) => setLostTarget(deal)}
+                    onQualify={(deal) => setQualifyTarget(deal)}
                   />
                 )}
 
@@ -287,6 +316,14 @@ function Crm() {
           deal={lostTarget}
           onClose={() => setLostTarget(null)}
           onConfirm={handleConfirmLost}
+        />
+      )}
+
+      {qualifyTarget && (
+        <QualificationModal
+          deal={qualifyTarget}
+          onClose={() => setQualifyTarget(null)}
+          onSave={handleQualify}
         />
       )}
 

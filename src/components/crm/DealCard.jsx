@@ -5,7 +5,7 @@ function formatAmount(amount, currency) {
   return `${Number(amount).toLocaleString("fr-FR")} ${currency || "MAD"}`;
 }
 
-function DealCard({ deal, dragging, onDragStart, onDragEnd, onDropBefore, onEdit, onDelete, onWon, onLost }) {
+function DealCard({ deal, dragging, onDragStart, onDragEnd, onDropBefore, onEdit, onDelete, onWon, onLost, onQualify }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dragOver, setDragOver] = useState(false);
 
@@ -79,14 +79,32 @@ function DealCard({ deal, dragging, onDragStart, onDragEnd, onDropBefore, onEdit
 
         {deal.source && <span className="deal-source">{deal.source}</span>}
 
+        {(deal.stage === "qualification" || deal.stage === "nurturing") && (
+          <div className="qualif-badges">
+            <span className={deal.qualificationBesoin ? "qb-on" : "qb-off"}>Besoin</span>
+            <span className={deal.qualificationBudget ? "qb-on" : "qb-off"}>Budget</span>
+            <span className={deal.qualificationTiming ? "qb-on" : "qb-off"}>Timing</span>
+          </div>
+        )}
+
+        {deal.stage === "qualification" && (
+          <button
+            type="button"
+            className="deal-quick-btn deal-quick-qualify"
+            onClick={() => onQualify(deal)}
+          >
+            Qualifier
+          </button>
+        )}
+
         <div className="deal-quick-actions">
           <button
             type="button"
             className="deal-quick-btn deal-quick-won"
             onClick={() => onWon(deal)}
-            title="Marquer gagné"
+            title="Marquer comme client signé"
           >
-            ✓ Gagné
+            ✓ Closé
           </button>
           <button
             type="button"

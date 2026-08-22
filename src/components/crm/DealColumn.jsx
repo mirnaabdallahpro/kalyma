@@ -2,9 +2,9 @@ import DealCard from "./DealCard";
 
 const STAGE_LABEL = {
   lead: "Lead",
+  qualification: "Qualification",
+  nurturing: "Nurturing",
   rdv: "RDV",
-  proposition: "Proposition",
-  negociation: "Négociation",
 };
 
 function DealColumn({
@@ -19,10 +19,11 @@ function DealColumn({
   onDelete,
   onWon,
   onLost,
+  onQualify,
 }) {
   return (
     <div
-      className="stage deal-column"
+      className={`stage deal-column ${stage === "nurturing" ? "stage-nurturing" : ""}`}
       onDragOver={(e) => e.preventDefault()}
       onDrop={(e) => {
         e.preventDefault();
@@ -48,6 +49,7 @@ function DealColumn({
             onDelete={onDelete}
             onWon={onWon}
             onLost={onLost}
+            onQualify={onQualify}
           />
         ))}
       </div>
