@@ -228,7 +228,7 @@ function Crm() {
 
           <div className="content">
             <div className="welcome">
-              <div>
+              <div style={{marginBottom:"0.6rem"}}>
                 <h1>CRM</h1>
                 <p>Transformez vos opportunités en clients.</p>
               </div>
