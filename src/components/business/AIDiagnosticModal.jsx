@@ -1,7 +1,9 @@
+import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "../../../lib/supabase";
 import { createDiagnosticTasks } from "../../../services/tasks";
 import Modal from "./Modal";
+
 
 function AIDiagnosticModal({ profile, onClose }) {
   const [diagnostic, setDiagnostic] = useState(null);
@@ -132,8 +134,18 @@ const [tasksCreated, setTasksCreated] = useState(false);
             <span />
           </div>
 
+
+
           <strong>
-            Analyse de votre business...
+            <>
+              <Loader2
+                size={15}
+                strokeWidth={2}
+                className="ai-spinner"
+              />
+              Analyse de votre business...
+            </>
+            
           </strong>
 
           <p>

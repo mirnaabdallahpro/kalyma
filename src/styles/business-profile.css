@@ -1145,3 +1145,17 @@
 
     color: #6b7280;
 }
+
+.ai-spinner {
+    animation: ai-spin 0.8s linear infinite;
+}
+
+@keyframes ai-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

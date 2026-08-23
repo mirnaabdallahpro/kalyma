@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getBusinessAiSuggestion } from "../../../../services/ai/businessSuggestionService";
 import Modal from "../Modal";
@@ -266,20 +266,35 @@ function EditBusinessProfileModal({
                   {label}
                 </label>
 
-                {hasAi && (
-                  <button
-                    type="button"
-                    className="ai-suggestion-btn"
-                    onClick={() => handleAiSuggestion(field)}
-                    disabled={aiLoading}
-                    title="Améliorer avec l'IA"
-                  >
-                   <Sparkles size={15} strokeWidth={2} className="text-primary" />
-                    {aiLoading && aiField === field
-                      ? "Analyse..."
-                      : "Améliorer avec l’IA"}
-                  </button>
-                )}
+              {hasAi && (
+  <button
+    type="button"
+    className="ai-suggestion-btn"
+    onClick={() => handleAiSuggestion(field)}
+    disabled={aiLoading}
+    title="Améliorer avec l'IA"
+  >
+    {aiLoading && aiField === field ? (
+      <>
+        <Loader2
+          size={15}
+          strokeWidth={2}
+          className="ai-spinner"
+        />
+        Analyse...
+      </>
+    ) : (
+      <>
+        <Sparkles
+          size={15}
+          strokeWidth={2}
+          className="text-primary"
+        />
+        Améliorer avec l’IA
+      </>
+    )}
+  </button>
+)}
               </div>
 
               {isSelect ? (
