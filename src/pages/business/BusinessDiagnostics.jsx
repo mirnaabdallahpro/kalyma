@@ -229,7 +229,7 @@ function BusinessDiagnostics() {
             </p>
           </div>
 
-          <ComingSoonOverlay>
+         
 
           <button
             type="button"
@@ -240,7 +240,7 @@ function BusinessDiagnostics() {
           >
             ✦ Analyse Kalyma AI
           </button>
-          </ComingSoonOverlay>
+         
         </div>
 
         <BusinessCard

@@ -272,3 +272,197 @@ export async function reorderTasks(source, orderedIds, movedTaskId, newStatus) {
     throw failed.error;
   }
 }
+
+
+
+/*
+export async function createDiagnosticTasks(recommendations = []) {
+  const user = await getAuthenticatedUser();
+
+  if (!user) {
+    throw new Error("Utilisateur non authentifié.");
+  }
+
+  if (!Array.isArray(recommendations) || recommendations.length === 0) {
+    return [];
+  }
+
+  // Récupérer la dernière position utilisée
+  const { data: existing, error: fetchError } = await supabase
+    .from("business_diagnostic_recommendations")
+    .select("position")
+    .eq("user_id", user.id)
+    .order("position", { ascending: false })
+    .limit(1);
+
+  if (fetchError) {
+    throw fetchError;
+  }
+
+  let nextPosition = existing?.length
+    ? existing[0].position + 1
+    : 0;
+
+  const rows = recommendations.map((recommendation) => {
+    const row = {
+      user_id: user.id,
+      title:
+        recommendation.title ||
+        recommendation.recommendation ||
+        recommendation.text ||
+        "Action recommandée par le diagnostic IA",
+
+      description:
+        recommendation.description ||
+        recommendation.recommendation ||
+        recommendation.finding ||
+        "",
+
+      priority:
+        recommendation.priority === "high"
+          ? "priority"
+          : recommendation.priority === "medium"
+          ? "work_on"
+          : "optional",
+
+      impact:
+        recommendation.impact ||
+        recommendation.priority ||
+        "medium",
+
+      status: "todo",
+
+      position: nextPosition++,
+    };
+
+    return row;
+  });
+
+  const { data, error } = await supabase
+    .from("business_diagnostic_recommendations")
+    .insert(rows)
+    .select();
+
+  if (error) {
+    throw error;
+  }
+
+  return data.map(mapDiagnosticRecommendation);
+}
+
+*/
+
+export async function createDiagnosticTasks(
+  recommendations = []
+) {
+  const user = await getAuthenticatedUser();
+
+  if (!user) {
+    throw new Error("Utilisateur non authentifié.");
+  }
+
+  if (!recommendations.length) {
+    return [];
+  }
+
+  const titles = recommendations
+    .map(
+      (recommendation) =>
+        recommendation.title ||
+        recommendation.recommendation ||
+        recommendation.text
+    )
+    .filter(Boolean);
+
+  const { data: existing, error: existingError } =
+    await supabase
+      .from("business_diagnostic_recommendations")
+      .select("title")
+      .eq("user_id", user.id)
+      .in("title", titles);
+
+  if (existingError) {
+    throw existingError;
+  }
+
+  const existingTitles = new Set(
+    (existing || []).map((item) => item.title)
+  );
+
+  const newRecommendations =
+    recommendations.filter((recommendation) => {
+      const title =
+        recommendation.title ||
+        recommendation.recommendation ||
+        recommendation.text;
+
+      return title && !existingTitles.has(title);
+    });
+
+  if (!newRecommendations.length) {
+    return [];
+  }
+
+  const { data: lastPosition, error: positionError } =
+    await supabase
+      .from("business_diagnostic_recommendations")
+      .select("position")
+      .eq("user_id", user.id)
+      .order("position", { ascending: false })
+      .limit(1);
+
+  if (positionError) {
+    throw positionError;
+  }
+
+  let nextPosition = lastPosition?.length
+    ? lastPosition[0].position + 1
+    : 0;
+
+  const rows = newRecommendations.map(
+    (recommendation) => {
+      const priority =
+        recommendation.priority || "medium";
+
+      return {
+        user_id: user.id,
+
+        title:
+          recommendation.title ||
+          recommendation.recommendation ||
+          recommendation.text,
+
+        description:
+          recommendation.description ||
+          recommendation.recommendation ||
+          "",
+
+        priority:
+          priority === "high"
+            ? "priority"
+            : priority === "medium"
+            ? "work_on"
+            : "optional",
+
+        impact:
+          recommendation.impact ||
+          priority,
+
+        status: "todo",
+
+        position: nextPosition++,
+      };
+    }
+  );
+
+  const { data, error } = await supabase
+    .from("business_diagnostic_recommendations")
+    .insert(rows)
+    .select();
+
+  if (error) {
+    throw error;
+  }
+
+  return data.map(mapDiagnosticRecommendation);
+}
