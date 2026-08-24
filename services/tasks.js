@@ -353,13 +353,25 @@ export async function createDiagnosticTasks(recommendations = []) {
 */
 
 export async function createDiagnosticTasks(
-  recommendations = []
+  recommendations = [],
+  diagnosticId,
+  profile
 ) {
   const user = await getAuthenticatedUser();
 
   if (!user) {
     throw new Error("Utilisateur non authentifié.");
   }
+
+  if (!diagnosticId) {
+    throw new Error(
+      "Diagnostic ID manquant."
+    );
+  }
+
+  if (!profile) {
+  throw new Error("Profil business introuvable.");
+}
 
   if (!recommendations.length) {
     return [];
@@ -374,42 +386,60 @@ export async function createDiagnosticTasks(
     )
     .filter(Boolean);
 
-  const { data: existing, error: existingError } =
-    await supabase
-      .from("business_diagnostic_recommendations")
-      .select("title")
-      .eq("user_id", user.id)
-      .in("title", titles);
+  // Vérifier les doublons uniquement
+  // dans le diagnostic courant
+  const {
+    data: existing,
+    error: existingError,
+  } = await supabase
+    .from("business_diagnostic_recommendations")
+    .select("title")
+    .eq("user_id", user.id)
+    .eq("diagnostic_id", diagnosticId)
+    .in("title", titles);
 
   if (existingError) {
     throw existingError;
   }
 
   const existingTitles = new Set(
-    (existing || []).map((item) => item.title)
+    (existing || []).map(
+      (item) => item.title
+    )
   );
 
   const newRecommendations =
-    recommendations.filter((recommendation) => {
-      const title =
-        recommendation.title ||
-        recommendation.recommendation ||
-        recommendation.text;
+    recommendations.filter(
+      (recommendation) => {
+        const title =
+          recommendation.title ||
+          recommendation.recommendation ||
+          recommendation.text;
 
-      return title && !existingTitles.has(title);
-    });
+        return (
+          title &&
+          !existingTitles.has(title)
+        );
+      }
+    );
 
   if (!newRecommendations.length) {
     return [];
   }
 
-  const { data: lastPosition, error: positionError } =
-    await supabase
-      .from("business_diagnostic_recommendations")
-      .select("position")
-      .eq("user_id", user.id)
-      .order("position", { ascending: false })
-      .limit(1);
+  // Position uniquement pour ce diagnostic
+  const {
+    data: lastPosition,
+    error: positionError,
+  } = await supabase
+    .from("business_diagnostic_recommendations")
+    .select("position")
+    .eq("user_id", user.id)
+    .eq("diagnostic_id", diagnosticId)
+    .order("position", {
+      ascending: false,
+    })
+    .limit(1);
 
   if (positionError) {
     throw positionError;
@@ -422,9 +452,14 @@ export async function createDiagnosticTasks(
   const rows = newRecommendations.map(
     (recommendation) => {
       const priority =
-        recommendation.priority || "medium";
+        recommendation.priority ||
+        "medium";
 
       return {
+        // 🔗 Liaison avec le diagnostic
+        diagnostic_id: diagnosticId,
+        business_profile_id: profile.id,
+
         user_id: user.id,
 
         title:
@@ -455,7 +490,10 @@ export async function createDiagnosticTasks(
     }
   );
 
-  const { data, error } = await supabase
+  const {
+    data,
+    error,
+  } = await supabase
     .from("business_diagnostic_recommendations")
     .insert(rows)
     .select();
@@ -464,5 +502,7 @@ export async function createDiagnosticTasks(
     throw error;
   }
 
-  return data.map(mapDiagnosticRecommendation);
+  return data.map(
+    mapDiagnosticRecommendation
+  );
 }

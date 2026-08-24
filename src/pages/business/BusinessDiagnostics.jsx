@@ -313,7 +313,7 @@ function BusinessDiagnostics() {
           </p>
         </div>
         
-        <ComingSoonOverlay>
+        
 
         <button
           type="button"
@@ -321,11 +321,10 @@ function BusinessDiagnostics() {
           onClick={() =>
             setShowAnalysis(true)
           }
-          disabled={true}
         >
           ✦ Analyse Kalyma AI
         </button>
-        </ComingSoonOverlay>
+      
       </div>
 
       {/* =========================================

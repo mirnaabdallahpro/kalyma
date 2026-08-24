@@ -9,6 +9,7 @@ import GoalsPanel from "../../components/business/GoalsPanel";
 import OffersPanel from "../../components/business/OffersPanel";
 import ProfileOverviewPanel from "../../components/business/ProfileOverviewPanel";
 
+import { NavLink } from "react-router-dom";
 import AIDiagnosticModal from "../../components/business/AIDiagnosticModal";
 import ConfirmModal from "../../components/business/ConfirmModal";
 import EditProfileModal from "../../components/business/EditProfileModal";
@@ -470,6 +471,11 @@ function BusinessOverview() {
         <div className="business-alert">
           Commencez par créer votre
           profil business.
+
+          
+        </div>
+        <div style={{marginTop:"0.7rem"}}>
+          <NavLink to={"/business/profile"} className="btn btn-primary">Configurer mon profil business</NavLink>
         </div>
 
       </div>

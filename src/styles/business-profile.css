@@ -1159,3 +1159,1039 @@
         transform: rotate(360deg);
     }
 }
+
+/* =========================================================
+   ICP MODAL
+   ========================================================= */
+
+.icp-modal {
+    width: 100%;
+}
+
+.icp-form {
+    width: 100%;
+}
+
+/* =========================================================
+   ICP TABS NAVIGATION
+   ========================================================= */
+
+.icp-tabs-wrapper {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.icp-tabs {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 0.25rem;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+.icp-tabs::-webkit-scrollbar {
+    height: 5px;
+}
+
+.icp-tabs::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.icp-tabs::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+/* =========================================================
+   TAB
+   ========================================================= */
+
+.icp-tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+
+    flex: 0 0 auto;
+
+    padding: 0.8rem 1rem;
+
+    border: none;
+    border-bottom: 2px solid transparent;
+
+    background: transparent;
+
+    color: #64748b;
+
+    font-size: 0.82rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+
+    white-space: nowrap;
+}
+
+.icp-tab:hover {
+    color: #0e2a47;
+    background: #f8fafc;
+}
+
+.icp-tab.active {
+    color: #0e2a47;
+    border-bottom-color: #e4a02b;
+    background: #fffbf3;
+}
+
+.icp-tab-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 25px;
+    height: 25px;
+
+    border-radius: 7px;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+
+    font-size: 0.72rem;
+    font-weight: 700;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.icp-tab.active .icp-tab-number {
+    background: #0e2a47;
+    color: #ffffff;
+}
+
+.icp-tab-label {
+    line-height: 1;
+}
+
+/* =========================================================
+   TAB CONTENT
+   ========================================================= */
+
+.icp-tab-content {
+    min-height: 430px;
+}
+
+.icp-tab-panel {
+    width: 100%;
+
+    animation: icpTabFadeIn 0.2s ease;
+}
+
+@keyframes icpTabFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================================
+   SECTION HEADER
+   ========================================================= */
+
+.icp-form-section {
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.icp-form-section:last-child {
+    margin-bottom: 0;
+}
+
+.icp-form-section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+
+    border-bottom: 1px solid #eef2f6;
+}
+
+.icp-form-section-header>span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 34px;
+    height: 34px;
+
+    border-radius: 9px;
+
+    background: #0e2a47;
+    color: #ffffff;
+
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    flex-shrink: 0;
+}
+
+.icp-form-section-header strong {
+    display: block;
+
+    color: #0e2a47;
+
+    font-size: 1rem;
+    font-weight: 700;
+
+    line-height: 1.3;
+}
+
+.icp-form-section-header small {
+    display: block;
+
+    color: #64748b;
+
+    font-size: 0.78rem;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   FORM GRID
+   ========================================================= */
+
+.icp-form-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 1.1rem 1.25rem;
+}
+
+.icp-form-grid.full {
+    grid-template-columns: 1fr;
+}
+
+/* =========================================================
+   FORM FIELD
+   ========================================================= */
+
+.icp-form-grid>label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    color: #334155;
+
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.icp-form-grid>label.full-width {
+    grid-column: 1 / -1;
+}
+
+/* =========================================================
+   INPUT / SELECT / TEXTAREA
+   ========================================================= */
+
+.icp-form input,
+.icp-form select,
+.icp-form textarea {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    border: 1px solid #dbe2ea;
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #1e293b;
+
+    font-family: inherit;
+    font-size: 0.85rem;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.icp-form input,
+.icp-form select {
+    min-height: 43px;
+    padding: 0.65rem 0.8rem;
+}
+
+.icp-form textarea {
+    min-height: 110px;
+
+    padding: 0.75rem 0.8rem;
+
+    resize: vertical;
+
+    line-height: 1.5;
+}
+
+.icp-form input::placeholder,
+.icp-form textarea::placeholder {
+    color: #94a3b8;
+}
+
+.icp-form input:hover,
+.icp-form select:hover,
+.icp-form textarea:hover {
+    border-color: #cbd5e1;
+}
+
+.icp-form input:focus,
+.icp-form select:focus,
+.icp-form textarea:focus {
+    outline: none;
+
+    border-color: #0e2a47;
+
+    box-shadow: 0 0 0 3px rgba(14, 42, 71, 0.08);
+}
+
+.icp-form input:disabled,
+.icp-form select:disabled,
+.icp-form textarea:disabled {
+    background: #f8fafc;
+
+    color: #94a3b8;
+
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   SELECT
+   ========================================================= */
+
+.icp-form select {
+    cursor: pointer;
+}
+
+.icp-form select:disabled {
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   FIELD HELP TEXT
+   ========================================================= */
+
+.icp-field-help {
+    margin-top: -0.2rem;
+
+    color: #94a3b8;
+
+    font-size: 0.72rem;
+    font-weight: 400;
+
+    line-height: 1.4;
+}
+
+.icp-field input,
+.icp-field textarea,
+.icp-form-select {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: #0e2a47;
+    background: #fff;
+    border: 1px solid #d9dee7;
+    border-radius: 8px;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.icp-field input,
+.icp-form-select {
+    height: 44px;
+    padding: 0 0.85rem;
+}
+
+.icp-field textarea {
+    min-height: 100px;
+    padding: 0.75rem 0.85rem;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+.icp-field input:focus,
+.icp-field textarea:focus,
+.icp-form-select:focus {
+    outline: none;
+    border-color: #0e2a47;
+    box-shadow: 0 0 0 3px rgba(14, 42, 71, 0.08);
+}
+
+.icp-field input:hover,
+.icp-field textarea:hover,
+.icp-form-select:hover {
+    border-color: #b8c2d0;
+}
+
+.icp-field input:disabled,
+.icp-field textarea:disabled,
+.icp-form-select:disabled {
+    background: #f5f6f8;
+    color: #8a94a3;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* =========================================================
+   REQUIRED FIELD
+   ========================================================= */
+
+.icp-required {
+    color: #dc2626;
+    margin-left: 2px;
+}
+
+/* =========================================================
+   ARRAY / MULTI VALUE INPUTS
+   ========================================================= */
+
+.icp-array-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.icp-array-input {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.icp-array-input input {
+    flex: 1;
+}
+
+.icp-array-add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 43px;
+    height: 43px;
+
+    padding: 0 0.8rem;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #0e2a47;
+    color: #ffffff;
+
+    font-size: 0.8rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.15s ease;
+}
+
+.icp-array-add:hover {
+    background: #173c60;
+}
+
+.icp-array-add:active {
+    transform: scale(0.97);
+}
+
+/* =========================================================
+   TAGS
+   ========================================================= */
+
+.icp-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.icp-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    padding: 0.4rem 0.65rem;
+
+    border: 1px solid #dbe2ea;
+    border-radius: 7px;
+
+    background: #f8fafc;
+
+    color: #334155;
+
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.icp-tag-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 18px;
+    height: 18px;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #e2e8f0;
+
+    color: #475569;
+
+    font-size: 0.7rem;
+
+    cursor: pointer;
+}
+
+.icp-tag-remove:hover {
+    background: #cbd5e1;
+}
+
+/* =========================================================
+   CHECKBOX / RADIO GROUP
+   ========================================================= */
+
+.icp-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.icp-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    min-height: 38px;
+
+    padding: 0.55rem 0.75rem;
+
+    border: 1px solid #dbe2ea;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #475569;
+
+    font-size: 0.78rem;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.icp-option:hover {
+    border-color: #94a3b8;
+}
+
+.icp-option.active {
+    border-color: #0e2a47;
+
+    background: #f1f6fa;
+
+    color: #0e2a47;
+}
+
+.icp-option input {
+    width: auto;
+    min-height: auto;
+    accent-color: #0e2a47;
+}
+
+/* =========================================================
+   SCORE / RANGE
+   ========================================================= */
+
+.icp-score-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.icp-score-value {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    color: #475569;
+
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.icp-score-value strong {
+    color: #0e2a47;
+    font-size: 0.95rem;
+}
+
+.icp-score-field input[type="range"] {
+    width: 100%;
+    min-height: auto;
+
+    padding: 0;
+
+    border: none;
+
+    accent-color: #0e2a47;
+
+    cursor: pointer;
+}
+
+/* =========================================================
+   INFO BOX
+   ========================================================= */
+
+.icp-info-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+
+    margin-bottom: 1.25rem;
+    padding: 0.85rem 1rem;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+
+    background: #f8fafc;
+
+    color: #64748b;
+
+    font-size: 0.78rem;
+    line-height: 1.5;
+}
+
+.icp-info-box strong {
+    color: #334155;
+}
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.icp-empty {
+    padding: 1rem;
+
+    border: 1px dashed #cbd5e1;
+    border-radius: 9px;
+
+    background: #f8fafc;
+
+    color: #94a3b8;
+
+    text-align: center;
+
+    font-size: 0.78rem;
+}
+
+/* =========================================================
+   NAVIGATION BOTTOM
+   ========================================================= */
+
+.icp-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+
+    border-top: 1px solid #eef2f6;
+}
+
+.icp-navigation-left,
+.icp-navigation-right {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.icp-nav-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+
+    min-height: 38px;
+
+    padding: 0.55rem 0.9rem;
+
+    border: 1px solid #dbe2ea;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #475569;
+
+    font-size: 0.78rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.icp-nav-button:hover:not(:disabled) {
+    border-color: #94a3b8;
+    background: #f8fafc;
+}
+
+.icp-nav-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.icp-nav-button.primary {
+    border-color: #0e2a47;
+
+    background: #0e2a47;
+
+    color: #ffffff;
+}
+
+.icp-nav-button.primary:hover:not(:disabled) {
+    background: #173c60;
+}
+
+/* =========================================================
+   TAB PROGRESS
+   ========================================================= */
+
+.icp-tab-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    color: #94a3b8;
+
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+.icp-tab-progress-bar {
+    width: 80px;
+    height: 5px;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: #e2e8f0;
+}
+
+.icp-tab-progress-fill {
+    height: 100%;
+
+    border-radius: inherit;
+
+    background: #e4a02b;
+
+    transition: width 0.25s ease;
+}
+
+/* =========================================================
+   MODAL FOOTER
+   ========================================================= */
+
+.icp-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+}
+
+.icp-modal-footer-left,
+.icp-modal-footer-right {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+/* =========================================================
+   SAVE STATUS
+   ========================================================= */
+
+.icp-save-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    color: #64748b;
+
+    font-size: 0.75rem;
+}
+
+.icp-save-status.success {
+    color: #15803d;
+}
+
+.icp-save-status.error {
+    color: #dc2626;
+}
+
+/* =========================================================
+   RESPONSIVE — TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+    .icp-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .icp-form-grid>label.full-width {
+        grid-column: auto;
+    }
+
+    .icp-tab {
+        padding: 0.7rem 0.8rem;
+    }
+
+    .icp-tab-label {
+        display: none;
+    }
+
+    .icp-tab-number {
+        width: 29px;
+        height: 29px;
+    }
+}
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+    .icp-tabs-wrapper {
+        margin-bottom: 1rem;
+    }
+
+    .icp-tabs {
+        gap: 0.2rem;
+        padding-bottom: 0.25rem;
+    }
+
+    .icp-tab {
+        padding: 0.6rem 0.65rem;
+    }
+
+    .icp-tab-number {
+        width: 27px;
+        height: 27px;
+
+        font-size: 0.68rem;
+    }
+
+    .icp-tab-content {
+        min-height: auto;
+    }
+
+    .icp-form-section-header {
+        gap: 0.65rem;
+    }
+
+    .icp-form-section-header>span {
+        min-width: 30px;
+        height: 30px;
+
+        border-radius: 7px;
+    }
+
+    .icp-form-section-header strong {
+        font-size: 0.9rem;
+    }
+
+    .icp-form-section-header small {
+        font-size: 0.72rem;
+    }
+
+    .icp-form-grid {
+        gap: 0.9rem;
+    }
+
+    .icp-form input,
+    .icp-form select {
+        min-height: 42px;
+    }
+
+    .icp-form textarea {
+        min-height: 100px;
+    }
+
+    .icp-navigation {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .icp-navigation-left,
+    .icp-navigation-right {
+        width: 100%;
+    }
+
+    .icp-nav-button {
+        flex: 1;
+    }
+
+    .icp-modal-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .icp-modal-footer-left,
+    .icp-modal-footer-right {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   SCROLLBAR DU CONTENU
+   ========================================================= */
+
+.icp-form::-webkit-scrollbar,
+.icp-tab-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.icp-form::-webkit-scrollbar-track,
+.icp-tab-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.icp-form::-webkit-scrollbar-thumb,
+.icp-tab-content::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+/* =========================================================
+   DARKER FOCUS ACCESSIBILITY
+   ========================================================= */
+
+.icp-tab:focus-visible,
+.icp-nav-button:focus-visible,
+.icp-array-add:focus-visible {
+    outline: 3px solid rgba(228, 160, 43, 0.25);
+    outline-offset: 2px;
+}
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.icp-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.icp-loading-spinner {
+    width: 15px;
+    height: 15px;
+
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #ffffff;
+
+    border-radius: 50%;
+
+    animation: icpSpin 0.7s linear infinite;
+}
+
+@keyframes icpSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.icp-form-select {
+    width: 100%;
+    min-height: 44px;
+    padding: 0.7rem 2.5rem 0.7rem 0.85rem;
+
+    border: 1px solid #d9dee7;
+    border-radius: 8px;
+
+    background-color: #fff;
+    color: #0e2a47;
+
+    font-size: 0.9rem;
+    font-family: inherit;
+    line-height: 1.4;
+
+    outline: none;
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+
+    appearance: auto;
+}
+
+.icp-form-select:hover {
+    border-color: #b8c2d0;
+}
+
+.icp-form-select:focus {
+    border-color: #0e2a47;
+    box-shadow: 0 0 0 3px rgba(14, 42, 71, 0.08);
+}
+
+.icp-form-select:disabled {
+    background-color: #f5f6f8;
+    color: #8a94a3;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.icp-form-select option {
+    color: #0e2a47;
+    background: #fff;
+}
+
+.icp-form-select option[value=""] {
+    color: #8a94a3;
+}
+
+.icp-form input,
+.icp-form textarea,
+.icp-form-select {
+    width: 100%;
+    box-sizing: border-box;
+}

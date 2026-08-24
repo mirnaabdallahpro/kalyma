@@ -1,6 +1,10 @@
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "../../../lib/supabase";
+import {
+  createBusinessDiagnostic,
+  setCurrentBusinessDiagnostic,
+} from "../../../services/businessDiagnostics";
 import { createDiagnosticTasks } from "../../../services/tasks";
 import Modal from "./Modal";
 
@@ -9,6 +13,7 @@ function AIDiagnosticModal({ profile, onClose }) {
   const [diagnostic, setDiagnostic] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [diagnosticId, setDiagnosticId] = useState(null);
   const [creatingTasks, setCreatingTasks] = useState(false);
 const [tasksCreated, setTasksCreated] = useState(false);
 
@@ -23,7 +28,9 @@ const [tasksCreated, setTasksCreated] = useState(false);
     setCreatingTasks(true);
 
     await createDiagnosticTasks(
-      diagnostic.priorities
+      diagnostic.priorities,
+      diagnosticId,
+      profile
     );
 
     setTasksCreated(true);
@@ -41,6 +48,8 @@ const [tasksCreated, setTasksCreated] = useState(false);
   }
 }
 
+
+/*
   async function generateDiagnostic() {
     try {
       setLoading(true);
@@ -80,6 +89,136 @@ const [tasksCreated, setTasksCreated] = useState(false);
       setLoading(false);
     }
   }
+
+  */
+
+  async function generateDiagnostic() {
+  try {
+    setLoading(true);
+    setError(null);
+    setTasksCreated(false);
+
+    const { data, error } =
+      await supabase.functions.invoke(
+        "business-ai-diagnostic",
+        {
+          body: {
+            profile,
+          },
+        }
+      );
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data?.success || !data?.diagnostic) {
+      throw new Error(
+        data?.error || "Diagnostic invalide."
+      );
+    }
+
+    const aiDiagnostic = data.diagnostic;
+
+    // ─────────────────────────────
+    // 1. Identifier les éléments clés
+    // ─────────────────────────────
+
+    const strongestPoint =
+      [...(aiDiagnostic.points || [])]
+        .sort((a, b) => b.score - a.score)[0];
+
+    const weakestPoint =
+      [...(aiDiagnostic.points || [])]
+        .sort((a, b) => a.score - b.score)[0];
+
+    const firstPriority =
+      aiDiagnostic.priorities?.[0] || null;
+
+    // ─────────────────────────────
+    // 2. Créer le diagnostic en BDD
+    // ─────────────────────────────
+
+   const savedDiagnostic =
+  await createBusinessDiagnostic({
+    source: "ai",
+
+    business_score:
+      aiDiagnostic.overallScore ?? 0,
+
+    synthesis_title:
+      "Diagnostic stratégique",
+
+    synthesis_description:
+      aiDiagnostic.summary ?? "",
+
+    strength_dimension:
+      strongestPoint?.key ?? null,
+
+    strength_score:
+      strongestPoint?.score ?? null,
+
+    priority_dimension:
+      weakestPoint?.key ?? null,
+
+    priority_score:
+      weakestPoint?.score ?? null,
+
+    next_action_title:
+      firstPriority?.title ?? null,
+
+    next_action_description:
+      firstPriority?.description ?? null,
+
+    input_snapshot: profile,
+
+    ai_provider: "google",
+
+    ai_model: "gemini",
+
+    generation_started_at:
+      new Date().toISOString(),
+
+    generated_at:
+      new Date().toISOString(),
+
+    status: "draft",
+  });
+
+await setCurrentBusinessDiagnostic(
+  savedDiagnostic.id
+);
+
+setDiagnosticId(savedDiagnostic.id);
+
+setDiagnostic(aiDiagnostic);
+
+    // ─────────────────────────────
+    // 3. Stocker l'ID du diagnostic
+    // ─────────────────────────────
+
+    setDiagnosticId(savedDiagnostic.id);
+
+    // ─────────────────────────────
+    // 4. Afficher le diagnostic
+    // ─────────────────────────────
+
+    setDiagnostic(aiDiagnostic);
+
+  } catch (err) {
+    console.error(
+      "Erreur génération diagnostic :",
+      err
+    );
+
+    setError(
+      err?.message ||
+        "Impossible de générer le diagnostic."
+    );
+  } finally {
+    setLoading(false);
+  }
+}
 
   function getStatusLabel(status) {
     switch (status) {
@@ -124,7 +263,7 @@ const [tasksCreated, setTasksCreated] = useState(false);
       title="Diagnostic stratégique complet"
       subtitle="Analyse générée à partir de votre profil business"
       onClose={onClose}
-      width={560}
+        width={760}
     >
       {loading && (
         <div className="diagnostic-loading">
@@ -305,22 +444,59 @@ const [tasksCreated, setTasksCreated] = useState(false);
                 </h3>
               </div>
 
-              <div className="diagnostic-priorities">
-                {diagnostic.priorities.map(
-                  (priority, index) => (
-                    <div
-                      className="diagnostic-priority-item"
-                      key={index}
-                    >
-                      <span>
-                        {index + 1}
-                      </span>
+       <div className="diagnostic-priorities">
+  {diagnostic.priorities.map(
+    (priority, index) => (
+      <div
+        className="diagnostic-priority-item"
+        key={index}
+      >
+        <span>
+          {index + 1}
+        </span>
 
-                      <p>{priority}</p>
-                    </div>
-                  )
-                )}
-              </div>
+        <div className="diagnostic-priority-item-content">
+
+          <h4 className="diagnostic-priority-title">
+            {priority.title}
+          </h4>
+
+          <p className="diagnostic-priority-description">
+            {priority.description}
+          </p>
+
+          <div className="diagnostic-priority-meta">
+
+            <span
+              className={
+                priority.priority === "high"
+                  ? "diagnostic-priority-high"
+                  : "diagnostic-priority-medium"
+              }
+            >
+              {priority.priority === "high"
+                ? "Priorité élevée"
+                : "Priorité moyenne"}
+            </span>
+
+            <span
+              className={
+                priority.impact === "high"
+                  ? "diagnostic-impact-high"
+                  : "diagnostic-impact-medium"
+              }
+            >
+              {priority.impact === "high"
+                ? "Impact élevé"
+                : "Impact moyen"}
+            </span>
+
+          </div>
+        </div>
+      </div>
+    )
+  )}
+</div>
             </div>
 
             

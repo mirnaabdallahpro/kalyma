@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Sparkles } from "lucide-react";
 import BusinessCard from "../../components/business/BusinessCard";
 import Modal from "../../components/business/Modal";
+import ICPModal from "../../components/ICPModal";
 
 import {
   createBusinessStrategyPriority,
@@ -58,6 +59,43 @@ function BusinessStrategy() {
     loadStrategy();
   }, []);
 
+  function calculateICPScore(icp) {
+  const criteria = [
+    icp.clientType,
+    icp.persona,
+    icp.role,
+    icp.sector,
+    icp.subsector,
+    icp.niche,
+    icp.companySize,
+    icp.revenue,
+    icp.geography,
+    icp.businessStage,
+    icp.currentSituation,
+    icp.primaryProblem,
+    icp.buyingTrigger,
+    icp.businessGoals?.length > 0,
+    icp.buyingCriteria?.length > 0,
+    icp.objections?.length > 0,
+    icp.buyingSignals?.length > 0,
+    icp.values?.length > 0,
+    icp.motivations?.length > 0,
+    icp.disqualificationCriteria?.length > 0,
+  ];
+
+  const completed = criteria.filter(Boolean).length;
+
+  return Math.round(
+    (completed / criteria.length) * 100
+  );
+}
+
+const icpScore = useMemo(() => {
+  return strategy
+    ? calculateICPScore(strategy.icp)
+    : 0;
+}, [strategy]);
+
 
   async function loadStrategy() {
     try {
@@ -90,19 +128,219 @@ function BusinessStrategy() {
         positioning:
           profile.positioning ?? "",
 
-        icp: {
-          sector:
-            profile.icp_sector ?? "",
+       icp: {
+  // Identité
+  clientType: profile.icp_client_type ?? "",
+  persona: profile.icp_persona ?? "",
+  role: profile.icp_role ?? "",
+  seniority: profile.icp_seniority ?? "",
+  decisionMaker: profile.icp_decision_maker ?? "",
 
-          size:
-            profile.icp_size ?? "",
+  // Firmographie
+  sector: profile.icp_sector ?? "",
+  subsector: profile.icp_subsector ?? "",
+  niche: profile.icp_niche ?? "",
+  microNiche: profile.icp_micro_niche ?? "",
+  companyType: profile.icp_company_type ?? "",
+  companySize: profile.icp_size ?? "",
+  employeeCount: profile.icp_employee_count ?? "",
+  companyAge: profile.icp_company_age ?? "",
+  structure: profile.icp_structure ?? "",
+  businessModel: profile.icp_business_model ?? "",
 
-          revenue:
-            profile.icp_revenue ?? "",
+  // Économie
+  revenue: profile.icp_revenue ?? "",
+  revenueGrowth: profile.icp_revenue_growth ?? "",
+  profitability: profile.icp_profitability ?? "",
+  budget: profile.icp_budget ?? "",
+  purchasingPower: profile.icp_purchasing_power ?? "",
+  averageTicket: profile.icp_average_ticket ?? "",
+  lifetimeValue: profile.icp_lifetime_value ?? "",
 
-          geography:
-            profile.icp_geography ?? "",
-        },
+  // Géographie
+  geography: profile.icp_geography ?? "",
+  country: profile.icp_country ?? "",
+  region: profile.icp_region ?? "",
+  city: profile.icp_city ?? "",
+  languages: Array.isArray(profile.icp_languages)
+    ? profile.icp_languages
+    : [],
+
+  // Maturité
+  businessStage: profile.icp_business_stage ?? "",
+  organizationalMaturity:
+    profile.icp_organizational_maturity ?? "",
+  digitalMaturity: profile.icp_digital_maturity ?? "",
+  salesMaturity: profile.icp_sales_maturity ?? "",
+  marketingMaturity:
+    profile.icp_marketing_maturity ?? "",
+
+  // Situation
+  currentSituation:
+    profile.icp_current_situation ?? "",
+  growthContext:
+    profile.icp_growth_context ?? "",
+  currentChallenges:
+    Array.isArray(profile.icp_current_challenges)
+      ? profile.icp_current_challenges
+      : [],
+  buyingTrigger:
+    profile.icp_buying_trigger ?? "",
+  urgencyLevel:
+    profile.icp_urgency_level ?? "",
+
+  // Pains
+  primaryProblem:
+    profile.icp_primary_problem ?? "",
+  secondaryProblems:
+    Array.isArray(profile.icp_secondary_problems)
+      ? profile.icp_secondary_problems
+      : [],
+  painPoints:
+    Array.isArray(profile.icp_pain_points)
+      ? profile.icp_pain_points
+      : [],
+  problemCauses:
+    Array.isArray(profile.icp_problem_causes)
+      ? profile.icp_problem_causes
+      : [],
+  consequences:
+    Array.isArray(profile.icp_problem_consequences)
+      ? profile.icp_problem_consequences
+      : [],
+  costOfInaction:
+    profile.icp_cost_of_inaction ?? "",
+
+  // Objectifs
+  businessGoals:
+    Array.isArray(profile.icp_business_goals)
+      ? profile.icp_business_goals
+      : [],
+  measurableGoals:
+    Array.isArray(profile.icp_measurable_goals)
+      ? profile.icp_measurable_goals
+      : [],
+  desiredOutcomes:
+    Array.isArray(profile.icp_desired_outcomes)
+      ? profile.icp_desired_outcomes
+      : [],
+
+  // Comportement
+  searchChannels:
+    Array.isArray(profile.icp_search_channels)
+      ? profile.icp_search_channels
+      : [],
+  contentConsumption:
+    Array.isArray(profile.icp_content_consumption)
+      ? profile.icp_content_consumption
+      : [],
+  onlineBehavior:
+    Array.isArray(profile.icp_online_behavior)
+      ? profile.icp_online_behavior
+      : [],
+  researchBehavior:
+    Array.isArray(profile.icp_research_behavior)
+      ? profile.icp_research_behavior
+      : [],
+  socialPlatforms:
+    Array.isArray(profile.icp_social_platforms)
+      ? profile.icp_social_platforms
+      : [],
+
+  // Achat
+  buyingBehavior:
+    profile.icp_buying_behavior ?? "",
+  decisionProcess:
+    profile.icp_decision_process ?? "",
+  decisionDuration:
+    profile.icp_decision_duration ?? "",
+  decisionMakersCount:
+    profile.icp_decision_makers_count ?? "",
+  influencers:
+    Array.isArray(profile.icp_influencers)
+      ? profile.icp_influencers
+      : [],
+  users:
+    Array.isArray(profile.icp_users)
+      ? profile.icp_users
+      : [],
+  prescribers:
+    Array.isArray(profile.icp_prescribers)
+      ? profile.icp_prescribers
+      : [],
+  salesCycle:
+    profile.icp_sales_cycle ?? "",
+
+  // Critères d'achat
+  buyingCriteria:
+    Array.isArray(profile.icp_buying_criteria)
+      ? profile.icp_buying_criteria
+      : [],
+  primaryBuyingCriterion:
+    profile.icp_primary_buying_criterion ?? "",
+  roiExpectation:
+    profile.icp_roi_expectation ?? "",
+  proofRequirements:
+    Array.isArray(profile.icp_proof_requirements)
+      ? profile.icp_proof_requirements
+      : [],
+
+  // Objections
+  objections:
+    Array.isArray(profile.icp_objections)
+      ? profile.icp_objections
+      : [],
+  priceSensitivity:
+    profile.icp_price_sensitivity ?? "",
+  trustBarriers:
+    Array.isArray(profile.icp_trust_barriers)
+      ? profile.icp_trust_barriers
+      : [],
+  changeResistance:
+    profile.icp_change_resistance ?? "",
+
+  // Intent
+  buyingSignals:
+    Array.isArray(profile.icp_buying_signals)
+      ? profile.icp_buying_signals
+      : [],
+  intentLevel:
+    profile.icp_intent_level ?? "",
+  intentScore:
+    profile.icp_intent_score ?? 0,
+
+  // Psychographie
+  values:
+    Array.isArray(profile.icp_values)
+      ? profile.icp_values
+      : [],
+  motivations:
+    Array.isArray(profile.icp_motivations)
+      ? profile.icp_motivations
+      : [],
+  fears:
+    Array.isArray(profile.icp_fears)
+      ? profile.icp_fears
+      : [],
+  aspirations:
+    Array.isArray(profile.icp_aspirations)
+      ? profile.icp_aspirations
+      : [],
+
+  // Qualification
+  qualificationCriteria:
+    Array.isArray(profile.icp_qualification_criteria)
+      ? profile.icp_qualification_criteria
+      : [],
+  disqualificationCriteria:
+    Array.isArray(profile.icp_disqualification_criteria)
+      ? profile.icp_disqualification_criteria
+      : [],
+  priorityLevel:
+    profile.icp_priority_level ?? "",
+  fitScore:
+    profile.icp_fit_score ?? 0,
+},
 
         differentiators:
           Array.isArray(
@@ -261,57 +499,220 @@ function BusinessStrategy() {
   ========================================= */
 
   async function handleSaveICP(icp) {
-    try {
-      setSaving(true);
-      setError("");
+  try {
+    setSaving(true);
+    setError("");
 
-      const updatedProfile =
-        await updateBusinessProfile({
-          icpSector: icp.sector,
-          icpSize: icp.size,
-          icpRevenue: icp.revenue,
-          icpGeography:
-            icp.geography,
-        });
+    const updatedProfile =
+      await updateBusinessProfile({
+        icpClientType: icp.clientType,
+        icpPersona: icp.persona,
+        icpRole: icp.role,
+        icpSeniority: icp.seniority,
+        icpDecisionMaker: icp.decisionMaker,
 
-      setStrategy((current) => ({
-        ...current,
+        icpSector: icp.sector,
+        icpSubsector: icp.subsector,
+        icpNiche: icp.niche,
+        icpMicroNiche: icp.microNiche,
+        icpCompanyType: icp.companyType,
+        icpSize: icp.companySize,
+        icpEmployeeCount: icp.employeeCount,
+        icpCompanyAge: icp.companyAge,
+        icpStructure: icp.structure,
+        icpBusinessModel: icp.businessModel,
 
-        icp: {
-          sector:
-            updatedProfile.icp_sector ??
-            icp.sector,
+        icpRevenue: icp.revenue,
+        icpRevenueGrowth: icp.revenueGrowth,
+        icpProfitability: icp.profitability,
+        icpBudget: icp.budget,
+        icpPurchasingPower: icp.purchasingPower,
+        icpAverageTicket: icp.averageTicket,
+        icpLifetimeValue: icp.lifetimeValue,
+        icpRecurrencePotential:
+  icp.recurrencePotential,
 
-          size:
-            updatedProfile.icp_size ??
-            icp.size,
+icpUpsellPotential:
+  icp.upsellPotential,
 
-          revenue:
-            updatedProfile.icp_revenue ??
-            icp.revenue,
+        icpGeography: icp.geography,
+        icpCountry: icp.country,
+        icpRegion: icp.region,
+        icpCity: icp.city,
+        icpLanguages: icp.languages,
+        icpMarketPriority:
+  icp.marketPriority,
 
-          geography:
-            updatedProfile.icp_geography ??
-            icp.geography,
-        },
-      }));
+icpRemotePossible:
+  icp.remotePossible,
 
-      setEditingSection(null);
+icpPhysicalPresenceRequired:
+  icp.physicalPresenceRequired,
 
-    } catch (err) {
-      console.error(
-        "Erreur sauvegarde ICP :",
-        err
-      );
+icpTimezone:
+  icp.timezone,
 
-      setError(
-        "Impossible d'enregistrer votre client idéal."
-      );
+        icpBusinessStage: icp.businessStage,
+        icpOrganizationalMaturity:
+          icp.organizationalMaturity,
+        icpDigitalMaturity:
+          icp.digitalMaturity,
+        icpSalesMaturity:
+          icp.salesMaturity,
+        icpMarketingMaturity:
+          icp.marketingMaturity,
 
-    } finally {
-      setSaving(false);
-    }
+        icpCurrentSituation:
+          icp.currentSituation,
+        icpGrowthContext:
+          icp.growthContext,
+        icpCurrentChallenges:
+          icp.currentChallenges,
+        icpBuyingTrigger:
+          icp.buyingTrigger,
+        icpUrgencyLevel:
+          icp.urgencyLevel,
+
+        icpPrimaryProblem:
+          icp.primaryProblem,
+        icpSecondaryProblems:
+          icp.secondaryProblems,
+        icpPainPoints:
+          icp.painPoints,
+        icpProblemCauses:
+          icp.problemCauses,
+        icpProblemConsequences:
+          icp.consequences,
+        icpCostOfInaction:
+          icp.costOfInaction,
+
+        icpBusinessGoals:
+          icp.businessGoals,
+        icpMeasurableGoals:
+          icp.measurableGoals,
+        icpDesiredOutcomes:
+          icp.desiredOutcomes,
+
+        icpGrowthObjectives:
+  icp.growthObjectives,
+
+        icpSearchChannels:
+          icp.searchChannels,
+        icpContentConsumption:
+          icp.contentConsumption,
+        icpOnlineBehavior:
+          icp.onlineBehavior,
+        icpResearchBehavior:
+          icp.researchBehavior,
+        icpSocialPlatforms:
+          icp.socialPlatforms,
+
+        icpBuyingBehavior:
+          icp.buyingBehavior,
+        icpDecisionProcess:
+          icp.decisionProcess,
+        icpDecisionDuration:
+          icp.decisionDuration,
+        icpDecisionMakersCount:
+          icp.decisionMakersCount,
+        icpInfluencers:
+          icp.influencers,
+        icpUsers:
+          icp.users,
+        icpPrescribers:
+          icp.prescribers,
+        icpSalesCycle:
+          icp.salesCycle,
+
+        icpBuyingCriteria:
+          icp.buyingCriteria,
+        icpPrimaryBuyingCriterion:
+          icp.primaryBuyingCriterion,
+        icpRoiExpectation:
+          icp.roiExpectation,
+        icpProofRequirements:
+          icp.proofRequirements,
+
+        icpObjections:
+          icp.objections,
+        icpPriceSensitivity:
+          icp.priceSensitivity,
+        icpTrustBarriers:
+          icp.trustBarriers,
+        icpChangeResistance:
+          icp.changeResistance,
+
+        icpBuyingSignals:
+          icp.buyingSignals,
+        icpIntentLevel:
+          icp.intentLevel,
+        icpIntentScore:
+          icp.intentScore,
+
+        icpValues:
+          icp.values,
+        icpMotivations:
+          icp.motivations,
+        icpFears:
+          icp.fears,
+        icpAspirations:
+          icp.aspirations,
+
+          icpPersonalityTraits:
+  icp.personalityTraits,
+
+        icpQualificationCriteria:
+          icp.qualificationCriteria,
+        icpDisqualificationCriteria:
+          icp.disqualificationCriteria,
+        icpPriorityLevel:
+          icp.priorityLevel,
+        icpFitScore:
+          icp.fitScore,
+
+        icpIdealFit:
+  icp.idealFit,
+
+icpStrategicValue:
+  icp.strategicValue,
+
+icpDeliveryFit:
+  icp.deliveryFit,
+
+icpProfitabilityPotential:
+  icp.profitabilityPotential,
+
+icpLongTermPotential:
+  icp.longTermPotential,
+
+icpReferralPotential:
+  icp.referralPotential,
+
+icpOverallScore:
+  icp.overallScore,
+      });
+
+    setStrategy((current) => ({
+      ...current,
+      icp: {
+        ...icp,
+      },
+    }));
+
+    setEditingSection(null);
+  } catch (err) {
+    console.error(
+      "Erreur sauvegarde ICP :",
+      err
+    );
+
+    setError(
+      "Impossible d'enregistrer votre client idéal."
+    );
+  } finally {
+    setSaving(false);
   }
+}
 
 
   /* =========================================
@@ -789,42 +1190,88 @@ function BusinessStrategy() {
           </button>
         }
       >
+        <div className="strategy-icp-header">
+  <div>
+    <span className="strategy-label">
+      ICP · IDEAL CUSTOMER PROFILE
+    </span>
+
+    <h2>
+      {strategy.icp.persona ||
+        "Client idéal à définir"}
+    </h2>
+  </div>
+
+  <div className="strategy-icp-completion">
+    <span>Précision</span>
+    <strong>{icpScore}%</strong>
+  </div>
+</div>
 
         <div className="strategy-icp-grid">
+  <StrategyData
+    label="Client cible"
+    value={strategy.icp.persona || "Non défini"}
+  />
 
-          <StrategyData
-            label="Secteur"
-            value={
-              strategy.icp.sector ||
-              "Non défini"
-            }
-          />
+  <StrategyData
+    label="Secteur / niche"
+    value={
+      strategy.icp.niche ||
+      strategy.icp.subsector ||
+      strategy.icp.sector ||
+      "Non défini"
+    }
+  />
 
-          <StrategyData
-            label="Taille"
-            value={
-              strategy.icp.size ||
-              "Non définie"
-            }
-          />
+  <StrategyData
+    label="Taille"
+    value={
+      strategy.icp.companySize ||
+      "Non définie"
+    }
+  />
 
-          <StrategyData
-            label="Chiffre d'affaires"
-            value={
-              strategy.icp.revenue ||
-              "Non défini"
-            }
-          />
+  <StrategyData
+    label="CA"
+    value={
+      strategy.icp.revenue ||
+      "Non défini"
+    }
+  />
 
-          <StrategyData
-            label="Zone géographique"
-            value={
-              strategy.icp.geography ||
-              "Non définie"
-            }
-          />
+  <StrategyData
+    label="Maturité"
+    value={
+      strategy.icp.businessStage ||
+      "Non définie"
+    }
+  />
 
-        </div>
+  <StrategyData
+    label="Problème principal"
+    value={
+      strategy.icp.primaryProblem ||
+      "Non défini"
+    }
+  />
+
+  <StrategyData
+    label="Déclencheur"
+    value={
+      strategy.icp.buyingTrigger ||
+      "Non défini"
+    }
+  />
+
+  <StrategyData
+    label="Zone"
+    value={
+      strategy.icp.geography ||
+      "Non définie"
+    }
+  />
+</div>
 
       </BusinessCard>
 
@@ -1399,151 +1846,6 @@ function StrategyTextModal({
 }
 
 
-/* =========================================
-   ICP MODAL
-========================================= */
-
-function ICPModal({
-  initialValue,
-  saving,
-  onClose,
-  onSave,
-}) {
-  const [form, setForm] =
-    useState({
-      sector:
-        initialValue?.sector ?? "",
-
-      size:
-        initialValue?.size ?? "",
-
-      revenue:
-        initialValue?.revenue ?? "",
-
-      geography:
-        initialValue?.geography ?? "",
-    });
-
-
-  const update = (
-    field,
-    value
-  ) => {
-    setForm((current) => ({
-      ...current,
-      [field]: value,
-    }));
-  };
-
-
-  return (
-    <Modal
-      title="Client idéal"
-      subtitle="Définissez précisément votre ICP."
-      onClose={onClose}
-      footer={
-        <>
-
-          <button
-            type="button"
-            className="business-modal-cancel"
-            onClick={onClose}
-            disabled={saving}
-          >
-            Annuler
-          </button>
-
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() =>
-              onSave(form)
-            }
-            disabled={saving}
-          >
-            {saving
-              ? "Enregistrement..."
-              : "Enregistrer"}
-          </button>
-
-        </>
-      }
-    >
-
-      <div className="business-form">
-
-        <label>
-          Secteur
-
-          <input
-            value={form.sector}
-            onChange={(event) =>
-              update(
-                "sector",
-                event.target.value
-              )
-            }
-            disabled={saving}
-          />
-
-        </label>
-
-
-        <label>
-          Taille
-
-          <input
-            value={form.size}
-            onChange={(event) =>
-              update(
-                "size",
-                event.target.value
-              )
-            }
-            disabled={saving}
-          />
-
-        </label>
-
-
-        <label>
-          Chiffre d'affaires
-
-          <input
-            value={form.revenue}
-            onChange={(event) =>
-              update(
-                "revenue",
-                event.target.value
-              )
-            }
-            disabled={saving}
-          />
-
-        </label>
-
-
-        <label>
-          Zone géographique
-
-          <input
-            value={form.geography}
-            onChange={(event) =>
-              update(
-                "geography",
-                event.target.value
-              )
-            }
-            disabled={saving}
-          />
-
-        </label>
-
-      </div>
-
-    </Modal>
-  );
-}
 
 
 /* =========================================
