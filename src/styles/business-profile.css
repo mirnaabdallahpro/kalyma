@@ -1559,6 +1559,206 @@
     opacity: 0.7;
 }
 
+/* ======================================================
+   ICP MODAL — LAYOUT
+====================================================== */
+
+.icp-modal-layout {
+    display: grid;
+    grid-template-columns: 210px minmax(0, 1fr);
+    gap: 24px;
+    min-height: 600px;
+    width: 100%;
+}
+
+/* ======================================================
+   VERTICAL TABS
+====================================================== */
+
+.icp-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-self: stretch;
+    min-width: 0;
+    max-height: 620px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 6px 8px 6px 0;
+    border-right: 1px solid #e5e7eb;
+    scrollbar-width: thin;
+}
+
+.icp-tab {
+    width: 100%;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    flex: 0 0 auto;
+    padding: 7px 10px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.2;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color .18s ease, color .18s ease, transform .18s ease;
+}
+
+.icp-tab:hover:not(:disabled) {
+    background: #f8fafc;
+    color: #0e2a47;
+}
+
+.icp-tab.active {
+    background: #eef3f8;
+    color: #0e2a47;
+    font-weight: 650;
+}
+
+.icp-tab:disabled {
+    cursor: not-allowed;
+    opacity: .65;
+}
+
+.icp-tab-number {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.icp-tab.active .icp-tab-number {
+    background: #0e2a47;
+    color: #fff;
+}
+
+.icp-tab-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ======================================================
+   CONTENT
+====================================================== */
+
+.icp-tab-content {
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.icp-form-section {
+    width: 100%;
+}
+
+.icp-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.icp-field-full {
+    grid-column: 1 / -1;
+}
+
+.icp-field input,
+.icp-field textarea,
+.icp-field select,
+.icp-form-select {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.icp-field input:focus,
+.icp-field textarea:focus,
+.icp-field select:focus,
+.icp-form-select:focus {
+    outline: none;
+}
+
+.icp-field textarea {
+    resize: vertical;
+    min-height: 96px;
+}
+
+/* ======================================================
+   FOOTER
+====================================================== */
+
+.icp-footer-navigation,
+.icp-footer-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.icp-footer-navigation {
+    margin-right: auto;
+}
+
+.icp-footer-actions {
+    margin-left: auto;
+}
+
+/* ======================================================
+   MOBILE
+====================================================== */
+
+@media (max-width: 768px) {
+    .icp-modal-layout {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        min-height: 0;
+    }
+
+    .icp-tabs {
+        flex-direction: row;
+        max-height: none;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 4px 0 10px;
+        border-right: 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .icp-tab {
+        width: auto;
+        min-width: 44px;
+        justify-content: center;
+    }
+
+    .icp-tab-label {
+        display: none;
+    }
+
+    .icp-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .icp-field-full {
+        grid-column: auto;
+    }
+
+    .icp-footer-navigation,
+    .icp-footer-actions {
+        gap: 6px;
+    }
+}
+
 /* =========================================================
    REQUIRED FIELD
    ========================================================= */

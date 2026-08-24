@@ -51,11 +51,15 @@ function TaskCard({ task, dragging, onDragStart, onDragEnd, onDropBefore, onEdit
             <span className="task-source-badge">{SOURCE_LABEL[task.source]}</span>
           )}
 
-          <div className="row-menu" tabIndex={0} onBlur={() => setMenuOpen(false)}>
+          <div className="row-menu">
             <button
               type="button"
               className="icon-btn"
-              onClick={() => setMenuOpen((v) => !v)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setMenuOpen((v) => !v);
+              }}
+              onMouseDown={(e) => e.stopPropagation()}
               aria-label="Options"
             >
               ⋮
@@ -65,7 +69,9 @@ function TaskCard({ task, dragging, onDragStart, onDragEnd, onDropBefore, onEdit
               <div className="row-dropdown">
                 <button
                   type="button"
-                  onClick={() => {
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setMenuOpen(false);
                     onEdit(task);
                   }}
@@ -75,7 +81,9 @@ function TaskCard({ task, dragging, onDragStart, onDragEnd, onDropBefore, onEdit
                 <button
                   type="button"
                   className="danger"
-                  onClick={() => {
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setMenuOpen(false);
                     onDelete(task);
                   }}

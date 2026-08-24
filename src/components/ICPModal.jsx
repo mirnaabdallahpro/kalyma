@@ -240,12 +240,7 @@ function ICPModal({
   // ==================================================
 
   const updateArray = (field, value) => {
-    const array = value
-      .split("\n")
-      .map((item) => item.trim())
-      .filter(Boolean);
-
-    update(field, array);
+    update(field, value.split("\n"));
   };
 
   const arrayValue = (field) => {
@@ -259,7 +254,18 @@ function ICPModal({
   // ==================================================
 
   const handleSave = () => {
-    onSave(form);
+    const cleanedForm = Object.fromEntries(
+      Object.entries(form).map(([key, value]) => [
+        key,
+        Array.isArray(value)
+          ? value
+              .map((item) => String(item).trim())
+              .filter(Boolean)
+          : value,
+      ])
+    );
+
+    onSave(cleanedForm);
   };
 
   // ==================================================
@@ -363,100 +369,6 @@ function ICPModal({
       setActiveTab(tabs[currentIndex + 1].id);
     }
   };
-
-  // ==================================================
-  // REUSABLE FIELD
-  // ==================================================
-
-  const Field = ({
-    label,
-    children,
-    hint,
-    full = false,
-  }) => (
-    <label
-      className={`icp-field ${
-        full ? "icp-field-full" : ""
-      }`}
-    >
-      <span className="icp-field-label">
-        {label}
-      </span>
-
-      {children}
-
-      {hint && (
-        <small className="icp-field-hint">
-          {hint}
-        </small>
-      )}
-    </label>
-  );
-
-  // ==================================================
-  // SELECT
-  // ==================================================
-
-const Select = ({
-  value,
-  onChange,
-  options,
-  placeholder = "Sélectionner",
-}) => (
-  <select
-    className="icp-form-select"
-    value={value}
-    onChange={(e) => onChange(e.target.value)}
-    disabled={saving}
-  >
-    <option value="">
-      {placeholder}
-    </option>
-
-    {options.map((option) => (
-      <option
-        key={option.value}
-        value={option.value}
-      >
-        {option.label}
-      </option>
-    ))}
-  </select>
-);
-
-  // ==================================================
-  // TEXTAREA ARRAY
-  // ==================================================
-
-  const ArrayField = ({
-    label,
-    field,
-    placeholder,
-    hint,
-    full = true,
-  }) => (
-    <Field
-      label={label}
-      hint={
-        hint ||
-        "Une valeur par ligne."
-      }
-      full={full}
-    >
-      <textarea
-        rows={4}
-        value={arrayValue(field)}
-        onChange={(e) =>
-          updateArray(
-            field,
-            e.target.value
-          )
-        }
-        placeholder={placeholder}
-        disabled={saving}
-      />
-    </Field>
-  );
 
   return (
     <Modal
@@ -569,6 +481,7 @@ const Select = ({
 
                 <Field label="Type de client">
                   <Select
+                    disabled={saving}
                     value={form.clientType}
                     onChange={(value) =>
                       update(
@@ -633,6 +546,7 @@ const Select = ({
 
                 <Field label="Niveau hiérarchique">
                   <Select
+                    disabled={saving}
                     value={form.seniority}
                     onChange={(value) =>
                       update(
@@ -671,6 +585,7 @@ const Select = ({
 
                 <Field label="Décideur principal">
                   <Select
+                    disabled={saving}
                     value={form.decisionMaker}
                     onChange={(value) =>
                       update(
@@ -731,6 +646,7 @@ const Select = ({
 
                 <Field label="Secteur d'activité">
                   <Select
+                    disabled={saving}
                     value={form.sector}
                     onChange={(value) =>
                       update(
@@ -850,6 +766,7 @@ const Select = ({
 
                 <Field label="Type d'entreprise">
                   <Select
+                    disabled={saving}
                     value={form.companyType}
                     onChange={(value) =>
                       update(
@@ -896,6 +813,7 @@ const Select = ({
 
                 <Field label="Taille">
                   <Select
+                    disabled={saving}
                     value={form.companySize}
                     onChange={(value) =>
                       update(
@@ -972,6 +890,7 @@ const Select = ({
 
                 <Field label="Structure">
                   <Select
+                    disabled={saving}
                     value={form.structure}
                     onChange={(value) =>
                       update(
@@ -1006,6 +925,7 @@ const Select = ({
 
                 <Field label="Modèle économique">
                   <Select
+                    disabled={saving}
                     value={form.businessModel}
                     onChange={(value) =>
                       update(
@@ -1070,6 +990,7 @@ const Select = ({
 
                 <Field label="Chiffre d'affaires">
                   <Select
+                    disabled={saving}
                     value={form.revenue}
                     onChange={(value) =>
                       update(
@@ -1112,6 +1033,7 @@ const Select = ({
 
                 <Field label="Croissance du CA">
                   <Select
+                    disabled={saving}
                     value={form.revenueGrowth}
                     onChange={(value) =>
                       update(
@@ -1150,6 +1072,7 @@ const Select = ({
 
                 <Field label="Rentabilité">
                   <Select
+                    disabled={saving}
                     value={form.profitability}
                     onChange={(value) =>
                       update(
@@ -1184,6 +1107,7 @@ const Select = ({
 
                 <Field label="Budget disponible">
                   <Select
+                    disabled={saving}
                     value={form.budget}
                     onChange={(value) =>
                       update(
@@ -1226,6 +1150,7 @@ const Select = ({
 
                 <Field label="Pouvoir d'achat">
                   <Select
+                    disabled={saving}
                     value={form.purchasingPower}
                     onChange={(value) =>
                       update(
@@ -1286,6 +1211,7 @@ const Select = ({
 
                 <Field label="Potentiel de récurrence">
                   <Select
+                    disabled={saving}
                     value={
                       form.recurrencePotential
                     }
@@ -1318,6 +1244,7 @@ const Select = ({
 
                 <Field label="Potentiel d'upsell">
                   <Select
+                    disabled={saving}
                     value={
                       form.upsellPotential
                     }
@@ -1368,6 +1295,7 @@ const Select = ({
 
                 <Field label="Zone géographique">
                   <Select
+                    disabled={saving}
                     value={form.geography}
                     onChange={(value) =>
                       update(
@@ -1460,12 +1388,16 @@ const Select = ({
                 <ArrayField
                   label="Langues"
                   field="languages"
+                    value={arrayValue("languages")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={"Français\nAnglais\nArabe"}
                   full={false}
                 />
 
                 <Field label="Priorité du marché">
                   <Select
+                    disabled={saving}
                     value={
                       form.marketPriority
                     }
@@ -1569,6 +1501,7 @@ const Select = ({
 
                 <Field label="Stade business">
                   <Select
+                    disabled={saving}
                     value={form.businessStage}
                     onChange={(value) =>
                       update(
@@ -1611,6 +1544,7 @@ const Select = ({
 
                 <Field label="Maturité organisationnelle">
                   <Select
+                    disabled={saving}
                     value={
                       form.organizationalMaturity
                     }
@@ -1647,6 +1581,7 @@ const Select = ({
 
                 <Field label="Maturité digitale">
                   <Select
+                    disabled={saving}
                     value={
                       form.digitalMaturity
                     }
@@ -1683,6 +1618,7 @@ const Select = ({
 
                 <Field label="Maturité commerciale">
                   <Select
+                    disabled={saving}
                     value={form.salesMaturity}
                     onChange={(value) =>
                       update(
@@ -1717,6 +1653,7 @@ const Select = ({
 
                 <Field label="Maturité marketing">
                   <Select
+                    disabled={saving}
                     value={
                       form.marketingMaturity
                     }
@@ -1812,6 +1749,9 @@ const Select = ({
                 <ArrayField
                   label="Défis actuels"
                   field="currentChallenges"
+                    value={arrayValue("currentChallenges")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Manque de clients\nPositionnement flou\nÉquipe insuffisante"
                   }
@@ -1836,6 +1776,7 @@ const Select = ({
 
                 <Field label="Niveau d'urgence">
                   <Select
+                    disabled={saving}
                     value={
                       form.urgencyLevel
                     }
@@ -1907,6 +1848,9 @@ const Select = ({
                 <ArrayField
                   label="Problèmes secondaires"
                   field="secondaryProblems"
+                    value={arrayValue("secondaryProblems")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Problème secondaire 1\nProblème secondaire 2"
                   }
@@ -1915,6 +1859,9 @@ const Select = ({
                 <ArrayField
                   label="Points de douleur"
                   field="painPoints"
+                    value={arrayValue("painPoints")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Frustration\nPerte de temps\nManque de visibilité"
                   }
@@ -1923,6 +1870,9 @@ const Select = ({
                 <ArrayField
                   label="Causes des problèmes"
                   field="problemCauses"
+                    value={arrayValue("problemCauses")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Mauvais positionnement\nManque de ressources\nAbsence de stratégie"
                   }
@@ -1931,6 +1881,9 @@ const Select = ({
                 <ArrayField
                   label="Conséquences"
                   field="problemConsequences"
+                    value={arrayValue("problemConsequences")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Perte de chiffre d'affaires\nStress\nOpportunités manquées"
                   }
@@ -1977,6 +1930,9 @@ const Select = ({
                 <ArrayField
                   label="Objectifs business"
                   field="businessGoals"
+                    value={arrayValue("businessGoals")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Augmenter le CA\nAcquérir de nouveaux clients\nAméliorer la rentabilité"
                   }
@@ -1985,6 +1941,9 @@ const Select = ({
                 <ArrayField
                   label="Objectifs mesurables"
                   field="measurableGoals"
+                    value={arrayValue("measurableGoals")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Atteindre 10k€/mois\n+30% de CA\n20 nouveaux clients"
                   }
@@ -2013,6 +1972,9 @@ const Select = ({
                 <ArrayField
                   label="Objectifs de croissance"
                   field="growthObjectives"
+                    value={arrayValue("growthObjectives")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Expansion géographique\nAugmentation du panier moyen\nDéveloppement de l'équipe"
                   }
@@ -2039,6 +2001,9 @@ const Select = ({
                 <ArrayField
                   label="Canaux de recherche"
                   field="searchChannels"
+                    value={arrayValue("searchChannels")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Google\nLinkedIn\nYouTube\nRecommandations"
                   }
@@ -2047,6 +2012,9 @@ const Select = ({
                 <ArrayField
                   label="Consommation de contenu"
                   field="contentConsumption"
+                    value={arrayValue("contentConsumption")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Articles\nPodcasts\nVidéos\nWebinaires"
                   }
@@ -2055,6 +2023,9 @@ const Select = ({
                 <ArrayField
                   label="Comportement en ligne"
                   field="onlineBehavior"
+                    value={arrayValue("onlineBehavior")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Compare plusieurs offres\nSuit des experts\nParticipe à des communautés"
                   }
@@ -2063,6 +2034,9 @@ const Select = ({
                 <ArrayField
                   label="Comportement de recherche"
                   field="researchBehavior"
+                    value={arrayValue("researchBehavior")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Recherche sur Google\nDemande des recommandations\nCompare les avis"
                   }
@@ -2071,6 +2045,9 @@ const Select = ({
                 <ArrayField
                   label="Réseaux sociaux"
                   field="socialPlatforms"
+                    value={arrayValue("socialPlatforms")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "LinkedIn\nInstagram\nFacebook\nYouTube"
                   }
@@ -2171,6 +2148,9 @@ const Select = ({
                 <ArrayField
                   label="Influenceurs"
                   field="influencers"
+                    value={arrayValue("influencers")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "CEO\nDirecteur commercial\nConsultant externe"
                   }
@@ -2179,6 +2159,9 @@ const Select = ({
                 <ArrayField
                   label="Utilisateurs"
                   field="users"
+                    value={arrayValue("users")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Équipe commerciale\nDirection\nÉquipe marketing"
                   }
@@ -2187,6 +2170,9 @@ const Select = ({
                 <ArrayField
                   label="Prescripteurs"
                   field="prescribers"
+                    value={arrayValue("prescribers")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Expert-comptable\nConsultant\nPartenaire"
                   }
@@ -2284,6 +2270,9 @@ const Select = ({
                 <ArrayField
                   label="Preuves nécessaires"
                   field="proofRequirements"
+                    value={arrayValue("proofRequirements")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Témoignages\nÉtudes de cas\nDémonstration\nRéférences"
                   }
@@ -2329,6 +2318,7 @@ const Select = ({
 
                 <Field label="Sensibilité au prix">
                   <Select
+                    disabled={saving}
                     value={
                       form.priceSensitivity
                     }
@@ -2362,6 +2352,9 @@ const Select = ({
                 <ArrayField
                   label="Freins liés à la confiance"
                   field="trustBarriers"
+                    value={arrayValue("trustBarriers")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Manque de références\nNouvelle marque\nPeu de témoignages"
                   }
@@ -2369,6 +2362,7 @@ const Select = ({
 
                 <Field label="Résistance au changement">
                   <Select
+                    disabled={saving}
                     value={
                       form.changeResistance
                     }
@@ -2416,6 +2410,9 @@ const Select = ({
                 <ArrayField
                   label="Signaux d'achat"
                   field="buyingSignals"
+                    value={arrayValue("buyingSignals")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Demande de devis\nDemande de rendez-vous\nTéléchargement d'une offre\nQuestion sur le prix"
                   }
@@ -2423,6 +2420,7 @@ const Select = ({
 
                 <Field label="Niveau d'intention">
                   <Select
+                    disabled={saving}
                     value={
                       form.intentLevel
                     }
@@ -2468,9 +2466,9 @@ const Select = ({
                     onChange={(e) =>
                       update(
                         "intentScore",
-                        Number(
-                          e.target.value
-                        )
+                        e.target.value === ""
+                          ? ""
+                          : Number(e.target.value)
                       )
                     }
                     disabled={saving}
@@ -2498,6 +2496,9 @@ const Select = ({
                 <ArrayField
                   label="Valeurs"
                   field="values"
+                    value={arrayValue("values")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Liberté\nExcellence\nAuthenticité\nIndépendance"
                   }
@@ -2506,6 +2507,9 @@ const Select = ({
                 <ArrayField
                   label="Motivations"
                   field="motivations"
+                    value={arrayValue("motivations")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Gagner du temps\nAugmenter les revenus\nÊtre reconnu"
                   }
@@ -2514,6 +2518,9 @@ const Select = ({
                 <ArrayField
                   label="Peurs"
                   field="fears"
+                    value={arrayValue("fears")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Échouer\nPerdre de l'argent\nFaire le mauvais choix"
                   }
@@ -2522,6 +2529,9 @@ const Select = ({
                 <ArrayField
                   label="Aspirations"
                   field="aspirations"
+                    value={arrayValue("aspirations")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Développer son entreprise\nGagner en liberté\nDevenir une référence"
                   }
@@ -2530,6 +2540,9 @@ const Select = ({
                 <ArrayField
                   label="Traits de personnalité"
                   field="personalityTraits"
+                    value={arrayValue("personalityTraits")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Ambitieux\nPrudent\nAnalytique\nIndépendant"
                   }
@@ -2575,6 +2588,7 @@ const Select = ({
 
                 <Field label="Valeur stratégique">
                   <Select
+                    disabled={saving}
                     value={
                       form.strategicValue
                     }
@@ -2607,6 +2621,7 @@ const Select = ({
 
                 <Field label="Adéquation de livraison">
                   <Select
+                    disabled={saving}
                     value={
                       form.deliveryFit
                     }
@@ -2639,6 +2654,7 @@ const Select = ({
 
                 <Field label="Potentiel de rentabilité">
                   <Select
+                    disabled={saving}
                     value={
                       form.profitabilityPotential
                     }
@@ -2671,6 +2687,7 @@ const Select = ({
 
                 <Field label="Potentiel long terme">
                   <Select
+                    disabled={saving}
                     value={
                       form.longTermPotential
                     }
@@ -2703,6 +2720,7 @@ const Select = ({
 
                 <Field label="Potentiel de recommandation">
                   <Select
+                    disabled={saving}
                     value={
                       form.referralPotential
                     }
@@ -2736,6 +2754,9 @@ const Select = ({
                 <ArrayField
                   label="Critères de qualification"
                   field="qualificationCriteria"
+                    value={arrayValue("qualificationCriteria")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Budget suffisant\nProblème urgent\nDécideur identifié"
                   }
@@ -2744,6 +2765,9 @@ const Select = ({
                 <ArrayField
                   label="Critères de disqualification"
                   field="disqualificationCriteria"
+                    value={arrayValue("disqualificationCriteria")}
+                    onChange={updateArray}
+                    disabled={saving}
                   placeholder={
                     "Budget insuffisant\nPas de besoin réel\nMauvais secteur"
                   }
@@ -2751,6 +2775,7 @@ const Select = ({
 
                 <Field label="Niveau de priorité">
                   <Select
+                    disabled={saving}
                     value={
                       form.priorityLevel
                     }
@@ -2792,9 +2817,9 @@ const Select = ({
                     onChange={(e) =>
                       update(
                         "fitScore",
-                        Number(
-                          e.target.value
-                        )
+                        e.target.value === ""
+                          ? ""
+                          : Number(e.target.value)
                       )
                     }
                     disabled={saving}
@@ -2812,9 +2837,9 @@ const Select = ({
                     onChange={(e) =>
                       update(
                         "overallScore",
-                        Number(
-                          e.target.value
-                        )
+                        e.target.value === ""
+                          ? ""
+                          : Number(e.target.value)
                       )
                     }
                     disabled={saving}
@@ -2828,6 +2853,96 @@ const Select = ({
         </div>
       </div>
     </Modal>
+  );
+}
+
+// ======================================================
+// REUSABLE FIELD COMPONENTS
+// ======================================================
+
+function Field({
+  label,
+  children,
+  hint,
+  full = false,
+}) {
+  return (
+    <label
+      className={`icp-field ${
+        full ? "icp-field-full" : ""
+      }`}
+    >
+      <span className="icp-field-label">
+        {label}
+      </span>
+
+      {children}
+
+      {hint && (
+        <small className="icp-field-hint">
+          {hint}
+        </small>
+      )}
+    </label>
+  );
+}
+
+function Select({
+  value,
+  onChange,
+  options,
+  placeholder = "Sélectionner",
+  disabled = false,
+}) {
+  return (
+    <select
+      className="icp-form-select"
+      value={value ?? ""}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled}
+    >
+      <option value="">
+        {placeholder}
+      </option>
+
+      {options.map((option) => (
+        <option
+          key={option.value}
+          value={option.value}
+        >
+          {option.label}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+function ArrayField({
+  label,
+  field,
+  placeholder,
+  hint,
+  full = true,
+  value,
+  onChange,
+  disabled = false,
+}) {
+  return (
+    <Field
+      label={label}
+      hint={hint || "Une valeur par ligne."}
+      full={full}
+    >
+      <textarea
+        rows={4}
+        value={value ?? ""}
+        onChange={(e) =>
+          onChange(field, e.target.value)
+        }
+        placeholder={placeholder}
+        disabled={disabled}
+      />
+    </Field>
   );
 }
 
