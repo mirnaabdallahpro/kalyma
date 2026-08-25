@@ -37,40 +37,49 @@ function DealCard({ deal, dragging, onDragStart, onDragEnd, onDropBefore, onEdit
         <div className="deal-card-top">
           <strong>{deal.companyName}</strong>
 
-          <div className="row-menu" tabIndex={0} onBlur={() => setMenuOpen(false)}>
-            <button
-              type="button"
-              className="icon-btn"
-              onClick={() => setMenuOpen((v) => !v)}
-              aria-label="Options"
-            >
-              ⋮
-            </button>
+          <div
+  className="row-menu"
+  onMouseDown={(e) => e.stopPropagation()}
+>
+  <button
+    type="button"
+    className="icon-btn"
+    onClick={(e) => {
+      e.stopPropagation();
+      setMenuOpen((v) => !v);
+    }}
+    aria-label="Options"
+  >
+    ⋮
+  </button>
 
-            {menuOpen && (
-              <div className="row-dropdown">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMenuOpen(false);
-                    onEdit(deal);
-                  }}
-                >
-                  Modifier
-                </button>
-                <button
-                  type="button"
-                  className="danger"
-                  onClick={() => {
-                    setMenuOpen(false);
-                    onDelete(deal);
-                  }}
-                >
-                  Supprimer
-                </button>
-              </div>
-            )}
-          </div>
+  {menuOpen && (
+    <div className="row-dropdown">
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          setMenuOpen(false);
+          onEdit(deal);
+        }}
+      >
+        Modifier
+      </button>
+
+      <button
+        type="button"
+        className="danger"
+        onClick={(e) => {
+          e.stopPropagation();
+          setMenuOpen(false);
+          onDelete(deal);
+        }}
+      >
+        Supprimer
+      </button>
+    </div>
+  )}
+</div>
         </div>
 
         <span className="deal-amount">{formatAmount(deal.amount, deal.currency)}</span>

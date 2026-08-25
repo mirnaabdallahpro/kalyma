@@ -180,6 +180,8 @@ export async function createTask({ title, category, meta, priorityColor, status 
   return mapManualTask(data);
 }
 
+/*
+
 export async function updateTask(id, updates) {
   const user = await getAuthenticatedUser();
 
@@ -210,6 +212,151 @@ export async function updateTask(id, updates) {
   return mapManualTask(data);
 }
 
+*/
+
+export async function updateTask(
+  id,
+  updates,
+  source = "manual"
+) {
+  const user = await getAuthenticatedUser();
+
+  if (!user) {
+    throw new Error(
+      "Utilisateur non authentifié."
+    );
+  }
+
+  const table = TABLE_BY_SOURCE[source];
+
+  if (!table) {
+    throw new Error(
+      `Source de tâche inconnue : ${source}`
+    );
+  }
+
+  const payload = {};
+
+  // =========================================
+  // CHAMPS COMMUNS
+  // =========================================
+
+  if (updates.title !== undefined) {
+    payload.title = updates.title;
+  }
+
+  if (updates.status !== undefined) {
+    payload.status = updates.status;
+  }
+
+  if (updates.position !== undefined) {
+    payload.position = updates.position;
+  }
+
+  // =========================================
+  // TÂCHE MANUELLE
+  // =========================================
+
+  if (source === "manual") {
+    if (updates.category !== undefined) {
+      payload.category = updates.category;
+    }
+
+    if (updates.meta !== undefined) {
+      payload.meta = updates.meta;
+    }
+
+    if (
+      updates.priorityColor !== undefined
+    ) {
+      payload.priority_color =
+        updates.priorityColor;
+    }
+  }
+
+  // =========================================
+  // TÂCHE STRATÉGIE
+  // =========================================
+
+  if (source === "strategy") {
+    if (updates.description !== undefined) {
+      payload.description =
+        updates.description;
+    }
+
+    if (updates.priority !== undefined) {
+      payload.priority = updates.priority;
+    }
+  }
+
+  // =========================================
+  // TÂCHE DIAGNOSTIC
+  // =========================================
+
+  if (source === "diagnostic") {
+    if (updates.description !== undefined) {
+      payload.description =
+        updates.description;
+    }
+
+    if (updates.priority !== undefined) {
+      payload.priority = updates.priority;
+    }
+
+    if (updates.impact !== undefined) {
+      payload.impact = updates.impact;
+    }
+  }
+
+  // =========================================
+  // SÉCURITÉ
+  // =========================================
+
+  if (Object.keys(payload).length === 0) {
+    throw new Error(
+      "Aucune donnée à mettre à jour."
+    );
+  }
+
+  // =========================================
+  // UPDATE
+  // =========================================
+
+  const {
+    data,
+    error,
+  } = await supabase
+    .from(table)
+    .update(payload)
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  // =========================================
+  // NORMALISATION
+  // =========================================
+
+  if (source === "manual") {
+    return mapManualTask(data);
+  }
+
+  if (source === "strategy") {
+    return mapStrategyPriority(data);
+  }
+
+  if (source === "diagnostic") {
+    return mapDiagnosticRecommendation(data);
+  }
+
+  return data;
+}
+
+/*
 export async function deleteTask(id) {
   const user = await getAuthenticatedUser();
 
@@ -219,6 +366,34 @@ export async function deleteTask(id) {
 
   const { error } = await supabase
     .from("tasks")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) {
+    throw error;
+  }
+}
+
+*/
+
+export async function deleteTask(id, source = "manual") {
+  const user = await getAuthenticatedUser();
+
+  if (!user) {
+    throw new Error("Utilisateur non authentifié.");
+  }
+
+  const table = TABLE_BY_SOURCE[source];
+
+  if (!table) {
+    throw new Error(
+      `Source de tâche inconnue : ${source}`
+    );
+  }
+
+  const { error } = await supabase
+    .from(table)
     .delete()
     .eq("id", id)
     .eq("user_id", user.id);

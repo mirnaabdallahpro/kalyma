@@ -277,13 +277,33 @@ setDiagnostic(aiDiagnostic);
 
           <strong>
             <>
-              <Loader2
-                size={15}
-                strokeWidth={2}
-                className="ai-spinner"
-              />
-              Analyse de votre business...
-            </>
+            <div className="ai-analysis-loader">
+              <div className="ai-loader-orbit">
+                <div className="ai-loader-core">
+                  <Loader2
+                    size={28}
+                    strokeWidth={2}
+                    className="ai-spinner"
+                  />
+                </div>
+              </div>
+
+              <div className="ai-analysis-content">
+                <span className="ai-analysis-title">
+                  Analyse IA en cours
+                  <span className="ai-dots">
+                    <span>.</span>
+                    <span>.</span>
+                    <span>.</span>
+                  </span>
+                </span>
+
+                <span className="ai-analysis-subtitle">
+                  Analyse de votre business et détection des opportunités...
+                </span>
+              </div>
+            </div>
+          </>
             
           </strong>
 

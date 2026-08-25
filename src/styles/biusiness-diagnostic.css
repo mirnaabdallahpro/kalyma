@@ -2386,3 +2386,147 @@
         font-size: 9px;
     }
 }
+
+.ai-analysis-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 24px 28px;
+    min-height: 110px;
+    border-radius: 16px;
+    background: linear-gradient(135deg,
+            rgba(14, 42, 71, 0.04),
+            rgba(228, 160, 43, 0.06));
+    border: 1px solid rgba(14, 42, 71, 0.08);
+}
+
+.ai-loader-orbit {
+    position: relative;
+    width: 58px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ai-loader-orbit::before,
+.ai-loader-orbit::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid rgba(228, 160, 43, 0.18);
+}
+
+.ai-loader-orbit::before {
+    border-top-color: #e4a02b;
+    animation: ai-orbit-spin 1.4s linear infinite;
+}
+
+.ai-loader-orbit::after {
+    inset: 6px;
+    border-right-color: #0e2a47;
+    animation: ai-orbit-spin-reverse 1.8s linear infinite;
+}
+
+.ai-loader-core {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow:
+        0 4px 14px rgba(14, 42, 71, 0.12),
+        0 0 0 5px rgba(228, 160, 43, 0.06);
+}
+
+.ai-spinner {
+    color: #0e2a47;
+    animation: ai-core-spin 1.2s linear infinite;
+}
+
+.ai-analysis-content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.ai-analysis-title {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: #0e2a47;
+}
+
+.ai-analysis-subtitle {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #6b7280;
+}
+
+.ai-dots {
+    display: inline-flex;
+    margin-left: 2px;
+}
+
+.ai-dots span {
+    animation: ai-dot 1.4s infinite;
+}
+
+.ai-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.ai-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes ai-orbit-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes ai-orbit-spin-reverse {
+    from {
+        transform: rotate(360deg);
+    }
+
+    to {
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes ai-core-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes ai-dot {
+
+    0%,
+    60%,
+    100% {
+        opacity: 0.2;
+        transform: translateY(0);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translateY(-2px);
+    }
+}

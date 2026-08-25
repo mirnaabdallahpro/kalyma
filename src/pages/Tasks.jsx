@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import {
-    createTask,
-    deleteTask,
-    getAllTasks,
-    reorderTasks,
-    updateTask,
+  createTask,
+  deleteTask,
+  getAllTasks,
+  reorderTasks,
+  updateTask,
 } from "../../services/tasks";
 import Sidebar from "../components/dashboard/Sidebar";
 import Topbar from "../components/dashboard/Topbar";
@@ -96,7 +96,7 @@ function Tasks() {
           meta: form.meta,
           priorityColor: form.priorityColor,
           status: form.status,
-        });
+        }, form.source);
         setTasks((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
       } else {
         const created = await createTask({
@@ -119,8 +119,16 @@ function Tasks() {
   const confirmDelete = async () => {
     if (!deleteTarget) return;
     try {
-      await deleteTask(deleteTarget.id);
-      setTasks((prev) => prev.filter((t) => t.id !== deleteTarget.id));
+      await deleteTask(deleteTarget.id, deleteTarget.source);
+      setTasks((currentTasks) =>
+      currentTasks.filter(
+        (item) =>
+          !(
+            item.id === deleteTarget.id &&
+            item.source === deleteTarget.source
+          )
+      )
+    );
     } catch (err) {
       setErrorMsg(err?.message || "Impossible de supprimer la tâche.");
     } finally {
