@@ -96,6 +96,12 @@ function Tasks() {
           meta: form.meta,
           priorityColor: form.priorityColor,
           status: form.status,
+          priority: form.priority,
+          dueDate: form.dueDate,
+          estimatedMinutes: form.estimatedMinutes,
+          projectId: form.projectId,
+          notes: form.notes,
+
         }, form.source);
         setTasks((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
       } else {
@@ -105,6 +111,12 @@ function Tasks() {
           meta: form.meta,
           priorityColor: form.priorityColor,
           status: form.status,
+          priority: form.priority,
+          dueDate: form.dueDate,
+          estimatedMinutes: form.estimatedMinutes,
+          projectId: form.projectId,
+          notes: form.notes,
+
         });
         setTasks((prev) => [...prev, created]);
       }

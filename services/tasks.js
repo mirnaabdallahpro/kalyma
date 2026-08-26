@@ -40,6 +40,15 @@ function mapManualTask(row) {
     status: row.status,
     position: row.position,
     source: "manual",
+    dueDate: row.due_date || null,
+    estimatedMinutes: row.estimated_minutes || null,
+    objectiveId: row.objective_id || null,
+    projectId: row.project_id || null,
+    prospectId: row.prospect_id || null,
+    sourceRecommendationId: row.source_recommendation_id || null,
+    dependsOnTaskId: row.depends_on_task_id || null,
+    notes: row.description || "",
+
   };
 }
 
@@ -180,39 +189,7 @@ export async function createTask({ title, category, meta, priorityColor, status 
   return mapManualTask(data);
 }
 
-/*
 
-export async function updateTask(id, updates) {
-  const user = await getAuthenticatedUser();
-
-  if (!user) {
-    throw new Error("Utilisateur non authentifié.");
-  }
-
-  const payload = {};
-
-  if (updates.title !== undefined) payload.title = updates.title;
-  if (updates.category !== undefined) payload.category = updates.category;
-  if (updates.meta !== undefined) payload.meta = updates.meta;
-  if (updates.priorityColor !== undefined) payload.priority_color = updates.priorityColor;
-  if (updates.status !== undefined) payload.status = updates.status;
-
-  const { data, error } = await supabase
-    .from("tasks")
-    .update(payload)
-    .eq("id", id)
-    .eq("user_id", user.id)
-    .select()
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
-  return mapManualTask(data);
-}
-
-*/
 
 export async function updateTask(
   id,
@@ -356,26 +333,6 @@ export async function updateTask(
   return data;
 }
 
-/*
-export async function deleteTask(id) {
-  const user = await getAuthenticatedUser();
-
-  if (!user) {
-    throw new Error("Utilisateur non authentifié.");
-  }
-
-  const { error } = await supabase
-    .from("tasks")
-    .delete()
-    .eq("id", id)
-    .eq("user_id", user.id);
-
-  if (error) {
-    throw error;
-  }
-}
-
-*/
 
 export async function deleteTask(id, source = "manual") {
   const user = await getAuthenticatedUser();
@@ -680,4 +637,47 @@ export async function createDiagnosticTasks(
   return data.map(
     mapDiagnosticRecommendation
   );
+}
+
+export async function getTaskContext(task) {
+  const context = {};
+ 
+  if (task.objectiveId) {
+    const { data } = await supabase.from("objectives").select("title").eq("id", task.objectiveId).maybeSingle();
+    if (data) context.objectiveTitle = data.title;
+  }
+ 
+  if (task.projectId) {
+    const { data } = await supabase.from("projects").select("title").eq("id", task.projectId).maybeSingle();
+    if (data) context.projectTitle = data.title;
+  }
+ 
+  if (task.prospectId) {
+    const { data } = await supabase.from("prospects").select("company_name").eq("id", task.prospectId).maybeSingle();
+    if (data) context.prospectName = data.company_name;
+  }
+ 
+  if (task.dependsOnTaskId) {
+    const { data } = await supabase.from("tasks").select("title, status").eq("id", task.dependsOnTaskId).maybeSingle();
+    if (data) context.dependsOnTitle = data.title;
+    if (data) context.dependsOnStatus = data.status;
+  }
+ 
+  return context;
+}
+
+
+ 
+export async function getManualTasksForSelect() {
+  const user = await getAuthenticatedUser();
+  if (!user) return [];
+ 
+  const { data, error } = await supabase
+    .from("tasks")
+    .select("id, title")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+ 
+  if (error) throw error;
+  return data;
 }

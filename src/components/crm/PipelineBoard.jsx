@@ -18,6 +18,7 @@ function PipelineBoard({
   onWon,
   onLost,
   onQualify,
+  onScheduleMeeting,
 }) {
   const totalValue = deals.reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
 
@@ -46,6 +47,7 @@ function PipelineBoard({
             onWon={onWon}
             onLost={onLost}
             onQualify={onQualify}
+            onScheduleMeeting={onScheduleMeeting}
           />
         ))}
       </div>

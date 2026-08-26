@@ -28,6 +28,7 @@ import StatsCards from "../components/crm/StatsCards";
 import Sidebar from "../components/dashboard/Sidebar";
 import Topbar from "../components/dashboard/Topbar";
 import ConfirmModal from "../components/shared/ConfirmModal";
+
 import "../styles/crm.css";
 
 const TABS = [
@@ -54,6 +55,7 @@ function Crm() {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
+  const [meetingTarget, setMeetingTarget] = useState(null);
 
   const loadAll = async () => {
     try {

@@ -34,7 +34,7 @@ function BusinessSidebar() {
       label: "Objectifs",
       path: "/business/goals",
       icon: "✓",
-      disabled: true,
+      disabled: false,
     },
     {
       label: "KPIs",

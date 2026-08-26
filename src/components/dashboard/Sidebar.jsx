@@ -44,7 +44,7 @@ function Sidebar() {
       to: "/meetings",
       icon: "▣",
       label: "Rendez-vous",
-      disabled: true,
+      disabled: false,
     },
     {
       to: "/messages",

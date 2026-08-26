@@ -12,7 +12,16 @@ const SOURCE_LABEL = {
   diagnostic: "Diagnostic IA",
 };
 
-function TaskCard({ task, dragging, onDragStart, onDragEnd, onDropBefore, onEdit, onDelete }) {
+function TaskCard({
+  task,
+  dragging,
+  onDragStart,
+  onDragEnd,
+  onDropBefore,
+  onEdit,
+  onDelete,
+  onPlanAction,
+}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dragOver, setDragOver] = useState(false);
 
@@ -44,62 +53,114 @@ function TaskCard({ task, dragging, onDragStart, onDragEnd, onDropBefore, onEdit
         <div className="task-card-top">
           <span
             className="dot"
-            style={{ background: DOT_COLOR[task.priorityColor] || DOT_COLOR.muted }}
+            style={{
+              background:
+                DOT_COLOR[task.priorityColor] || DOT_COLOR.muted,
+            }}
           />
 
+          {/* Source de la tâche */}
           {task.source !== "manual" && (
-            <span className="task-source-badge">{SOURCE_LABEL[task.source]}</span>
+            <>
+              <span className="task-source-badge">
+                {SOURCE_LABEL[task.source]}
+              </span>
+
+              {/* Voir le contexte de la tâche */}
+              <button
+                type="button"
+                className="icon-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(task);
+                }}
+                onMouseDown={(e) => e.stopPropagation()}
+                aria-label="Voir le contexte"
+                title="Voir le contexte"
+              >
+                ⓘ
+              </button>
+            </>
           )}
 
-          <div className="row-menu">
-            <button
-              type="button"
-              className="icon-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                setMenuOpen((v) => !v);
-              }}
-              onMouseDown={(e) => e.stopPropagation()}
-              aria-label="Options"
-            >
-              ⋮
-            </button>
+          {/* Menu uniquement pour les tâches manuelles */}
+          {task.source === "manual" && (
+            <div className="row-menu">
+              <button
+                type="button"
+                className="icon-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen((v) => !v);
+                }}
+                onMouseDown={(e) => e.stopPropagation()}
+                aria-label="Options"
+              >
+                ⋮
+              </button>
 
-            {menuOpen && (
-              <div className="row-dropdown">
-                <button
-                  type="button"
-                  onMouseDown={(e) => e.stopPropagation()}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setMenuOpen(false);
-                    onEdit(task);
-                  }}
-                >
-                  Modifier
-                </button>
-                <button
-                  type="button"
-                  className="danger"
-                  onMouseDown={(e) => e.stopPropagation()}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setMenuOpen(false);
-                    onDelete(task);
-                  }}
-                >
-                  Supprimer
-                </button>
-              </div>
-            )}
-          </div>
+              {menuOpen && (
+                <div className="row-dropdown">
+                  <button
+                    type="button"
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMenuOpen(false);
+                      onEdit(task);
+                    }}
+                  >
+                    Modifier
+                  </button>
+
+                  <button
+                    type="button"
+                    className="danger"
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMenuOpen(false);
+                      onDelete(task);
+                    }}
+                  >
+                    Supprimer
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
+        {/* Contenu de la tâche */}
         <strong>{task.title}</strong>
+
         <small>
           {task.category}
           {task.meta ? ` · ${task.meta}` : ""}
         </small>
+
+        {/* Diagnostic IA → Transformer en plan d'action */}
+        {task.source === "diagnostic" && !task.convertedToObjectiveId && (
+          <button
+            type="button"
+            className="deal-quick-qualify"
+            style={{ marginTop: 8 }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onPlanAction(task);
+            }}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            Transformer en plan d&apos;action
+          </button>
+        )}
+
+        {/* Diagnostic IA déjà transformé */}
+        {task.source === "diagnostic" && task.convertedToObjectiveId && (
+          <span className="task-plan-done">
+            ✓ Plan d&apos;action créé
+          </span>
+        )}
       </div>
     </div>
   );

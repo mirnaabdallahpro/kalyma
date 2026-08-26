@@ -20,6 +20,7 @@ function DealColumn({
   onWon,
   onLost,
   onQualify,
+  onScheduleMeeting,
 }) {
   return (
     <div
@@ -50,6 +51,7 @@ function DealColumn({
             onWon={onWon}
             onLost={onLost}
             onQualify={onQualify}
+            onScheduleMeeting={onScheduleMeeting}
           />
         ))}
       </div>

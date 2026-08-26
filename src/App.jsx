@@ -17,6 +17,7 @@ import BusinessStrategy from "./pages/business/BusinessStrategy";
 import ComingSoon from "./pages/ComingSoon";
 import Crm from "./pages/Crm";
 import Dashboard from "./pages/Dashboard";
+import Objectives from "./pages/Objectives";
 import Tasks from "./pages/Tasks";
 
 
@@ -27,6 +28,7 @@ import Register from "./pages/auth/Register";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import BusinessDiagnostics from "./pages/business/BusinessDiagnostics";
 import Home from "./pages/Home";
+import Meetings from "./pages/Meetings";
 import "./styles.css";
 
 function App() {
@@ -117,23 +119,33 @@ function App() {
           />
 
           {/* /business/offers */}
-          <Route
-            path="offers"
-            element={<BusinessOffers />}
-          />
-          <Route
-  path="strategy"
-  element={<BusinessStrategy />}
-/>
+              <Route
+                path="offers"
+                element={<BusinessOffers />}
+              />
+              <Route
+                path="strategy"
+                element={<BusinessStrategy />}
+              />
+            <Route
+                path="goals"
+                element={<Objectives />}
+              />
 
-    <Route
-  path="diagnostics"
-  element={<BusinessDiagnostics />}
-/>
+
+
+                <Route
+              path="diagnostics"
+              element={<BusinessDiagnostics />}
+            />
         </Route>
 
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/crm" element={<Crm />} />
+          <Route
+            path="/meetings"
+            element={<Meetings />}
+          />
 
        
 
