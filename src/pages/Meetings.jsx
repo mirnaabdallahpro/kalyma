@@ -67,7 +67,7 @@ function Meetings() {
             <div className="welcome">
               <div>
                 <h1>Rendez-vous</h1>
-                <p>Programme un RDV depuis une opportunité CRM — il apparaît ici.</p>
+                <p>Programme un RDV depuis une opportunité CRM. il apparaît ici.</p>
               </div>
             </div>
 
