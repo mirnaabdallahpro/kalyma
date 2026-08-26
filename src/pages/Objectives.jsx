@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createObjective, deleteObjective, getObjectives, updateObjective } from "../../services/planning";
 import ObjectiveCard from "../components/objectives/ObjectiveCard";
-import ObjectiveFormModal from "../components/objectives/ObjectiveFormModal";
+import ObjectiveFormModal from "../components/objectives/Objectiveformmodal";
 import ConfirmModal from "../components/shared/ConfirmModal";
 import "../styles/planning.css";
 

@@ -1,3 +1,5 @@
+
+
 function ObjectiveCard({ objective, onEdit, onDelete }) {
   const hasTarget = objective.target != null && objective.current != null;
   const pct = hasTarget ? Math.min(100, Math.round((objective.current / objective.target) * 100)) : null;
