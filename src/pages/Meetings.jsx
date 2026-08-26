@@ -7,7 +7,6 @@ import MeetingOutcomeModal from "../components/meetings/Meetingoutcomemodal";
 import ConfirmModal from "../components/shared/ConfirmModal";
 import "../styles/meetings.css";
 
-
 function Meetings() {
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,7 +19,7 @@ function Meetings() {
       setErrorMsg("");
       setMeetings(await getMeetings());
     } catch (err) {
-      setErrorMsg(err?.message || "Impossible de charger les rendez-vous.");
+      setErrorMsg(err?.message || "Impossible de charger les RDVs.");
     } finally {
       setLoading(false);
     }
