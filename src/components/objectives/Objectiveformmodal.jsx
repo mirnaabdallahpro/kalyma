@@ -13,6 +13,7 @@ function ObjectiveFormModal({ initialObjective, onClose, onSave }) {
     deadline: initialObjective?.deadline || "",
   });
 
+  //
   const update = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
 
   const handleSubmit = (e) => {
