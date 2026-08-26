@@ -3,9 +3,10 @@ import { closeMeetingWithOutcome, deleteMeeting, getMeetings } from "../../servi
 import Sidebar from "../components/dashboard/Sidebar";
 import Topbar from "../components/dashboard/Topbar";
 import MeetingCard from "../components/meetings/MeetingCard";
-import MeetingOutcomeModal from "../components/meetings/MeetingOutcomeModal";
+import MeetingOutcomeModal from "../components/meetings/Meetingoutcomemodal";
 import ConfirmModal from "../components/shared/ConfirmModal";
 import "../styles/meetings.css";
+
 
 function Meetings() {
   const [meetings, setMeetings] = useState([]);

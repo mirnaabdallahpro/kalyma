@@ -28,6 +28,7 @@ import Register from "./pages/auth/Register";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import BusinessDiagnostics from "./pages/business/BusinessDiagnostics";
 import Home from "./pages/Home";
+import Meetings from "./pages/Meetings";
 import "./styles.css";
 
 function App() {
@@ -141,6 +142,7 @@ function App() {
 
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/crm" element={<Crm />} />
+          <Route path="/meetings" element={<Meetings />} />
           
 
        
