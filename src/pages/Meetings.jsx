@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { closeMeetingWithOutcome, deleteMeeting, getMeetings } from "../../services/meetings";
 import Sidebar from "../components/dashboard/Sidebar";
 import Topbar from "../components/dashboard/Topbar";
-import MeetingCard from "../components/meetings/MeetingCard";
+import MeetCard from "../components/meetings/MeetCard";
 import MeetingOutcomeModal from "../components/meetings/Meetingoutcomemodal";
 import ConfirmModal from "../components/shared/ConfirmModal";
 import "../styles/meetings.css";
@@ -90,7 +90,7 @@ function Meetings() {
                     <p className="empty-state">Aucun rendez-vous programmé.</p>
                   ) : (
                     upcoming.map((m) => (
-                      <MeetingCard key={m.id} meeting={m} onClose={setOutcomeTarget} onDelete={setDeleteTarget} />
+                      <MeetCard key={m.id} meeting={m} onClose={setOutcomeTarget} onDelete={setDeleteTarget} />
                     ))
                   )}
                 </section>
@@ -104,7 +104,7 @@ function Meetings() {
                     <p className="empty-state">Aucun rendez-vous passé.</p>
                   ) : (
                     past.map((m) => (
-                      <MeetingCard key={m.id} meeting={m} onClose={setOutcomeTarget} onDelete={setDeleteTarget} />
+                      <MeetCard key={m.id} meeting={m} onClose={setOutcomeTarget} onDelete={setDeleteTarget} />
                     ))
                   )}
                 </section>
