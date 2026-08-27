@@ -28,7 +28,7 @@ import RelancesPanel from "../components/crm/RelancesPanel";
 import StatsCards from "../components/crm/StatsCards";
 import Sidebar from "../components/dashboard/Sidebar";
 import Topbar from "../components/dashboard/Topbar";
-import MeetingFormModal from "../components/meetings/MeetingFormModal";
+import MeetFormModal from "../components/meetings/MeetFormModal";
 import ConfirmModal from "../components/shared/ConfirmModal";
 
 import "../styles/crm.css";
@@ -349,7 +349,7 @@ function Crm() {
       )}
       
       {meetingTarget && (
-        <MeetingFormModal
+        <MeetFormModal
           prospect={meetingTarget}
           onClose={() => setMeetingTarget(null)}
           onSave={handleScheduleMeeting}

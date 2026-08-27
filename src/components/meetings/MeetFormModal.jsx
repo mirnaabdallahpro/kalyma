@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Modal from "../shared/Modal";
 
-function MeetingFormModal({ prospect, onClose, onSave }) {
+function MeetFormModal({ prospect, onClose, onSave }) {
   const [form, setForm] = useState({
     title: `RDV — ${prospect.companyName}`,
     objective: "",
@@ -74,4 +74,4 @@ function MeetingFormModal({ prospect, onClose, onSave }) {
   );
 }
 
-export default MeetingFormModal;
+export default MeetFormModal;
