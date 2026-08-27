@@ -1,4 +1,30 @@
-function UpcomingMeeting() {
+function UpcomingMeeting({ meetings = [] }) {
+  const nextMeeting =
+    [...meetings]
+      .filter((meeting) => meeting?.scheduledAt)
+      .sort(
+        (a, b) =>
+          new Date(a.scheduledAt).getTime() -
+          new Date(b.scheduledAt).getTime()
+      )[0] || null;
+
+
+
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+
+    if (Number.isNaN(date.getTime())) {
+      return "Date inconnue";
+    }
+
+    return new Intl.DateTimeFormat("fr-FR", {
+      day: "2-digit",
+      month: "long",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date);
+  };
+
   return (
     <section
       className="panel"
@@ -6,38 +32,41 @@ function UpcomingMeeting() {
         marginTop: "18px",
       }}
     >
-
       <div className="panel-head">
-
-        <h3>
-          Prochain rendez-vous
-        </h3>
+        <h3>Prochain rendez-vous</h3>
 
         <span className="muted">
-          Aujourd'hui
+          {nextMeeting ? "À venir" : "Aucun"}
         </span>
-
       </div>
 
-      <strong>
-        Growth Strategy Call
-      </strong>
+      {nextMeeting ? (
+        <>
+          <strong>{nextMeeting.title}</strong>
 
-      <p className="muted">
-        15:30 · AfriTech
-      </p>
+          <p className="muted">
+            {formatDateTime(nextMeeting.scheduledAt)}
 
-      <a
-        className="btn btn-primary"
-        style={{
-          padding: "9px 12px",
-          fontSize: "12px",
-        }}
-        href="#"
-      >
-        Voir le rendez-vous
-      </a>
+            {nextMeeting.prospect?.companyName &&
+              ` · ${nextMeeting.prospect.companyName}`}
+          </p>
 
+          <a
+            className="btn btn-primary"
+            style={{
+              padding: "9px 12px",
+              fontSize: "12px",
+            }}
+            href={`/meetings`}
+          >
+            Voir le rendez-vous
+          </a>
+        </>
+      ) : (
+        <p className="muted">
+          Aucun rendez-vous à venir.
+        </p>
+      )}
     </section>
   );
 }

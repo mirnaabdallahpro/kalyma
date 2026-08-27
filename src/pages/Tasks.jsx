@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
 import {
   createTask,
   deleteTask,
@@ -48,13 +49,10 @@ function Tasks() {
     setLoading(true);
     setError(null);
 
-    console.log("1. Recherche du profil...");
 
     let data = await getBusinessProfile();
 
-    console.log("2. Profil récupéré :", data);
-
-    console.log("5. Mapping du profil...");
+  
 
     setProfile(mapBusinessProfile(data));
 
@@ -206,6 +204,43 @@ function Tasks() {
     (t) => t.status !== "done" && t.priorityColor === "secondary"
   );
 
+  const handleArchiveTask = async (task) => {
+  try {
+    if (task.source === "manual") {
+      await supabase
+        .from("tasks")
+        .update({
+          archived_at: new Date().toISOString(),
+        })
+        .eq("id", task.id);
+    }
+
+    if (task.source === "strategy") {
+      await supabase
+        .from("business_strategy_priorities")
+        .update({
+          task_archived_at: new Date().toISOString(),
+        })
+        .eq("id", task.sourceId);
+    }
+
+    if (task.source === "diagnostic") {
+      await supabase
+        .from("business_diagnostic_recommendations")
+        .update({
+          task_archived_at: new Date().toISOString(),
+        })
+        .eq("id", task.sourceId);
+    }
+
+    setTasks((prev) =>
+      prev.filter((item) => item.id !== task.id)
+    );
+  } catch (error) {
+    console.error("Erreur archivage :", error);
+  }
+};
+
   return (
     <div className="dashboard-body">
       <div className="app">
@@ -259,6 +294,7 @@ function Tasks() {
                       onAdd={(s) => setFormState({ status: s })}
                       onEdit={(task) => setFormState(task)}
                       onDelete={(task) => setDeleteTarget(task)}
+                      onArchive={(task)=>handleArchiveTask(task)}
                       onPlanAction={(task) => setPlanTarget(task)}
                       onViewDetails={setSelectedTask}
                     />

@@ -1,6 +1,11 @@
+import { useEffect, useState } from "react";
+import {
+  getCurrentBusinessDiagnosticFull,
+} from "../../services/businessDiagnostics";
+import { getMeetings } from "../../services/meetings";
+import PipelineBoardDashboard from "../components/crm/PipelineBoardDashboard";
 import AIRecommendation from "../components/dashboard/AIRecommendation";
 import Panel from "../components/dashboard/Panel";
-import PipelineStage from "../components/dashboard/PipelineStage";
 import PriorityItem from "../components/dashboard/PriorityItem";
 import SalesChart from "../components/dashboard/SalesChart";
 import Sidebar from "../components/dashboard/Sidebar";
@@ -9,35 +14,16 @@ import Topbar from "../components/dashboard/Topbar";
 import UpcomingMeeting from "../components/dashboard/UpcomingMeeting";
 import WeeklyBriefing from "../components/dashboard/WeeklyBriefing";
 
+
+import {
+  getOffersForSelect,
+  getProspects,
+  getRelanceSettings,
+  getUpcomingRelances
+} from "../../services/crm";
+
 function Dashboard() {
-  const stats = [
-    {
-      label: "Kalyma Score",
-      value: "74",
-      suffix: "/100",
-      trend: "↑ +6 ce mois",
-      trendType: "up",
-    },
-    {
-      label: "Pipeline",
-      value: "87 000",
-      suffix: " MAD",
-      trend: "↑ 12% vs mois dernier",
-      trendType: "up",
-    },
-    {
-      label: "Prospects actifs",
-      value: "64",
-      trend: "↑ 8 cette semaine",
-      trendType: "up",
-    },
-    {
-      label: "Objectif mensuel",
-      value: "62%",
-      trend: "31 200 / 50 000 MAD",
-      trendType: "default",
-    },
-  ];
+ 
 
   const pipeline = [
     {
@@ -90,6 +76,93 @@ function Dashboard() {
     },
   ];
 
+  const [deals, setDeals] = useState([]);
+  const [offers, setOffers] = useState([]);
+  const [relances, setRelances] = useState([]);
+  const [meetings, setMeetings] = useState([]);
+
+  const [relanceSettings, setRelanceSettings] = useState({ intervals: [3, 7, 30], enabled: true });
+  const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState("");
+    const [diagnostic, setDiagnostic] = useState(null);
+
+
+
+
+  const loadAll = async () => {
+    try {
+      setErrorMsg("");
+      const [dealsData, offersData, relancesData, settingsData, meetingsData, diagnosticData ] = await Promise.all([
+        getProspects(),
+        getOffersForSelect(),
+        getUpcomingRelances(),
+        getRelanceSettings(),
+        getMeetings(),
+        getCurrentBusinessDiagnosticFull()
+      ]);
+
+      setDeals(dealsData);
+      setOffers(offersData);
+      setRelances(relancesData);
+      setRelanceSettings(settingsData);
+      setMeetings(meetingsData);
+      setDiagnostic(diagnosticData);
+     
+    } catch (err) {
+      setErrorMsg(err?.message || "Impossible de charger le CRM pour le moment.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadAll();
+  }, []);
+
+  const activeDeals = deals.filter(
+  (deal) => !["won", "lost"].includes(deal.stage)
+);
+
+const pipelineValue = activeDeals.reduce(
+  (total, deal) => total + Number(deal.amount || deal.value || 0),
+  0
+);
+
+const scoreBusiness = diagnostic?.business_score;
+
+const stats = [
+  {
+    label: "Kalyma Score",
+    value: scoreBusiness,
+    suffix: "/100",
+   
+    trendType: "up",
+  },
+  {
+    label: "Pipeline",
+    value: pipelineValue.toLocaleString("fr-FR"),
+    suffix: " MAD",
+    trend: `${activeDeals.length} opportunité${
+      activeDeals.length > 1 ? "s" : ""
+    } active${activeDeals.length > 1 ? "s" : ""}`,
+    trendType: "up",
+  },
+  {
+    label: "Prospects actifs",
+    value: activeDeals.length.toString(),
+    trend: `${deals.length} opportunité${
+      deals.length > 1 ? "s" : ""
+    } au total`,
+    trendType: "up",
+  },
+  {
+    label: "Objectif mensuel",
+    value: "62%",
+    trend: "31 200 / 50 000 MAD",
+    trendType: "default",
+  },
+];
+
   return (
     <div className="dashboard-body">
       <div className="app">
@@ -105,7 +178,7 @@ function Dashboard() {
             {/* Welcome */}
             <div className="welcome">
               <div>
-                <h1>Bonjour, Fatahou 👋</h1>
+                <h1>Bonjour 👋</h1>
                 <p>
                   Voici ce qui mérite votre attention aujourd'hui.
                 </p>
@@ -143,22 +216,17 @@ function Dashboard() {
                   <SalesChart />
                 </Panel>
 
+
                 {/* Pipeline */}
-                <Panel
-                  title="Pipeline commercial"
-                  subtitle="12 opportunités"
-                  className="pipeline-panel"
+                <div style={{marginTop:"0.9rem"}}
                 >
-                  <div className="pipeline">
-                    {pipeline.map((stage) => (
-                      <PipelineStage
-                        key={stage.title}
-                        title={stage.title}
-                        deals={stage.deals}
-                      />
-                    ))}
-                  </div>
-                </Panel>
+                   <PipelineBoardDashboard
+                    deals={deals.filter((d) =>
+                      ["lead", "qualification", "nurturing", "rdv"].includes(d.stage)
+                    )}
+                    
+                  />
+                </div>
 
               </div>
 
@@ -192,7 +260,7 @@ function Dashboard() {
                 <AIRecommendation />
 
                 {/* Meeting */}
-                <UpcomingMeeting />
+                <UpcomingMeeting meetings={meetings}/>
 
               </div>
 

@@ -1,6 +1,20 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 
+import {
+  BarChart3,
+  BriefcaseBusiness,
+  ChevronDown,
+  ChevronUp,
+  FileBarChart,
+  LayoutDashboard,
+  Lightbulb,
+  Sparkles,
+  Target,
+  UserRound,
+  X
+} from "lucide-react";
+
 function BusinessSidebar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -8,44 +22,44 @@ function BusinessSidebar() {
     {
       label: "Vue d'ensemble",
       path: "/business",
-      icon: "◈",
+      icon: LayoutDashboard,
       end: true,
       disabled: false,
     },
     {
       label: "Profil Business",
       path: "/business/profile",
-      icon: "◎",
+      icon: UserRound,
       disabled: false,
     },
     {
       label: "Stratégie",
       path: "/business/strategy",
-      icon: "◇",
+      icon: Lightbulb,
       disabled: false,
     },
     {
       label: "Offres",
       path: "/business/offers",
-      icon: "▣",
+      icon: BriefcaseBusiness,
       disabled: false,
     },
     {
       label: "Objectifs",
       path: "/business/goals",
-      icon: "✓",
+      icon: Target,
       disabled: false,
     },
     {
       label: "KPIs",
       path: "/business/kpis",
-      icon: "◒",
+      icon: BarChart3,
       disabled: true,
     },
     {
       label: "Diagnostics",
       path: "/business/diagnostics",
-      icon: "✦",
+      icon: FileBarChart,
       disabled: false,
     },
   ];
@@ -60,6 +74,8 @@ function BusinessSidebar() {
    * =========================================
    */
   const renderDesktopItem = (item) => {
+    const Icon = item.icon;
+
     if (item.disabled) {
       return (
         <div
@@ -70,12 +86,10 @@ function BusinessSidebar() {
         >
           <span className="business-sidebar-link-content">
             <span className="business-sidebar-icon">
-              {item.icon}
+              <Icon size={19} strokeWidth={1.8} />
             </span>
 
-            <span>
-              {item.label}
-            </span>
+            <span>{item.label}</span>
           </span>
 
           <span className="business-sidebar-status">
@@ -98,12 +112,10 @@ function BusinessSidebar() {
       >
         <span className="business-sidebar-link-content">
           <span className="business-sidebar-icon">
-            {item.icon}
+            <Icon size={19} strokeWidth={1.8} />
           </span>
 
-          <span>
-            {item.label}
-          </span>
+          <span>{item.label}</span>
         </span>
       </NavLink>
     );
@@ -115,6 +127,8 @@ function BusinessSidebar() {
    * =========================================
    */
   const renderMobileItem = (item) => {
+    const Icon = item.icon;
+
     if (item.disabled) {
       return (
         <div
@@ -124,7 +138,7 @@ function BusinessSidebar() {
           aria-disabled="true"
         >
           <span className="business-mobile-link-icon">
-            {item.icon}
+            <Icon size={20} strokeWidth={1.8} />
           </span>
 
           <span className="business-mobile-link-label">
@@ -151,7 +165,7 @@ function BusinessSidebar() {
         }
       >
         <span className="business-mobile-link-icon">
-          {item.icon}
+          <Icon size={20} strokeWidth={1.8} />
         </span>
 
         <span className="business-mobile-link-label">
@@ -172,7 +186,6 @@ function BusinessSidebar() {
       ========================================= */}
 
       <aside className="business-sidebar">
-
         <div className="business-sidebar-header">
           <span>BUSINESS</span>
 
@@ -186,9 +199,13 @@ function BusinessSidebar() {
         </nav>
 
         <div className="business-sidebar-footer">
-
           <div className="business-sidebar-ai">
-            <span>✦</span>
+            <span>
+              <Sparkles
+                size={18}
+                strokeWidth={1.8}
+              />
+            </span>
 
             <div>
               <strong>
@@ -200,18 +217,14 @@ function BusinessSidebar() {
               </small>
             </div>
           </div>
-
         </div>
-
       </aside>
-
 
       {/* =========================================
           MOBILE BUSINESS NAVIGATION
       ========================================= */}
 
       <div className="business-mobile-navigation">
-
         <button
           type="button"
           className="business-mobile-menu-button"
@@ -219,12 +232,18 @@ function BusinessSidebar() {
             setMobileMenuOpen((prev) => !prev)
           }
           aria-expanded={mobileMenuOpen}
-          aria-label="Ouvrir le menu Business"
+          aria-label={
+            mobileMenuOpen
+              ? "Fermer le menu Business"
+              : "Ouvrir le menu Business"
+          }
         >
           <div className="business-mobile-title">
-
             <span className="business-mobile-icon">
-              ◉
+              <BriefcaseBusiness
+                size={20}
+                strokeWidth={1.8}
+              />
             </span>
 
             <div>
@@ -234,23 +253,28 @@ function BusinessSidebar() {
                 Cockpit stratégique
               </strong>
             </div>
-
           </div>
 
           <span className="business-mobile-chevron">
-            {mobileMenuOpen ? "⌃" : "⌄"}
+            {mobileMenuOpen ? (
+              <ChevronUp
+                size={20}
+                strokeWidth={2}
+              />
+            ) : (
+              <ChevronDown
+                size={20}
+                strokeWidth={2}
+              />
+            )}
           </span>
         </button>
-
 
         {/* MENU */}
 
         {mobileMenuOpen && (
-
           <div className="business-mobile-menu">
-
             <div className="business-mobile-menu-header">
-
               <span>
                 NAVIGATION BUSINESS
               </span>
@@ -260,22 +284,26 @@ function BusinessSidebar() {
                 onClick={closeMobileMenu}
                 aria-label="Fermer le menu"
               >
-                ×
+                <X
+                  size={20}
+                  strokeWidth={2}
+                />
               </button>
-
             </div>
-
 
             <nav>
               {menu.map(renderMobileItem)}
             </nav>
 
-
             {/* IA */}
 
             <div className="business-mobile-ai">
-
-              <span>✦</span>
+              <span>
+                <Sparkles
+                  size={18}
+                  strokeWidth={1.8}
+                />
+              </span>
 
               <div>
                 <strong>
@@ -286,13 +314,9 @@ function BusinessSidebar() {
                   Assistant stratégique
                 </small>
               </div>
-
             </div>
-
           </div>
-
         )}
-
       </div>
     </>
   );

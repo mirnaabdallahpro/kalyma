@@ -1,48 +1,64 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+
+import {
+  BriefcaseBusiness,
+  CalendarDays,
+  CheckSquare,
+  ChevronDown,
+  ChevronUp,
+  FileText,
+  LayoutDashboard,
+  LogOut,
+  MessageSquare,
+  Search,
+  Settings,
+  UsersRound,
+} from "lucide-react";
+
 import { signOut } from "../../../services/authService";
 
 const workspaceMenu = [
   {
     label: "Dashboard",
     path: "/dashboard",
-    icon: "◈",
+    icon: LayoutDashboard,
     disabled: false,
   },
   {
     label: "Business",
     path: "/business",
-    icon: "◉",
+    icon: BriefcaseBusiness,
     disabled: false,
   },
   {
     label: "CRM",
     path: "/crm",
-    icon: "◎",
+    icon: UsersRound,
     disabled: false,
   },
   {
     label: "Tâches",
     path: "/tasks",
-    icon: "✓",
+    icon: CheckSquare,
     disabled: false,
   },
   {
     label: "Rendez-vous",
     path: "/meetings",
-    icon: "▣",
-    disabled: true,
+    icon: CalendarDays,
+    disabled: false,
   },
   {
     label: "Messages",
     path: "/messages",
-    icon: "✉",
+    icon: MessageSquare,
     disabled: true,
   },
   {
     label: "Documents",
     path: "/documents",
-    icon: "□",
+    icon: FileText,
     disabled: true,
   },
 ];
@@ -51,16 +67,14 @@ const accountMenu = [
   {
     label: "Paramètres",
     path: "/settings",
-    icon: "⚙",
+    icon: Settings,
     disabled: true,
   },
 ];
 
 function Topbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-
   const menuRef = useRef(null);
-
   const navigate = useNavigate();
 
   const closeMenu = () => {
@@ -114,6 +128,8 @@ function Topbar() {
    */
 
   const renderWorkspaceItem = (item) => {
+    const Icon = item.icon;
+
     if (item.disabled) {
       return (
         <div
@@ -124,12 +140,13 @@ function Topbar() {
         >
           <span className="workspace-dropdown-link-content">
             <span className="workspace-dropdown-icon">
-              {item.icon}
+              <Icon
+                size={18}
+                strokeWidth={1.8}
+              />
             </span>
 
-            <span>
-              {item.label}
-            </span>
+            <span>{item.label}</span>
           </span>
 
           <span className="workspace-dropdown-status">
@@ -153,12 +170,13 @@ function Topbar() {
       >
         <span className="workspace-dropdown-link-content">
           <span className="workspace-dropdown-icon">
-            {item.icon}
+            <Icon
+              size={18}
+              strokeWidth={1.8}
+            />
           </span>
 
-          <span>
-            {item.label}
-          </span>
+          <span>{item.label}</span>
         </span>
       </NavLink>
     );
@@ -171,6 +189,8 @@ function Topbar() {
    */
 
   const renderAccountItem = (item) => {
+    const Icon = item.icon;
+
     if (item.disabled) {
       return (
         <div
@@ -181,12 +201,13 @@ function Topbar() {
         >
           <span className="workspace-dropdown-link-content">
             <span className="workspace-dropdown-icon">
-              {item.icon}
+              <Icon
+                size={18}
+                strokeWidth={1.8}
+              />
             </span>
 
-            <span>
-              {item.label}
-            </span>
+            <span>{item.label}</span>
           </span>
 
           <span className="workspace-dropdown-status">
@@ -209,12 +230,13 @@ function Topbar() {
       >
         <span className="workspace-dropdown-link-content">
           <span className="workspace-dropdown-icon">
-            {item.icon}
+            <Icon
+              size={18}
+              strokeWidth={1.8}
+            />
           </span>
 
-          <span>
-            {item.label}
-          </span>
+          <span>{item.label}</span>
         </span>
       </NavLink>
     );
@@ -232,13 +254,16 @@ function Topbar() {
         kaly<span>ma</span>
       </NavLink>
 
-
       {/* RECHERCHE */}
 
       <div className="search">
-        ⌕ &nbsp; Rechercher...
-      </div>
+        <Search
+          size={17}
+          strokeWidth={1.8}
+        />
 
+        <span>Rechercher...</span>
+      </div>
 
       {/* ESPACE UTILISATEUR */}
 
@@ -246,7 +271,6 @@ function Topbar() {
         className="user-space"
         ref={menuRef}
       >
-
         <button
           type="button"
           className={`user ${
@@ -267,13 +291,21 @@ function Topbar() {
           </div>
 
           <span className="user-chevron">
-            {menuOpen ? "⌃" : "⌄"}
+            {menuOpen ? (
+              <ChevronUp
+                size={17}
+                strokeWidth={1.8}
+              />
+            ) : (
+              <ChevronDown
+                size={17}
+                strokeWidth={1.8}
+              />
+            )}
           </span>
         </button>
 
-
         {menuOpen && (
-
           <div className="workspace-dropdown">
 
             {/* HEADER */}
@@ -288,11 +320,9 @@ function Topbar() {
               </strong>
             </div>
 
-
             {/* WORKSPACE */}
 
             <div className="workspace-dropdown-section">
-
               <div className="workspace-dropdown-label">
                 Workspace
               </div>
@@ -302,16 +332,13 @@ function Topbar() {
                   renderWorkspaceItem
                 )}
               </nav>
-
             </div>
-
 
             {/* COMPTE */}
 
             <div className="workspace-dropdown-divider" />
 
             <div className="workspace-dropdown-section">
-
               <div className="workspace-dropdown-label">
                 Compte
               </div>
@@ -321,9 +348,7 @@ function Topbar() {
                   renderAccountItem
                 )}
               </nav>
-
             </div>
-
 
             {/* DECONNEXION */}
 
@@ -335,7 +360,10 @@ function Topbar() {
               onClick={handleSignOut}
             >
               <span className="workspace-dropdown-icon">
-                ↪
+                <LogOut
+                  size={18}
+                  strokeWidth={1.8}
+                />
               </span>
 
               <span>
@@ -344,11 +372,8 @@ function Topbar() {
             </button>
 
           </div>
-
         )}
-
       </div>
-
     </header>
   );
 }

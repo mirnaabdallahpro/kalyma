@@ -17,6 +17,7 @@ function TaskColumn({
   onAdd,
   onEdit,
   onDelete,
+  onArchive,
   onPlanAction,
   onViewDetails
 }) {
@@ -53,6 +54,7 @@ function TaskColumn({
             onDelete={onDelete}
               onPlanAction={onPlanAction}
               onViewDetails={onViewDetails}
+              onArchive={onArchive}
           />
         ))}
       </div>

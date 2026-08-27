@@ -107,15 +107,18 @@ export async function getAllTasks() {
       .from("tasks")
       .select("*")
       .eq("user_id", user.id)
+      .is("archived_at", null)
       .order("position", { ascending: true }),
     supabase
       .from("business_strategy_priorities")
       .select("*")
+      .is("task_archived_at", null)
       .eq("user_id", user.id)
       .order("position", { ascending: true }),
     supabase
       .from("business_diagnostic_recommendations")
       .select("*")
+      .is("task_archived_at", null)
       .eq("user_id", user.id)
       .order("position", { ascending: true }),
   ]);
@@ -679,5 +682,42 @@ export async function getManualTasksForSelect() {
     .order("created_at", { ascending: false });
  
   if (error) throw error;
+  return data;
+}
+
+
+export async function archiveTask(taskId) {
+  const { data, error } = await supabase
+    .from("tasks")
+    .update({
+      archived_at: new Date().toISOString(),
+    })
+    .eq("id", taskId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Erreur archivage tâche :", error);
+    throw error;
+  }
+
+  return data;
+}
+
+export async function unarchiveTask(taskId) {
+  const { data, error } = await supabase
+    .from("tasks")
+    .update({
+      archived_at: null,
+    })
+    .eq("id", taskId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Erreur désarchivage tâche :", error);
+    throw error;
+  }
+
   return data;
 }

@@ -1,3 +1,14 @@
+import {
+  BriefcaseBusiness,
+  CalendarDays,
+  CheckSquare,
+  FileText,
+  LayoutDashboard,
+  MessageSquare,
+  Settings,
+  UsersRound,
+} from "lucide-react";
+
 import { NavLink, useNavigate } from "react-router-dom";
 import { signOut } from "../../../services/authService";
 
@@ -7,54 +18,58 @@ function Sidebar() {
   async function handleSignOut() {
     try {
       await signOut();
+
       navigate("/login", {
         replace: true,
       });
     } catch (error) {
-      console.error("Erreur lors de la déconnexion :", error);
+      console.error(
+        "Erreur lors de la déconnexion :",
+        error
+      );
     }
   }
 
   const menuItems = [
     {
       to: "/dashboard",
-      icon: "◈",
+      icon: LayoutDashboard,
       label: "Dashboard",
       disabled: false,
     },
     {
       to: "/business",
-      icon: "◉",
+      icon: BriefcaseBusiness,
       label: "Business",
       disabled: false,
     },
     {
       to: "/crm",
-      icon: "◎",
+      icon: UsersRound,
       label: "CRM",
       disabled: false,
     },
     {
       to: "/tasks",
-      icon: "✓",
+      icon: CheckSquare,
       label: "Tâches",
       disabled: false,
     },
     {
       to: "/meetings",
-      icon: "▣",
+      icon: CalendarDays,
       label: "Rendez-vous",
       disabled: false,
     },
     {
       to: "/messages",
-      icon: "✉",
+      icon: MessageSquare,
       label: "Messages",
       disabled: true,
     },
     {
       to: "/documents",
-      icon: "□",
+      icon: FileText,
       label: "Documents",
       disabled: true,
     },
@@ -63,13 +78,15 @@ function Sidebar() {
   const accountItems = [
     {
       to: "/settings",
-      icon: "⚙",
+      icon: Settings,
       label: "Paramètres",
       disabled: true,
     },
   ];
 
   function renderMenuItem(item) {
+    const Icon = item.icon;
+
     if (item.disabled) {
       return (
         <div
@@ -80,14 +97,19 @@ function Sidebar() {
         >
           <span className="menu-item-content">
             <span className="menu-item-icon">
-              {item.icon}
+              <Icon
+                size={20}
+                strokeWidth={1.8}
+              />
             </span>
 
             <span>{item.label}</span>
           </span>
 
           <span className="menu-item-status">
-            <span className="menu-item-status-icon">⚙</span>
+            <span className="menu-item-status-icon">
+              ⚙
+            </span>
           </span>
         </div>
       );
@@ -103,7 +125,10 @@ function Sidebar() {
       >
         <span className="menu-item-content">
           <span className="menu-item-icon">
-            {item.icon}
+            <Icon
+              size={20}
+              strokeWidth={1.8}
+            />
           </span>
 
           <span>{item.label}</span>
@@ -115,7 +140,10 @@ function Sidebar() {
   return (
     <aside className="sidebar">
 
-      <NavLink className="logo" to="/dashboard">
+      <NavLink
+        className="logo"
+        to="/dashboard"
+      >
         kaly<span>ma</span>
       </NavLink>
 
