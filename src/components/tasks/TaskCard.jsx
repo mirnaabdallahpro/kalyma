@@ -83,6 +83,19 @@ function TaskCard({
               >
                 ⓘ
               </button>
+               {/* Menu */}
+              <button
+                type="button"
+                className="icon-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen((v) => !v);
+                }}
+                onMouseDown={(e) => e.stopPropagation()}
+                aria-label="Options"
+              >
+                ⋮
+              </button>
             </>
           )}
 
