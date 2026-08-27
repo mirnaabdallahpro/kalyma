@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { supabase } from "../../lib/supabaseClient";
+import { supabase } from "../../../lib/supabase";
 import Modal from "../shared/Modal";
 
 const OUTCOMES = [
