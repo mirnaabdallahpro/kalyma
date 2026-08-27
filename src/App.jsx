@@ -17,6 +17,7 @@ import BusinessStrategy from "./pages/business/BusinessStrategy";
 import ComingSoon from "./pages/ComingSoon";
 import Crm from "./pages/Crm";
 import Dashboard from "./pages/Dashboard";
+import HowItWorks from "./pages/HowItWorks";
 import Objectives from "./pages/Objectives";
 import Tasks from "./pages/Tasks";
 
@@ -56,6 +57,10 @@ function App() {
           <Route
             path="/register"
             element={<Register />}
+          />
+            <Route
+            path="/comment-ca-marche"
+            element={<HowItWorks />}
           />
 
           <Route

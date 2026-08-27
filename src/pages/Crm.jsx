@@ -16,6 +16,7 @@ import {
   updateProspect,
   updateRelanceSettings,
 } from "../../services/crm";
+import { scheduleMeeting } from "../../services/meetings";
 import ClosedDealsList from "../components/crm/ClosedDealsList";
 import ImportProspectsModal from "../components/crm/ImportProspectsModal";
 import LostReasonModal from "../components/crm/LostReasonModal";
@@ -27,6 +28,7 @@ import RelancesPanel from "../components/crm/RelancesPanel";
 import StatsCards from "../components/crm/StatsCards";
 import Sidebar from "../components/dashboard/Sidebar";
 import Topbar from "../components/dashboard/Topbar";
+import MeetingFormModal from "../components/meetings/MeetingFormModal";
 import ConfirmModal from "../components/shared/ConfirmModal";
 
 import "../styles/crm.css";
@@ -171,6 +173,16 @@ function Crm() {
     }
   };
 
+  const handleScheduleMeeting = async (form) => {
+    try {
+      await scheduleMeeting(form);
+      setMeetingTarget(null);
+    } catch (err) {
+      setErrorMsg(err?.message || "Impossible de programmer ce rendez-vous.");
+    }
+  };
+ 
+
   const handleQualify = async (criteria) => {
     if (!qualifyTarget) return;
     try {
@@ -297,6 +309,7 @@ function Crm() {
                     onWon={handleWon}
                     onLost={(deal) => setLostTarget(deal)}
                     onQualify={(deal) => setQualifyTarget(deal)}
+                    onScheduleMeeting={(deal) => setMeetingTarget(deal)}
                   />
                 )}
 
@@ -334,6 +347,15 @@ function Crm() {
           onConfirm={handleConfirmLost}
         />
       )}
+      
+      {meetingTarget && (
+        <MeetingFormModal
+          prospect={meetingTarget}
+          onClose={() => setMeetingTarget(null)}
+          onSave={handleScheduleMeeting}
+        />
+      )}
+
 
       {qualifyTarget && (
         <QualificationModal

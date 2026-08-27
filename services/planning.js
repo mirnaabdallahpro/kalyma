@@ -218,10 +218,17 @@ export async function convertRecommendationToPlan({
   businessProfileId,
   objectiveTitle,
   projectTitle,
-  taskTitles, // array de strings
+  tasks,
 }) {
   const user = await getAuthenticatedUser();
-  if (!user) throw new Error("Utilisateur non authentifié.");
+
+  if (!user) {
+    throw new Error("Utilisateur non authentifié.");
+  }
+
+  // ============================================================
+  // 1. CRÉER L'OBJECTIF
+  // ============================================================
 
   const { data: objective, error: objError } = await supabase
     .from("objectives")
@@ -236,6 +243,10 @@ export async function convertRecommendationToPlan({
 
   if (objError) throw objError;
 
+  // ============================================================
+  // 2. CRÉER LE PROJET
+  // ============================================================
+
   const { data: project, error: projError } = await supabase
     .from("projects")
     .insert({
@@ -248,32 +259,285 @@ export async function convertRecommendationToPlan({
 
   if (projError) throw projError;
 
-  const cleanTitles = taskTitles.map((t) => t.trim()).filter(Boolean);
+  console.log(
+    "________________ TASKS --------------",
+    tasks
+  );
 
-  if (cleanTitles.length) {
-    const taskPayload = cleanTitles.map((title, index) => ({
+  // ============================================================
+  // 3. NORMALISER LES TÂCHES
+  // ============================================================
+
+  const cleanTasks = Array.isArray(tasks)
+    ? tasks
+        .map((task, index) => {
+          // Ancien format : ["Tâche 1", "Tâche 2"]
+          if (typeof task === "string") {
+            const title = task.trim();
+
+            if (!title) return null;
+
+            return {
+              title,
+              description: "",
+              priority: "medium",
+              estimatedMinutes: null,
+              deadlineDays: null,
+              dependsOn: [],
+              position: index,
+            };
+          }
+
+          // Nouveau format :
+          // {
+          //   title,
+          //   description,
+          //   priority,
+          //   estimatedMinutes,
+          //   deadlineDays,
+          //   dependsOn,
+          //   order
+          // }
+          if (task && typeof task === "object") {
+            const title =
+              typeof task.title === "string"
+                ? task.title.trim()
+                : "";
+
+            if (!title) return null;
+
+            return {
+              title,
+              description:
+                typeof task.description === "string"
+                  ? task.description
+                  : "",
+
+              priority:
+                ["high", "medium", "low"].includes(task.priority)
+                  ? task.priority
+                  : "medium",
+
+              estimatedMinutes:
+                Number.isInteger(task.estimatedMinutes)
+                  ? task.estimatedMinutes
+                  : null,
+
+              deadlineDays:
+                Number.isInteger(task.deadlineDays)
+                  ? task.deadlineDays
+                  : null,
+
+              dependsOn: Array.isArray(task.dependsOn)
+                ? task.dependsOn
+                : [],
+
+              position:
+                Number.isInteger(task.order)
+                  ? task.order
+                  : index,
+            };
+          }
+
+          return null;
+        })
+        .filter(Boolean)
+    : [];
+
+  console.log(
+    "________________ CLEAN TASKS --------------",
+    cleanTasks
+  );
+
+  // ============================================================
+  // 4. CALCULER LES DATES D'ÉCHÉANCE
+  // ============================================================
+
+  const calculateDueDate = (deadlineDays) => {
+    if (
+      !Number.isInteger(deadlineDays) ||
+      deadlineDays < 0
+    ) {
+      return null;
+    }
+
+    const date = new Date();
+
+    date.setDate(
+      date.getDate() + deadlineDays
+    );
+
+    return date.toISOString().split("T")[0];
+  };
+
+  // ============================================================
+  // 5. CRÉER LES TÂCHES
+  // ============================================================
+
+  if (cleanTasks.length) {
+    const taskPayload = cleanTasks.map((task, index) => ({
       user_id: user.id,
-      title,
+
+      title: task.title,
+
+      description: task.description,
+
       category: "Projet",
+
       status: "todo",
-      priority: "medium",
-      position: index,
+
+      priority: task.priority,
+
+      priority_color:
+        task.priority === "high"
+          ? "secondary"
+          : task.priority === "low"
+            ? "muted"
+            : "accent",
+
+      position:
+        Number.isInteger(task.position)
+          ? task.position
+          : index,
+
       objective_id: objective.id,
+
       project_id: project.id,
+
+      source_recommendation_id:
+        recommendationId || null,
+
+      estimated_minutes:
+        task.estimatedMinutes,
+
+      due_date:
+        calculateDueDate(task.deadlineDays),
+
+      // Les dépendances seront résolues après insertion
+      depends_on_task_id: null,
     }));
 
-    const { error: taskError } = await supabase.from("tasks").insert(taskPayload);
+    console.log(
+      "________________ TASK PAYLOAD --------------",
+      taskPayload
+    );
+
+    const {
+      data: createdTasks,
+      error: taskError,
+    } = await supabase
+      .from("tasks")
+      .insert(taskPayload)
+      .select();
+
     if (taskError) throw taskError;
+
+    // ==========================================================
+    // 6. RÉSOUDRE LES DÉPENDANCES
+    // ==========================================================
+
+    if (createdTasks?.length) {
+      for (let i = 0; i < cleanTasks.length; i++) {
+        const task = cleanTasks[i];
+
+        if (!Array.isArray(task.dependsOn)) {
+          continue;
+        }
+
+        if (!task.dependsOn.length) {
+          continue;
+        }
+
+        /*
+         * On suppose ici que dependsOn contient
+         * l'ordre de la tâche dépendante.
+         *
+         * Exemple :
+         *
+         * tâche 2 :
+         * dependsOn: [1]
+         *
+         * signifie que la tâche 2 dépend
+         * de la tâche ayant order = 1.
+         */
+
+        const dependencyOrder = task.dependsOn[0];
+
+        const dependencyTask =
+          createdTasks.find(
+            (createdTask) =>
+              createdTask.position === dependencyOrder
+          );
+
+        if (!dependencyTask) {
+          continue;
+        }
+
+        await supabase
+          .from("tasks")
+          .update({
+            depends_on_task_id:
+              dependencyTask.id,
+          })
+          .eq("id", createdTasks[i].id)
+          .eq("user_id", user.id);
+      }
+    }
   }
 
+  // ============================================================
+  // 7. MARQUER LA RECOMMANDATION COMME CONVERTIE
+  // ============================================================
+
   if (recommendationId) {
-    const { error: recoError } = await supabase
+    const {
+      error: recoError,
+    } = await supabase
       .from("business_diagnostic_recommendations")
-      .update({ converted_to_objective_id: objective.id })
+      .update({
+        converted_to_objective_id: objective.id,
+      })
       .eq("id", recommendationId)
       .eq("user_id", user.id);
+
     if (recoError) throw recoError;
   }
 
-  return { objective: mapObjective(objective), project: mapProject(project), taskCount: cleanTitles.length };
+  // ============================================================
+  // 8. RETOUR
+  // ============================================================
+
+  return {
+    objective: mapObjective(objective),
+    project: mapProject(project),
+    taskCount: cleanTasks.length,
+  };
+}
+
+
+export async function generatePlanAction({
+  recommendation,
+  profile,
+}) {
+  const { data, error } = await supabase.functions.invoke(
+    "business-ai-plan-action",
+    {
+      body: {
+        recommendation,
+        profile,
+      },
+    }
+  );
+
+  if (error) {
+    throw error;
+  }
+
+  if (!data?.plan) {
+    throw new Error(
+      "Aucun plan d'action n'a été généré."
+    );
+  }
+
+  return data.plan;
 }

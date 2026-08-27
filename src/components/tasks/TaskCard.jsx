@@ -21,9 +21,12 @@ function TaskCard({
   onEdit,
   onDelete,
   onPlanAction,
+  onViewDetails,
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+
+  console.log("---------------------------TASK------------------------------",task);
 
   return (
     <div
@@ -66,26 +69,42 @@ function TaskCard({
                 {SOURCE_LABEL[task.source]}
               </span>
 
-              {/* Voir le contexte de la tâche */}
+              {/* Voir les détails */}
               <button
                 type="button"
-                className="icon-btn"
+                className="icon-btn task-info-btn"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onEdit(task);
+                  onViewDetails(task);
                 }}
                 onMouseDown={(e) => e.stopPropagation()}
-                aria-label="Voir le contexte"
-                title="Voir le contexte"
+                aria-label="Voir les détails"
+                title="Voir les détails"
               >
                 ⓘ
               </button>
             </>
           )}
 
-          {/* Menu uniquement pour les tâches manuelles */}
+          {/* Tâches manuelles */}
           {task.source === "manual" && (
             <div className="row-menu">
+              {/* Infos */}
+              <button
+                type="button"
+                className="icon-btn task-info-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onViewDetails(task);
+                }}
+                onMouseDown={(e) => e.stopPropagation()}
+                aria-label="Voir les détails"
+                title="Voir les détails"
+              >
+                ⓘ
+              </button>
+
+              {/* Menu */}
               <button
                 type="button"
                 className="icon-btn"
@@ -131,7 +150,7 @@ function TaskCard({
           )}
         </div>
 
-        {/* Contenu de la tâche */}
+        {/* Contenu */}
         <strong>{task.title}</strong>
 
         <small>
@@ -139,7 +158,7 @@ function TaskCard({
           {task.meta ? ` · ${task.meta}` : ""}
         </small>
 
-        {/* Diagnostic IA → Transformer en plan d'action */}
+        {/* Transformer en plan d'action */}
         {task.source === "diagnostic" && !task.convertedToObjectiveId && (
           <button
             type="button"
@@ -155,7 +174,7 @@ function TaskCard({
           </button>
         )}
 
-        {/* Diagnostic IA déjà transformé */}
+        {/* Déjà transformé */}
         {task.source === "diagnostic" && task.convertedToObjectiveId && (
           <span className="task-plan-done">
             ✓ Plan d&apos;action créé

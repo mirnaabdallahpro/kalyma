@@ -5,7 +5,7 @@ function formatAmount(amount, currency) {
   return `${Number(amount).toLocaleString("fr-FR")} ${currency || "MAD"}`;
 }
 
-function DealCard({ deal, dragging, onDragStart, onDragEnd, onDropBefore, onEdit, onDelete, onWon, onLost, onQualify }) {
+function DealCard({ deal, dragging, onDragStart, onDragEnd, onDropBefore, onEdit, onDelete, onWon, onLost, onQualify , onScheduleMeeting }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dragOver, setDragOver] = useState(false);
 
@@ -106,6 +106,16 @@ function DealCard({ deal, dragging, onDragStart, onDragEnd, onDropBefore, onEdit
             Qualifier
           </button>
         )}
+                {deal.stage === "rdv" && (
+          <button
+            type="button"
+            className="deal-quick-btn deal-quick-meeting"
+            onClick={() => onScheduleMeeting(deal)}
+          >
+            📅 Programmer un RDV
+          </button>
+        )}
+
 
         <div className="deal-quick-actions">
           <button

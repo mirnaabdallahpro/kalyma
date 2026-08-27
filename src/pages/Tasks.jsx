@@ -9,11 +9,20 @@ import {
 import Sidebar from "../components/dashboard/Sidebar";
 import Topbar from "../components/dashboard/Topbar";
 import ConfirmModal from "../components/shared/ConfirmModal";
+import PlanActionModal from "../components/tasks/PlanActionModal";
 import ProgressPanel from "../components/tasks/ProgressPanel";
 import TaskAIPanel from "../components/tasks/TaskAIPanel";
 import TaskColumn from "../components/tasks/TaskColumn";
 import TaskFormModal from "../components/tasks/TaskFormModal";
 import "../styles/tasks.css";
+
+
+import {
+  getBusinessProfile
+} from "../../services/businessProfileService";
+import TaskDetailsModal from "../components/tasks/TaskDetailsModal";
+import { mapBusinessProfile } from "../utils/businessProfileMapper";
+
 
 const STATUSES = ["todo", "in_progress", "done"];
 
@@ -26,6 +35,47 @@ function Tasks() {
   const [formState, setFormState] = useState(null); // null | { status } | task
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [planTarget, setPlanTarget] = useState(null);
+  const [error, setError] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
+
+     const [profile, setProfile] = useState(null);
+
+
+
+   async function loadProfile() {
+  try {
+    setLoading(true);
+    setError(null);
+
+    console.log("1. Recherche du profil...");
+
+    let data = await getBusinessProfile();
+
+    console.log("2. Profil récupéré :", data);
+
+    console.log("5. Mapping du profil...");
+
+    setProfile(mapBusinessProfile(data));
+
+  } catch (err) {
+    console.error("❌ ERREUR LOAD PROFILE :", err);
+    console.error("message:", err?.message);
+    console.error("code:", err?.code);
+    console.error("details:", err?.details);
+    console.error("hint:", err?.hint);
+
+    setError(
+      "Impossible de charger votre profil Business."
+    );
+  } finally {
+    setLoading(false);
+  }
+}
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
 
   const loadTasks = async () => {
     try {
@@ -209,6 +259,8 @@ function Tasks() {
                       onAdd={(s) => setFormState({ status: s })}
                       onEdit={(task) => setFormState(task)}
                       onDelete={(task) => setDeleteTarget(task)}
+                      onPlanAction={(task) => setPlanTarget(task)}
+                      onViewDetails={setSelectedTask}
                     />
                   ))}
                 </div>
@@ -221,6 +273,10 @@ function Tasks() {
             )}
           </div>
         </main>
+        <TaskDetailsModal
+          task={selectedTask}
+          onClose={() => setSelectedTask(null)}
+        />
       </div>
 
       {formState && (
@@ -232,6 +288,19 @@ function Tasks() {
         />
       )}
 
+            {planTarget && (
+        <PlanActionModal
+          recommendation={planTarget}
+          profile={profile}
+          onClose={() => setPlanTarget(null)}
+          onCreated={() => {
+            setPlanTarget(null);
+            loadTasks();
+          }}
+        />
+      )}
+
+
       {deleteTarget && (
         <ConfirmModal
           message={`Supprimer "${deleteTarget.title}" ? Cette action est irréversible.`}
@@ -240,6 +309,7 @@ function Tasks() {
         />
       )}
     </div>
+    
   );
 }
 

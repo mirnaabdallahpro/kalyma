@@ -17,7 +17,11 @@ function TaskColumn({
   onAdd,
   onEdit,
   onDelete,
+  onPlanAction,
+  onViewDetails
 }) {
+
+  
   return (
     <div
       className="task-column"
@@ -47,6 +51,8 @@ function TaskColumn({
             onDropBefore={onDropBefore}
             onEdit={onEdit}
             onDelete={onDelete}
+              onPlanAction={onPlanAction}
+              onViewDetails={onViewDetails}
           />
         ))}
       </div>

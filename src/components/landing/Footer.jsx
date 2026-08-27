@@ -15,6 +15,7 @@ function Footer() {
           <a href="#offres">Offres</a>
           <a href="#pourquoi">Pourquoi nous</a>
           <a href="/admin/business">Espace admin</a>
+          <a href="/comment-ca-marche">Comment ça marche ?</a>
         </nav>
 
         <div className="lp-footer-meta">
