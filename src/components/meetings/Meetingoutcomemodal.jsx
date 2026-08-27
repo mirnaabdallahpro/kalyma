@@ -72,7 +72,7 @@ function MeetingOutcomeModal({ meeting, onClose, onSave }) {
         </>
       }
     >
-      <form id="outcome-form" onSubmit={ }>
+      <form id="outcome-form" onSubmit={handleSubmit}>
         <div
           className="field field-full"
           style={{ marginBottom: 16 }}
