@@ -1224,13 +1224,11 @@
     width: auto;
     height: auto;
     object-fit: contain;
-    filter: grayscale(100%);
     opacity: 0.55;
     transition: opacity 0.25s ease, filter 0.25s ease;
 }
 
 .lp-proof-slot:hover .lp-client-logo {
-    filter: grayscale(0);
     opacity: 1;
 }
 
@@ -1259,13 +1257,11 @@
     width: auto;
     height: auto;
     object-fit: contain;
-    filter: grayscale(100%);
     opacity: 0.7;
     transition: all 0.25s ease;
 }
 
 .lp-proof-slot:hover .lp-client-logo {
-    filter: grayscale(0%);
     opacity: 1;
 }
 
@@ -1473,13 +1469,12 @@
 
 .lp-hero-cta {
     border: 0;
-    background: var(--secondary);
     color: var(--primary);
 }
 
 .lp-hero-cta:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(255, 220, 90, 0.22);
+
 }
 
 .lp-hero-secondary {

@@ -1,10 +1,12 @@
+import KalymaLogo from "../../assets/brands/kalyma-logo.svg";
+
 function Footer() {
   return (
     <footer className="lp-footer">
       <div className="lp-section-inner lp-footer-inner">
         <div>
           <div className="lp-logo lp-footer-logo">
-            kaly<span>ma</span>
+            <img src={KalymaLogo} style={{width:"150px"}} alt="Kalyma" />
           </div>
           <p>Business. Digital. Technologie. Accompagnement.</p>
         </div>

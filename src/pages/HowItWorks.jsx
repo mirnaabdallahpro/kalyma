@@ -1,5 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import KalymaLogoLight from "../assets/brands/kalyma-logo-light.svg";
+import KalymaLogo from "../assets/brands/kalyma-logo.svg";
+
+
+
 
 const FLOW_STEPS = [
   {
@@ -143,7 +148,7 @@ function HowItWorks() {
             onClick={() => goTo("/")}
             type="button"
           >
-            Kalyma<span>.</span>
+             <img src={KalymaLogo} style={{width:"150px"}} alt="Kalyma" />
           </button>
 
           <div className="lp-nav-links">
@@ -734,7 +739,7 @@ function HowItWorks() {
         <div className="lp-section-inner">
 
           <div className="how-footer-brand">
-            Kalyma<span>.</span>
+            <img src={KalymaLogoLight} style={{width:"180px"}} alt="Kalyma" />
           </div>
 
           <p>

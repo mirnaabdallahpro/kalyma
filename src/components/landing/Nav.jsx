@@ -15,7 +15,7 @@ function Nav() {
     <header className={`lp-nav ${scrolled ? "lp-nav-solid" : ""}`}>
       <div className="lp-nav-inner">
         <Link to="/" className="lp-logo">
-         <img src={KalymaLogo} style={{width:"250px"}} alt="Kalyma" />
+         <img src={KalymaLogo} style={{width:"150px"}} alt="Kalyma" />
         </Link>
 
         <nav className="lp-nav-links">
