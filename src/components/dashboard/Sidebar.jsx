@@ -11,6 +11,7 @@ import {
 
 import { NavLink, useNavigate } from "react-router-dom";
 import { signOut } from "../../../services/authService";
+import KalymaLogo from "../../assets/brands/kalyma-logo.svg";
 
 function Sidebar() {
   const navigate = useNavigate();
@@ -140,11 +141,8 @@ function Sidebar() {
   return (
     <aside className="sidebar">
 
-      <NavLink
-        className="logo"
-        to="/dashboard"
-      >
-        kaly<span>ma</span>
+     <NavLink className="logo" to="/dashboard">
+        <img src={KalymaLogo} alt="Kalyma" />
       </NavLink>
 
       <div className="menu-label">

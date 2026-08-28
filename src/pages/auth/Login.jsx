@@ -6,8 +6,11 @@ import {
   useNavigate
 } from "react-router-dom";
 
+import { NavLink } from "react-router-dom";
 import { supabase } from "../../../lib/supabase";
+import KalymaLogo from "../../assets/brands/kalyma-logo-light.svg";
 import { useAuth } from "../../context/AuthContext";
+
 
 function Login() {
   const {
@@ -80,9 +83,9 @@ function Login() {
 
       <div className="auth-card">
 
-        <div className="auth-logo">
-          kaly<span>ma</span>
-        </div>
+      <NavLink className="" to="/">
+        <img src={KalymaLogo} style={{width:"350px"}} alt="Kalyma" />
+      </NavLink>
 
         <h1>
           Bienvenue sur Kalyma

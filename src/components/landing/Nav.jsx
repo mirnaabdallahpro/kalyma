@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import KalymaLogo from "../../assets/brands/kalyma-logo.svg";
 
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -14,7 +15,7 @@ function Nav() {
     <header className={`lp-nav ${scrolled ? "lp-nav-solid" : ""}`}>
       <div className="lp-nav-inner">
         <Link to="/" className="lp-logo">
-          kaly<span>ma</span>
+         <img src={KalymaLogo} style={{width:"250px"}} alt="Kalyma" />
         </Link>
 
         <nav className="lp-nav-links">

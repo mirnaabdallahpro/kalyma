@@ -1,11 +1,13 @@
 import { useState } from "react";
 import {
-    Link,
-    Navigate,
-    useNavigate,
+  Link,
+  Navigate,
+  useNavigate,
 } from "react-router-dom";
 
+import { NavLink } from "react-router-dom";
 import { supabase } from "../../../lib/supabase";
+import KalymaLogo from "../../assets/brands/kalyma-logo-light.svg";
 import { useAuth } from "../../context/AuthContext";
 
 function Register() {
@@ -126,7 +128,9 @@ function Register() {
       <div className="auth-card">
 
         <div className="auth-logo">
-          kaly<span>ma</span>
+           <NavLink className="" to="/">
+          <img src={KalymaLogo} style={{width:"350px"}} alt="Kalyma" />
+        </NavLink>
         </div>
 
         <h1>
