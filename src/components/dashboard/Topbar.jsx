@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import KalymaLogo from "../../assets/brands/kalyma-logo-light.svg";
 
 import {
   BriefcaseBusiness,
@@ -71,6 +72,8 @@ const accountMenu = [
     disabled: true,
   },
 ];
+
+
 
 function Topbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -251,7 +254,7 @@ function Topbar() {
         to="/dashboard"
         className="topbar-logo"
       >
-        kaly<span>ma</span>
+         <img src={KalymaLogo} style={{width:"150px"}} alt="Kalyma" />
       </NavLink>
 
       {/* RECHERCHE */}
