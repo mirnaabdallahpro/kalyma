@@ -14,7 +14,7 @@ import Topbar from "../components/dashboard/Topbar";
 import UpcomingMeeting from "../components/dashboard/UpcomingMeeting";
 import WeeklyBriefing from "../components/dashboard/WeeklyBriefing";
 
-
+import { NavLink } from "react-router-dom";
 import {
   getOffersForSelect,
   getProspects,
@@ -84,7 +84,7 @@ function Dashboard() {
   const [relanceSettings, setRelanceSettings] = useState({ intervals: [3, 7, 30], enabled: true });
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
-    const [diagnostic, setDiagnostic] = useState(null);
+  const [diagnostic, setDiagnostic] = useState(null);
 
 
 
@@ -119,47 +119,178 @@ function Dashboard() {
     loadAll();
   }, []);
 
-  const activeDeals = deals.filter(
-  (deal) => !["won", "lost"].includes(deal.stage)
+  const activeOffers = offers.filter(
+  (offer) => offer.status === "active"
 );
 
+const now = new Date();
+
+// ==========================================
+// PÉRIODES
+// ==========================================
+
+const currentPeriodStart = new Date(now);
+currentPeriodStart.setDate(now.getDate() - 7);
+
+const previousPeriodStart = new Date(now);
+previousPeriodStart.setDate(now.getDate() - 14);
+
+// ==========================================
+// OPPORTUNITÉS PAR PÉRIODE
+// ==========================================
+
+// 7 derniers jours
+const currentPeriodDeals = deals.filter((deal) => {
+  const date = new Date(deal.created_at);
+
+  return date >= currentPeriodStart && date <= now;
+});
+
+// 7 jours précédents
+const previousPeriodDeals = deals.filter((deal) => {
+  const date = new Date(deal.created_at);
+
+  return date >= previousPeriodStart && date < currentPeriodStart;
+});
+
+// ==========================================
+// DEALS ACTUELS
+// ==========================================
+
+const activeDeals = deals.filter(
+  (deal) => !["gagne", "perdu"].includes(deal.stage)
+);
+
+const wonDeals = deals.filter(
+  (deal) => deal.stage === "gagne"
+);
+
+const lostDeals = deals.filter(
+  (deal) => deal.stage === "perdu"
+);
+
+const closedDeals = [...wonDeals, ...lostDeals];
+
+// ==========================================
+// PIPELINE ACTUEL
+// ==========================================
+
 const pipelineValue = activeDeals.reduce(
-  (total, deal) => total + Number(deal.amount || deal.value || 0),
+  (total, deal) => total + Number(deal.amount || 0),
   0
 );
 
-const scoreBusiness = diagnostic?.business_score;
+// ==========================================
+// PIPELINE PÉRIODE PRÉCÉDENTE
+// ==========================================
+
+const previousActiveDeals = previousPeriodDeals.filter(
+  (deal) => !["gagne", "perdu"].includes(deal.stage)
+);
+
+const previousPipelineValue = previousActiveDeals.reduce(
+  (total, deal) => total + Number(deal.amount || 0),
+  0
+);
+
+// ==========================================
+// PROSPECTS ACTUELS
+// ==========================================
+
+const activeDealsCount = activeDeals.length;
+
+// Prospects actifs sur la période précédente
+const previousActiveDealsCount = previousActiveDeals.length;
+
+// ==========================================
+// CLIENTS
+// ==========================================
+
+const totalClients = wonDeals.length;
+
+// ==========================================
+// CHIFFRE D'AFFAIRES
+// ==========================================
+
+const revenue = wonDeals.reduce(
+  (total, deal) => total + Number(deal.amount || 0),
+  0
+);
+
+// ==========================================
+// TAUX DE CONVERSION
+// ==========================================
+
+const conversionRate =
+  closedDeals.length > 0
+    ? (wonDeals.length / closedDeals.length) * 100
+    : 0;
+
+// ==========================================
+// CALCUL DES TENDANCES
+// ==========================================
+
+const calculateTrend = (current, previous) => {
+  if (previous === 0) {
+    return current > 0 ? 100 : 0;
+  }
+
+  return ((current - previous) / previous) * 100;
+};
+
+const pipelineTrend = calculateTrend(
+  pipelineValue,
+  previousPipelineValue
+);
+
+const activeDealsTrend = calculateTrend(
+  activeDealsCount,
+  previousActiveDealsCount
+);
+
+// ==========================================
+// SCORE BUSINESS
+// ==========================================
+
+const scoreBusiness = diagnostic?.business_score ?? 0;
+
+// ==========================================
+// STATS DASHBOARD
+// ==========================================
 
 const stats = [
   {
     label: "Kalyma Score",
     value: scoreBusiness,
     suffix: "/100",
-   
+    trend: "Score actuel",
     trendType: "up",
   },
+
   {
     label: "Pipeline",
     value: pipelineValue.toLocaleString("fr-FR"),
     suffix: " MAD",
-    trend: `${activeDeals.length} opportunité${
-      activeDeals.length > 1 ? "s" : ""
-    } active${activeDeals.length > 1 ? "s" : ""}`,
-    trendType: "up",
+    trend: `${pipelineTrend >= 0 ? "+" : ""}${pipelineTrend.toFixed(
+      0
+    )}% vs période précédente`,
+    trendType: pipelineTrend >= 0 ? "up" : "down",
   },
+
   {
     label: "Prospects actifs",
-    value: activeDeals.length.toString(),
-    trend: `${deals.length} opportunité${
-      deals.length > 1 ? "s" : ""
-    } au total`,
-    trendType: "up",
+    value: activeDealsCount.toString(),
+    trend: `${activeDealsTrend >= 0 ? "+" : ""}${activeDealsTrend.toFixed(
+      0
+    )}% vs période précédente`,
+    trendType: activeDealsTrend >= 0 ? "up" : "down",
   },
+
   {
-    label: "Objectif mensuel",
-    value: "62%",
-    trend: "31 200 / 50 000 MAD",
-    trendType: "default",
+    label: "Clients accompagnés",
+    value: totalClients,
+    trend: `${conversionRate.toFixed(0)}% de conversion`,
+    trendType: conversionRate >= 20 ? "up" : "down",
   },
 ];
 
@@ -184,8 +315,13 @@ const stats = [
                 </p>
               </div>
 
-              <div className="date">
-                Lundi 17 août 2026
+             <div className="date">
+                {new Date().toLocaleDateString("fr-FR", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
               </div>
             </div>
 
@@ -213,7 +349,7 @@ const stats = [
                   title="Performance commerciale"
                   subtitle="30 derniers jours"
                 >
-                  <SalesChart />
+                  <SalesChart deals={deals}/>
                 </Panel>
 
 
@@ -233,31 +369,42 @@ const stats = [
               {/* RIGHT */}
               <div>
 
-                {/* Priorities */}
+                {/* Offres actives */}
                 <Panel
-                  title="Priorités du jour"
-                  subtitle="3 actions"
-                >
-                  <PriorityItem
-                    title="Relancer Atlas Consulting"
-                    description="Proposition envoyée il y a 6 jours"
-                  />
+  title="Offres actives"
+  subtitle={`${activeOffers.length} ${
+    activeOffers.length > 1 ? "offres" : "offre"
+  }`}
+>
+  {activeOffers.length > 0 ? (
+    <>
+      {activeOffers.slice(0, 2).map((offer) => (
+        <PriorityItem
+          key={offer.id}
+          title={offer.name.trim()}
+          description={`${Number(offer.price).toLocaleString(
+            "fr-FR"
+          )} ${offer.currency}`}
+        />
+      ))}
 
-                  <PriorityItem
-                    title="Préparer le RDV AfriTech"
-                    description="Aujourd'hui · 15:30"
-                    color="accent"
-                  />
-
-                  <PriorityItem
-                    title="Finaliser l'offre Growth"
-                    description="Échéance demain"
-                    color="primary"
-                  />
-                </Panel>
+      <NavLink
+        to="/business/offers"
+        className="panel-more-link"
+      >
+        Voir toutes les offres →
+      </NavLink>
+    </>
+  ) : (
+    <PriorityItem
+      title="Aucune offre active"
+      description="Créez votre première offre commerciale"
+    />
+  )}
+</Panel>
 
                 {/* AI */}
-                <AIRecommendation />
+                <AIRecommendation recommendations={[]}/>
 
                 {/* Meeting */}
                 <UpcomingMeeting meetings={meetings}/>

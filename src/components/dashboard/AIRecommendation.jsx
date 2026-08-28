@@ -1,4 +1,12 @@
-function AIRecommendation() {
+function AIRecommendation({ recommendations = [], onViewPriorities }) {
+  const recommendation = recommendations
+    .filter((item) => !item.task_archived_at)
+    .sort((a, b) => a.position - b.position)[0];
+
+  if (!recommendation) {
+    return null;
+  }
+
   return (
     <section
       className="ai"
@@ -6,25 +14,21 @@ function AIRecommendation() {
         marginTop: "18px",
       }}
     >
-
       <span className="tag">
         KALYMA AI
       </span>
 
       <h3>
-        Une recommandation pour vous
+        {recommendation.title}
       </h3>
 
       <p>
-        Votre pipeline est sain, mais 7 opportunités
-        n'ont pas de prochaine action. Priorisez les
-        3 prospects les plus chauds aujourd'hui.
+        {recommendation.description}
       </p>
 
-      <button>
+      <button onClick={onViewPriorities}>
         Voir mes priorités →
       </button>
-
     </section>
   );
 }
