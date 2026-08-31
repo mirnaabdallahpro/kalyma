@@ -444,3 +444,77 @@ export async function deleteBusinessDiagnostic(id) {
 
   return true;
 }
+
+/**
+ * Enregistre le feedback de l'utilisateur sur une recommandation IA.
+ *
+ * reason:
+ * - too_generic
+ * - already_done
+ * - not_priority
+ * - not_understood
+ */
+export async function createDiagnosticRecommendationFeedback({
+  diagnosticId,
+  recommendationKey,
+  recommendationText,
+  reason,
+}) {
+  const user = await getAuthenticatedUser();
+
+  if (!user) {
+    throw new Error("Utilisateur non authentifié.");
+  }
+
+  if (!diagnosticId) {
+    throw new Error("Diagnostic introuvable.");
+  }
+
+  if (!recommendationKey) {
+    throw new Error("Clé de recommandation requise.");
+  }
+
+  if (!recommendationText) {
+    throw new Error("Texte de recommandation requis.");
+  }
+
+  if (!reason) {
+    throw new Error("Motif du feedback requis.");
+  }
+
+  const allowedReasons = [
+    "too_generic",
+    "already_done",
+    "not_priority",
+    "not_understood",
+  ];
+
+  if (!allowedReasons.includes(reason)) {
+    throw new Error("Motif de feedback invalide.");
+  }
+
+  const payload = {
+    user_id: user.id,
+    diagnostic_id: diagnosticId,
+    recommendation_key: recommendationKey,
+    recommendation_text: recommendationText,
+    reason,
+  };
+
+  const { data, error } = await supabase
+    .from("diagnostic_recommendation_feedback")
+    .insert(payload)
+    .select()
+    .single();
+
+  if (error) {
+    console.error(
+      "Erreur création feedback recommandation :",
+      error
+    );
+
+    throw error;
+  }
+
+  return data;
+}
