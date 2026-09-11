@@ -10,6 +10,7 @@ import { getOrCreateConversation } from '../../../services/messagingService';
 import Sidebar from '../../components/dashboard/Sidebar';
 import Topbar from '../../components/dashboard/Topbar';
 import ConversationView from '../../components/messaging/ConversationView';
+import EnableNotificationsButton from '../../components/notifications/EnableNotificationsButton';
 
 export default function ClientMessagerie() {
   const [user, setUser] = useState(null);
@@ -42,6 +43,7 @@ export default function ClientMessagerie() {
           <main className="main">
             <Topbar></Topbar>
     <div className="conv-col" style={{ height: '100vh' }}>
+      
       <div className="conv-topbar">
         <div className="who">
           <div className="avatar">FT</div>
@@ -50,6 +52,9 @@ export default function ClientMessagerie() {
             <span>Suivi ALCHIMIE™</span>
           </div>
         </div>
+        <div>
+        <EnableNotificationsButton userId={user.id}/>
+      </div>
       </div>
 
       <ConversationView

@@ -10,9 +10,11 @@ import { useNavigate } from 'react-router-dom';
 import { getAuthenticatedAdmin } from '../../../services/admin/adminBusinessService';
 import { getAuthenticatedUser } from '../../../services/businessProfileService'; // adapte le chemin si ce n'est pas là que vivent tes helpers d'auth
 import { listConversations } from '../../../services/messagingService';
+import MobileBottomNav from '../../components/admin/MobileBottomNav';
 import ClientList from '../../components/messaging/ClientList';
 import ContextPanel from '../../components/messaging/ContextPanel';
 import ConversationView from '../../components/messaging/ConversationView';
+import EnableNotificationsButton from '../../components/notifications/EnableNotificationsButton';
 
 export default function AdminMessagerie() {
   const navigate = useNavigate();
@@ -21,6 +23,8 @@ export default function AdminMessagerie() {
   const [conversations, setConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
   const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
+
    const [isAdmin, setIsAdmin] = useState(false);
 
   const refreshConversations = useCallback(async () => {
@@ -102,10 +106,13 @@ export default function AdminMessagerie() {
         <a className="logo" href="/">Kalyma<span>.</span></a>
 
         <div className="menu-label">Navigation</div>
+        <div>
+        <EnableNotificationsButton userId={user.id}/>
+      </div>
         <nav className="menu">
           <a href="/dashboard">Tableau de bord</a>
           <a href="/messagerie" className="active">Messagerie</a>
-          <a href="/clients">Clients</a>
+          <a href="/admin/business">Clients</a>
         </nav>
 
         <div className="menu-label" style={{ marginTop: 18 }}>Conversations</div>
@@ -114,7 +121,10 @@ export default function AdminMessagerie() {
           activeConversationId={activeConversation?.id}
           onSelect={setActiveConversation}
         />
+        
       </aside>
+       {/* Mobile */}
+  <MobileBottomNav user={user} />
       <main className="main">
 
       {activeConversation ? (
