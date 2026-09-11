@@ -52,15 +52,21 @@ const workspaceMenu = [
   },
   {
     label: "Messages",
-    path: "/messages",
+    path: "/messageries",
     icon: MessageSquare,
-    disabled: true,
+    disabled: false,
   },
   {
     label: "Documents",
     path: "/documents",
     icon: FileText,
     disabled: true,
+  },
+   {
+    label: "Messageries admin",
+    path: "/admin/messages",
+    icon: FileText,
+    disabled: false,
   },
 ];
 
