@@ -27,7 +27,9 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import AdminMessagerie from "./pages/admin/Messagerie";
 import BusinessDiagnostics from "./pages/business/BusinessDiagnostics";
+import ClientMessagerie from "./pages/client/Messagerie";
 import Home from "./pages/Home";
 import Meetings from "./pages/Meetings";
 import "./styles.css";
@@ -68,6 +70,11 @@ function App() {
             element={<ComingSoon />}
           />
 
+          <Route
+            path="/admin/messages"
+            element={<AdminMessagerie />}
+          />
+          
           <Route
             path="/admin/business"
             element={<AdminBusinessClients />}
@@ -148,10 +155,10 @@ function App() {
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/crm" element={<Crm />} />
           <Route path="/meetings" element={<Meetings />} />
+           <Route path="/messagerie" element={<ClientMessagerie />} />
           
 
-       
-
+    
         {/* =========================
             404
         ========================= */}

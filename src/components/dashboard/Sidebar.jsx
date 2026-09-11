@@ -63,10 +63,10 @@ function Sidebar() {
       disabled: false,
     },
     {
-      to: "/messages",
+      to: "/messagerie",
       icon: MessageSquare,
       label: "Messages",
-      disabled: true,
+      disabled: false,
     },
     {
       to: "/documents",

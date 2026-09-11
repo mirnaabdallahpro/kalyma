@@ -6,7 +6,7 @@ import { supabase } from "../../lib/supabase";
  * Source du rôle :
  * auth.users.id → user_roles.user_id
  */
-async function getAuthenticatedAdmin() {
+export async function getAuthenticatedAdmin() {
   const {
     data: { session },
     error: sessionError,

@@ -1,6 +1,6 @@
 import { supabase } from "../lib/supabase";
 
-async function getAuthenticatedUser() {
+export async function getAuthenticatedUser() {
   const {
     data: { session },
     error,
