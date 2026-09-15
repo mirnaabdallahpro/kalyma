@@ -3823,3 +3823,199 @@ button {
         stroke-width: 2.5;
     }
 }
+
+/* -----------------------------------------------------
+   MODIFIER / SUPPRIMER / RÉAGIR (MessageBubble.jsx)
+----------------------------------------------------- */
+
+/* conteneur des éléments d'un message (bulle + PJ + réactions +
+   barre d'actions), remplace le <div> nu de la version précédente */
+.msg-content {
+    position: relative;
+    max-width: 100%;
+}
+
+/* message supprimé — bulle grisée, italique, comme WhatsApp */
+.bubble-deleted {
+    background: transparent !important;
+    border: 1px dashed var(--line) !important;
+    color: var(--muted) !important;
+    font-style: italic;
+}
+
+.msg-edited-tag {
+    color: var(--muted);
+}
+
+/* barre d'actions (réagir / modifier / supprimer), visible au survol */
+.msg-actions {
+    display: flex;
+    gap: 4px;
+
+    margin-top: 4px;
+
+    opacity: 0;
+
+    transition: opacity 0.15s ease;
+}
+
+.msg-row:hover .msg-actions {
+    opacity: 1;
+}
+
+.msg-row.coach .msg-actions {
+    justify-content: flex-end;
+}
+
+.msg-action-btn {
+    width: 26px;
+    height: 26px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 8px;
+
+    font-size: 13px;
+
+    background: var(--soft);
+    border: 1px solid var(--line);
+
+    transition: background 0.15s ease;
+}
+
+.msg-action-btn:hover {
+    background: var(--line);
+}
+
+.msg-actions-emoji-wrap {
+    position: relative;
+}
+
+/* mini sélecteur d'emoji façon WhatsApp */
+.emoji-picker {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 0;
+
+    display: flex;
+    gap: 4px;
+
+    padding: 6px 8px;
+
+    background: #fff;
+
+    border: 1px solid var(--line);
+    border-radius: 999px;
+
+    box-shadow: var(--shadow);
+
+    z-index: 20;
+
+    animation: linkPickerIn 0.12s ease;
+}
+
+.msg-row.coach .emoji-picker {
+    left: auto;
+    right: 0;
+}
+
+.emoji-picker-item {
+    width: 26px;
+    height: 26px;
+
+    display: grid;
+    place-items: center;
+
+    font-size: 16px;
+
+    border-radius: 50%;
+
+    transition: transform 0.12s ease, background 0.12s ease;
+}
+
+.emoji-picker-item:hover {
+    background: var(--soft);
+    transform: scale(1.15);
+}
+
+/* réactions déjà posées sur le message, sous la bulle */
+.reaction-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+
+    margin-top: 6px;
+}
+
+.reaction-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+
+    padding: 3px 8px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+
+    background: var(--soft);
+    border: 1px solid var(--line);
+
+    color: var(--text);
+}
+
+.reaction-chip.mine {
+    background: #eaf0ff;
+    border-color: var(--accent);
+    color: var(--primary);
+    font-weight: 700;
+}
+
+/* mode édition inline */
+.msg-edit-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    min-width: 220px;
+    max-width: 320px;
+
+    padding: 10px;
+
+    border-radius: 14px;
+
+    background: var(--soft);
+    border: 1px solid var(--line);
+}
+
+.msg-edit-textarea {
+    width: 100%;
+
+    padding: 8px;
+
+    border-radius: 8px;
+    border: 1px solid var(--line);
+
+    font: inherit;
+    font-size: 13px;
+    color: var(--text);
+
+    resize: vertical;
+}
+
+.msg-edit-textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.msg-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.msg-edit-actions .btn {
+    padding: 7px 12px;
+    font-size: 12px;
+}

@@ -8,11 +8,8 @@ import Composer from './Composer';
 import MessageBubble from './MessageBubble';
 
 export default function ConversationView({ conversationId, currentUserId, currentRole, clientUserId }) {
-  const { messages, loading, sending, send, bottomRef } = useConversation(
-    conversationId,
-    currentUserId,
-    currentRole
-  );
+  const { messages, loading, sending, send, editMessage, deleteMessage, toggleReaction, bottomRef } =
+    useConversation(conversationId, currentUserId, currentRole);
 
   if (loading) {
     return <div className="conv-thread"><p className="muted">Chargement de la conversation…</p></div>;
@@ -22,7 +19,15 @@ export default function ConversationView({ conversationId, currentUserId, curren
     <>
       <div className="conv-thread">
         {messages.map((message) => (
-          <MessageBubble key={message.id} message={message} currentRole={currentRole} />
+          <MessageBubble
+            key={message.id}
+            message={message}
+            currentRole={currentRole}
+            currentUserId={currentUserId}
+            onEdit={editMessage}
+            onDelete={deleteMessage}
+            onReact={toggleReaction}
+          />
         ))}
         <div ref={bottomRef} />
       </div>

@@ -7,8 +7,7 @@
 // Hypothèse : le client Supabase est exporté depuis src/lib/supabaseClient.js
 // Adapte l'import si ton chemin réel est différent.
 
-import { supabase } from "../lib/supabase";
-
+import { supabase } from '../lib/supabase';
 
 const ATTACHMENTS_BUCKET = 'message-attachments';
 
@@ -66,12 +65,56 @@ export async function listMessages(conversationId, { limit = 50 } = {}) {
     .from('messages')
     .select(`
       *,
-      message_attachments ( * )
+      message_attachments ( * ),
+      message_reactions ( * )
     `)
     .eq('conversation_id', conversationId)
     .order('created_at', { ascending: true })
     .limit(limit);
 
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Modifie le contenu d'un message qu'on a soi-même envoyé.
+ * Passe par la fonction RPC edit_message (voir migration
+ * 20260911_message_actions.sql) plutôt qu'un .update() direct :
+ * la vérification "c'est bien mon message" est faite côté base,
+ * pas fait confiance au client.
+ */
+export async function editMessage(messageId, content) {
+  const { data, error } = await supabase.rpc('edit_message', {
+    p_message_id: messageId,
+    p_content: content,
+  });
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Supprime (soft delete) un message. Le contenu et les pièces jointes
+ * sont effacés côté base ; la ligne reste avec deleted_at renseigné
+ * pour afficher "Message supprimé" dans le fil, comme WhatsApp.
+ */
+export async function deleteMessage(messageId) {
+  const { data, error } = await supabase.rpc('delete_message', {
+    p_message_id: messageId,
+  });
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Ajoute ou retire (toggle) une réaction emoji de l'utilisateur courant
+ * sur un message. Retourne true si la réaction a été ajoutée, false
+ * si elle a été retirée.
+ */
+export async function toggleReaction(messageId, emoji) {
+  const { data, error } = await supabase.rpc('toggle_reaction', {
+    p_message_id: messageId,
+    p_emoji: emoji,
+  });
   if (error) throw error;
   return data;
 }
@@ -186,16 +229,45 @@ export function buildInternalLinkAttachment(entityType, entityId, label) {
 // -----------------------------------------------------------
 
 /**
- * S'abonne aux nouveaux messages d'une conversation.
+ * S'abonne aux nouveaux messages ET aux modifications (édition,
+ * suppression) d'une conversation. onUpdate est optionnel — si non
+ * fourni, seuls les nouveaux messages sont écoutés (compat. ascendante).
  * Retourne une fonction unsubscribe() à appeler au démontage.
  */
-export function subscribeToMessages(conversationId, onInsert) {
+export function subscribeToMessages(conversationId, onInsert, onUpdate) {
   const channel = supabase
     .channel(`messages:${conversationId}`)
     .on(
       'postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${conversationId}` },
       (payload) => onInsert(payload.new)
+    )
+    .on(
+      'postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: 'messages', filter: `conversation_id=eq.${conversationId}` },
+      (payload) => onUpdate?.(payload.new)
+    )
+    .subscribe();
+
+  return () => supabase.removeChannel(channel);
+}
+
+/**
+ * S'abonne aux ajouts/retraits de réactions emoji sur les messages
+ * d'une conversation. onChange reçoit { type: 'INSERT' | 'DELETE', reaction }.
+ */
+export function subscribeToReactions(conversationId, onChange) {
+  const channel = supabase
+    .channel(`reactions:${conversationId}`)
+    .on(
+      'postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'message_reactions' },
+      (payload) => onChange({ type: 'INSERT', reaction: payload.new })
+    )
+    .on(
+      'postgres_changes',
+      { event: 'DELETE', schema: 'public', table: 'message_reactions' },
+      (payload) => onChange({ type: 'DELETE', reaction: payload.old })
     )
     .subscribe();
 
