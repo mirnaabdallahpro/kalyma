@@ -61,6 +61,10 @@ export async function listConversations() {
 // -----------------------------------------------------------
 
 export async function listMessages(conversationId, { limit = 50 } = {}) {
+  // tri décroissant + limit = on récupère bien les N DERNIERS messages
+  // (un tri croissant + limit couperait la conversation à ses N
+  // PREMIERS messages, et ferait disparaître tout ce qui vient après
+  // dès que la conversation dépasse `limit`)
   const { data, error } = await supabase
     .from('messages')
     .select(`
@@ -69,11 +73,13 @@ export async function listMessages(conversationId, { limit = 50 } = {}) {
       message_reactions ( * )
     `)
     .eq('conversation_id', conversationId)
-    .order('created_at', { ascending: true })
+    .order('created_at', { ascending: false })
     .limit(limit);
 
   if (error) throw error;
-  return data;
+
+  // on remet en ordre chronologique (ancien → récent) pour l'affichage du fil
+  return (data || []).reverse();
 }
 
 /**

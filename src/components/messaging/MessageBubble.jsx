@@ -13,12 +13,19 @@ const QUICK_EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
 
 function ScreenshotAttachment({ attachment }) {
   const [url, setUrl] = useState(null);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    getScreenshotUrl(attachment.url).then((signed) => {
-      if (!cancelled) setUrl(signed);
-    });
+    setFailed(false);
+    getScreenshotUrl(attachment.url)
+      .then((signed) => {
+        if (!cancelled) setUrl(signed);
+      })
+      .catch((err) => {
+        console.error('Impossible de charger la capture :', err);
+        if (!cancelled) setFailed(true);
+      });
     return () => {
       cancelled = true;
     };
@@ -27,7 +34,8 @@ function ScreenshotAttachment({ attachment }) {
   return (
     <div className="attach-shot">
       {url ? <img src={url} alt={attachment.label || 'Capture d\'écran'} /> : null}
-      {attachment.label ? <div className="cap">{attachment.label}</div> : null}
+      {failed ? <div className="cap attach-shot-error">Image indisponible</div> : null}
+      {!failed && attachment.label ? <div className="cap">{attachment.label}</div> : null}
     </div>
   );
 }
