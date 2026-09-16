@@ -700,7 +700,7 @@
 }
 
 .lp-section-dark {
-    background: var(--lp-charcoal);
+    background: #041b53;
     color: #fff;
 }
 
@@ -2413,5 +2413,261 @@
         scroll-behavior: auto !important;
         transition: none !important;
         animation: none !important;
+    }
+}
+
+/* ============================================
+   Nouvelles classes — Détail des offres Kalyma
+   À importer/coller après le CSS existant des
+   .lp-offer-card / .lp-offers-grid déjà en place.
+
+   Les couleurs utilisent des variables --lp-*
+   avec une valeur de repli (fallback). Si ton
+   fichier de thème définit déjà ces variables
+   (accent jaune, fond sombre, etc.), remplace
+   simplement les noms ci-dessous par les tiens
+   pour rester 100% cohérent avec ta charte.
+   ============================================ */
+
+.lp-offers-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin-top: 40px;
+}
+
+/* Desktop : offre 1 et 2 côte à côte (50/50), offre 3 pleine largeur en dessous */
+@media (min-width: 900px) {
+    .lp-offers-detail-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .lp-offers-detail-grid>*:nth-child(3) {
+        grid-column: 1 / -1;
+    }
+}
+
+/* --- Carte détail d'une offre --- */
+.lp-offer-detail {
+    background: var(--lp-card-bg, #1c2431);
+    border: 1px solid var(--lp-border, rgba(255, 255, 255, 0.08));
+    border-radius: 18px;
+    padding: 36px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.lp-offer-detail-featured {
+    border-color: var(--lp-yellow, #f4b740);
+    box-shadow: 0 0 0 1px var(--lp-yellow, #f4b740);
+}
+
+.lp-offer-detail-name {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--lp-white, #fff);
+    margin: 10px 0 8px;
+}
+
+.lp-offer-detail-promise {
+    font-size: 16px;
+    font-style: italic;
+    color: var(--lp-muted, #a9b1c3);
+    max-width: 640px;
+    margin-bottom: 24px;
+}
+
+/* --- Ligne pour-qui / délai / effort --- */
+.lp-offer-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--lp-border, rgba(255, 255, 255, 0.08));
+}
+
+.lp-offer-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 180px;
+    flex: 1;
+}
+
+.lp-offer-meta-item strong {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--lp-yellow, #f4b740);
+    font-weight: 700;
+}
+
+.lp-offer-meta-item span {
+    font-size: 14px;
+    color: var(--lp-muted, #a9b1c3);
+    line-height: 1.4;
+}
+
+/* --- Libellé de section (ex: "Ce que vous obtenez") --- */
+.lp-offer-section-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    color: var(--lp-muted, #a9b1c3);
+    margin: 8px 0 12px;
+}
+
+/* --- Liste des livrables --- */
+.lp-offer-checklist {
+    list-style: none;
+    margin: 0 0 28px;
+    padding: 0;
+}
+
+.lp-offer-checklist li {
+    position: relative;
+    padding: 10px 0 10px 26px;
+    font-size: 14.5px;
+    color: var(--lp-white, #eef1f6);
+    border-bottom: 1px solid var(--lp-border, rgba(255, 255, 255, 0.06));
+    line-height: 1.5;
+}
+
+.lp-offer-checklist li:last-child {
+    border-bottom: none;
+}
+
+.lp-offer-checklist li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--lp-yellow, #f4b740);
+    font-weight: 700;
+}
+
+/* --- Bloc "value stack" --- */
+.lp-offer-stack {
+    background: var(--lp-stack-bg, rgba(255, 255, 255, 0.04));
+    border: 1px solid var(--lp-border, rgba(255, 255, 255, 0.08));
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 28px;
+}
+
+.lp-offer-stack-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    color: var(--lp-muted, #a9b1c3);
+    margin: 0 0 14px;
+}
+
+.lp-offer-stack-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 14px;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--lp-border, rgba(255, 255, 255, 0.1));
+    color: var(--lp-white, #eef1f6);
+}
+
+.lp-offer-stack-row span:last-child {
+    color: var(--lp-muted, #a9b1c3);
+    white-space: nowrap;
+}
+
+.lp-offer-stack-total {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--lp-white, #fff);
+    padding-top: 14px;
+    margin-top: 6px;
+}
+
+/* --- Bloc prix --- */
+.lp-offer-price-block {
+    background: var(--lp-price-bg, rgba(244, 183, 64, 0.1));
+    border: 1px solid var(--lp-yellow, #f4b740);
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.lp-offer-price-from {
+    font-size: 12.5px;
+    text-decoration: line-through;
+    color: var(--lp-muted, #a9b1c3);
+    margin-bottom: 6px;
+}
+
+.lp-offer-price-value {
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--lp-white, #fff);
+}
+
+.lp-offer-price-value small {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--lp-muted, #a9b1c3);
+}
+
+/* --- Garantie --- */
+.lp-offer-guarantee {
+    font-size: 14px;
+    line-height: 1.5;
+    background: rgba(244, 183, 64, 0.08);
+    border-left: 3px solid var(--lp-yellow, #f4b740);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    color: var(--lp-white, #eef1f6);
+    margin-bottom: 20px;
+}
+
+.lp-offer-guarantee b {
+    color: var(--lp-yellow, #f4b740);
+}
+
+/* --- Bonus / scarcity --- */
+.lp-offer-bonus-scarcity {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.lp-offer-bonus-scarcity div {
+    flex: 1;
+    min-width: 220px;
+    font-size: 13.5px;
+    color: var(--lp-muted, #a9b1c3);
+    line-height: 1.5;
+}
+
+.lp-offer-bonus-scarcity b {
+    display: block;
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--lp-white, #eef1f6);
+    margin-bottom: 4px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 520px) {
+    .lp-offer-detail {
+        padding: 28px 20px;
+    }
+
+    .lp-offer-price-value {
+        font-size: 28px;
     }
 }
