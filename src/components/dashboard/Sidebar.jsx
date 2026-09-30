@@ -5,6 +5,7 @@ import {
   FileText,
   LayoutDashboard,
   MessageSquare,
+  PenLine,
   Settings,
   UsersRound,
 } from "lucide-react";
@@ -54,6 +55,12 @@ function Sidebar() {
       to: "/tasks",
       icon: CheckSquare,
       label: "Tâches",
+      disabled: false,
+    },
+    {
+      to: "/content",
+      icon: PenLine,
+      label: "Communication",
       disabled: false,
     },
     {

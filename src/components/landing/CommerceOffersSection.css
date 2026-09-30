@@ -1,0 +1,48 @@
+/* ============================================
+   Section Commerce — même structure que les
+   offres service (.lp-offer-*), mais accent
+   terracotta au lieu du jaune Kalyma, pour que
+   le visiteur distingue immédiatement les deux
+   parcours au premier coup d'œil.
+
+   Comme tout le CSS de .lp-offer-* utilise
+   var(--lp-yellow, ...) avec une valeur de repli,
+   il suffit de redéfinir --lp-yellow ici : la
+   cascade fait le reste, aucune classe dupliquée.
+   ============================================ */
+
+.lp-section-commerce {
+  --lp-yellow: #d9764a;   /* terracotta au lieu du jaune */
+  --lp-card-bg: #241a15;  /* fond légèrement plus chaud */
+}
+
+.lp-eyebrow-commerce {
+  background: rgba(217, 118, 74, 0.14);
+  color: #d9764a;
+  border-color: rgba(217, 118, 74, 0.4);
+}
+
+/* Sur cette section, les boutons "Choisir" doivent utiliser le
+   terracotta plutôt que la classe btn-yellow globale du site */
+.lp-section-commerce .btn-yellow {
+  background: #d9764a;
+  border-color: #d9764a;
+  color: #1c1a17;
+}
+
+.lp-section-commerce .btn-yellow:hover {
+  background: #c96539;
+  border-color: #c96539;
+}
+
+/* Grille à 2 colonnes fixes en desktop (au lieu de la règle
+   "3e carte pleine largeur" utilisée par la section service) */
+@media (min-width: 900px) {
+  .lp-offers-detail-grid-2col {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .lp-offers-detail-grid-2col > *:nth-child(3) {
+    grid-column: auto;
+  }
+}

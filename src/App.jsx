@@ -30,7 +30,9 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminMessagerie from "./pages/admin/Messagerie";
 import BusinessDiagnostics from "./pages/business/BusinessDiagnostics";
 import ClientMessagerie from "./pages/client/Messagerie";
+import ForgeLanding from "./pages/ForgeLanding";
 import Home from "./pages/Home";
+import LinkedInContentPage from "./pages/LinkedInContentPage";
 import Meetings from "./pages/Meetings";
 import "./styles.css";
 
@@ -64,6 +66,11 @@ function App() {
             path="/comment-ca-marche"
             element={<HowItWorks />}
           />
+           <Route
+            path="/forge-offre"
+            element={<ForgeLanding />}
+          />
+
 
           <Route
             path="/coming-soon"
@@ -154,6 +161,10 @@ function App() {
 
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/crm" element={<Crm />} />
+          <Route
+            path="/content"
+            element={<LinkedInContentPage />}
+        />
           <Route path="/meetings" element={<Meetings />} />
            <Route path="/messagerie" element={<ClientMessagerie />} />
           

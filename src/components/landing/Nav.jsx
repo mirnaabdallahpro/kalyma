@@ -23,6 +23,7 @@ function Nav() {
           <a href="#parcours">Parcours</a>
           <a href="#offres">Offres</a>
           <a href="#pourquoi">Pourquoi nous</a>
+          <a href="/forge-offre"  target="_blank" rel="noopener noreferrer">Accompagnement Forge</a>
         </nav>
 
         <Link to="/dashboard" className="lp-nav-cta">

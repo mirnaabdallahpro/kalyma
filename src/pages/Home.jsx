@@ -1,10 +1,11 @@
+import CommerceOffersSection from "../components/landing/CommerceOffersSection";
 import DifferentiatorsSection from "../components/landing/DifferentiatorsSection";
 import FinalCTA from "../components/landing/FinalCTA";
 import Footer from "../components/landing/Footer";
 import Hero from "../components/landing/Hero";
 import JourneyPath from "../components/landing/JourneyPath";
 import Nav from "../components/landing/Nav";
-import OffersSection from "../components/landing/OffersSection";
+import OffersDetailSection from "../components/landing/OffersDetailSection"; // adapte le chemin selon ton arborescence
 import PillarsSection from "../components/landing/PillarsSection";
 import ProblemSection from "../components/landing/ProblemSection";
 import SocialProofSection from "../components/landing/SocialProofSection";
@@ -18,7 +19,8 @@ function Home() {
       <ProblemSection />
       <PillarsSection />
       <JourneyPath />
-      <OffersSection />
+      <OffersDetailSection />
+      <CommerceOffersSection />
       <DifferentiatorsSection />
       <SocialProofSection />
       <FinalCTA />
