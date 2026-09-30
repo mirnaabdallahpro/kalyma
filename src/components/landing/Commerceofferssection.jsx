@@ -71,7 +71,7 @@ const commerceOffers = [
     guaranteeTitle: "Garantie « satisfait ou mois offert »",
     guaranteeText:
       "si à la fin du premier mois vous n'êtes pas satisfait du travail réalisé, le mois suivant vous est offert, sans engagement à poursuivre après.",
-    bonus: "Audit gratuit de vos marges et de votre pricing en entrée de programme",
+    bonus: "Audit gratuit de vos marges et de votre pricing en entrée de programme.",
     scarcity: "15 commerces suivis en simultané maximum, pour garantir une vraie régularité",
     featured: true,
   },
