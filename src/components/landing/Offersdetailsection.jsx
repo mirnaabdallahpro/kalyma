@@ -6,7 +6,7 @@ const offers = [
     tag: "Offre d'entrée",
     name: "Le Signal",
     promise:
-      "Savoir enfin, noir sur blanc, ce qui bloque votre croissance — et quoi faire cette semaine pour le débloquer.",
+      "Savoir enfin noir sur blanc, ce qui bloque votre croissance — et quoi faire cette semaine pour le débloquer.",
     meta: [
       { label: "Pour qui", value: "Entrepreneurs qui sentent que « quelque chose ne tourne pas » sans savoir quoi" },
       { label: "Délai", value: "Résultats livrés sous 5 jours ouvrés" },
