@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 /* Landing page — THE FORGE (ALCHIMIE™)
    Utilise les classes du design system « lp-* » de Kalyma.
-   Les variables --primary, --secondary, --line et --radius doivent
    déjà être définies dans ton CSS global. */
 import Footer from "../components/landing/Footer";
 import { openCalendlyPopup, useCalendlyScript } from "../components/landing/offerShared";
