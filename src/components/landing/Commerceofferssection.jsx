@@ -1,6 +1,6 @@
 import useScrollReveal from "../../hooks/useScrollReveal";
 import "./CommerceOffersSection.css";
-import { OfferDetailCard, useCalendlyScript } from "./offerShared";
+import { OfferDetailCard, useCalendlyScript } from "./OfferShared";
 
 const commerceOffers = [
   {

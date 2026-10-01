@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
    Utilise les classes du design system « lp-* » de Kalyma.
    déjà être définies dans ton CSS global. */
 import Footer from "../components/landing/Footer";
-import { openCalendlyPopup, useCalendlyScript } from "../components/landing/offerShared";
+import { openCalendlyPopup, useCalendlyScript } from "../components/landing/OfferShared";
 
 const CTA_HREF = "#candidater"; // remplace par ton lien de prise de rendez-vous
 const COHORT_DATE = "lundi 2 novembre 2026";

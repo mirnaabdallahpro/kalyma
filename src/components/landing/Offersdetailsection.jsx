@@ -1,5 +1,5 @@
 import useScrollReveal from "../../hooks/useScrollReveal";
-import { OfferDetailCard, useCalendlyScript } from "./offerShared";
+import { OfferDetailCard, useCalendlyScript } from "./OfferShared";
 
 const offers = [
   {
