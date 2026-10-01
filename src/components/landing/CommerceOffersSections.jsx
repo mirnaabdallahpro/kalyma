@@ -1,6 +1,5 @@
 import useScrollReveal from "../../hooks/useScrollReveal";
 import "./CommerceOffersSection.css";
-import { OfferDetailCard } from "./OfferShared";
 
 const commerceOffers = [
   {
@@ -104,6 +103,76 @@ function useCalendlyScript() {
       document.body.appendChild(script);
     }
   }, []);
+}
+function OfferDetailCard({ offer }) {
+  return (
+    <div className={`lp-offer-detail ${offer.featured ? "lp-offer-detail-featured" : ""}`}>
+      <span className="lp-offer-tag">{offer.tag}</span>
+      <h3 className="lp-offer-detail-name">{offer.name}</h3>
+      <p className="lp-offer-detail-promise">{offer.promise}</p>
+
+      <div className="lp-offer-meta-row">
+        {offer.meta.map((m) => (
+          <div className="lp-offer-meta-item" key={m.label}>
+            <strong>{m.label}</strong>
+            <span>{m.value}</span>
+          </div>
+        ))}
+      </div>
+
+      <p className="lp-offer-section-label">Ce que vous obtenez concrètement</p>
+      <ul className="lp-offer-checklist">
+        {offer.deliverables.map((d, i) => (
+          <li key={i}>{d}</li>
+        ))}
+      </ul>
+
+      <div className="lp-offer-stack">
+        <p className="lp-offer-stack-title">Ce que ça vaut réellement</p>
+        {offer.stack.map((s) => (
+          <div className="lp-offer-stack-row" key={s.label}>
+            <span>{s.label}</span>
+            <span>{s.value}</span>
+          </div>
+        ))}
+        <div className="lp-offer-stack-total">
+          <span>Valeur totale</span>
+          <span>{offer.stackTotal}</span>
+        </div>
+      </div>
+
+      <div className="lp-offer-price-block">
+        <div className="lp-offer-price-from">{offer.priceFrom}</div>
+        <div className="lp-offer-price-value">
+          {offer.price} <small>{offer.priceUnit}</small>
+        </div>
+      </div>
+
+      <div className="lp-offer-guarantee">
+        <b>{offer.guaranteeTitle} : </b>
+        {offer.guaranteeText}
+      </div>
+
+      <div className="lp-offer-bonus-scarcity">
+        <div>
+          <b>Bonus inclus</b>
+          {offer.bonus}
+        </div>
+        <div>
+          <b>Places</b>
+          {offer.scarcity}
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => openCalendlyPopup(offer.name)}
+        className={`btn ${offer.featured ? "btn-yellow" : "btn-ghost-light"}`}
+      >
+        Choisir {offer.name}
+      </button>
+    </div>
+  );
 }
 
 function openCalendlyPopup(offerName) {
