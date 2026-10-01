@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import useScrollReveal from "../../hooks/useScrollReveal";
 import "./CommerceOffersSection.css";
 
