@@ -1,6 +1,6 @@
 import useScrollReveal from "../../hooks/useScrollReveal";
 import "./CommerceOffersSection.css";
-import { OfferDetailCard, useCalendlyScript } from "./OfferShared";
+import { OfferDetailCard } from "./OfferShared";
 
 const commerceOffers = [
   {
@@ -76,6 +76,47 @@ const commerceOffers = [
     featured: true,
   },
 ];
+
+const CALENDLY_URL = "https://calendly.com/kalyma/appel-de-cadrage-le-signal";
+
+// Couleurs Kalyma appliquées à l'intérieur du widget Calendly
+// (les 3 seuls paramètres que Calendly autorise à personnaliser,
+// sans le # devant le code hexadécimal)
+const CALENDLY_COLORS = {
+  primary_color: "f4b740", // jaune Kalyma — boutons et créneaux sélectionnés
+  text_color: "1c2431", // navy Kalyma — texte du widget
+  background_color: "ffffff", // fond du widget
+};
+
+function useCalendlyScript() {
+  useEffect(() => {
+    if (!document.querySelector('link[href*="calendly.com/assets/external/widget.css"]')) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "https://assets.calendly.com/assets/external/widget.css";
+      document.head.appendChild(link);
+    }
+
+    if (!window.Calendly && !document.querySelector('script[src*="calendly.com/assets/external/widget.js"]')) {
+      const script = document.createElement("script");
+      script.src = "https://assets.calendly.com/assets/external/widget.js";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+}
+
+function openCalendlyPopup(offerName) {
+  if (window.Calendly) {
+    const params = new URLSearchParams({
+      utm_content: offerName,
+      ...CALENDLY_COLORS,
+    });
+    window.Calendly.initPopupWidget({
+      url: `${CALENDLY_URL}?${params.toString()}`,
+    });
+  }
+}
 
 function CommerceOffersSections() {
   const [ref, visible] = useScrollReveal();
