@@ -77,7 +77,7 @@ const commerceOffers = [
   },
 ];
 
-function CommerceOffersSection() {
+function CommerceOffersSections() {
   const [ref, visible] = useScrollReveal();
   useCalendlyScript();
 
@@ -108,4 +108,4 @@ function CommerceOffersSection() {
   );
 }
 
-export default CommerceOffersSection;
+export default CommerceOffersSections;

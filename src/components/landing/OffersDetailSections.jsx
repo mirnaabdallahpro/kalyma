@@ -107,7 +107,7 @@ const offers = [
   },
 ];
 
-function OffersDetailSection() {
+function OffersDetailSections() {
   const [ref, visible] = useScrollReveal();
   useCalendlyScript();
 
@@ -139,4 +139,4 @@ function OffersDetailSection() {
   );
 }
 
-export default OffersDetailSection;
+export default OffersDetailSections;
